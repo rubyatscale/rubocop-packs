@@ -3,7 +3,6 @@
 require 'rubocop'
 
 require_relative 'rubocop/modularization'
-require_relative 'rubocop/modularization/version'
 require_relative 'rubocop/modularization/inject'
 
 RuboCop::Modularization::Inject.defaults!

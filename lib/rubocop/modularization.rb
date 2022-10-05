@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require_relative "modularization/version"
-
 module RuboCop
   module Modularization
     class Error < StandardError; end
