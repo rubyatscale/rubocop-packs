@@ -3,3 +3,6 @@
 
 # typed: strong
 module ::RSpec; end
+module RuboCop::Modularization::Inject::Config; end
+module RuboCop::Modularization::Inject::ConfigLoader; end
+module RuboCop::RSpec::ExpectOffense; end
