@@ -1,7 +1,8 @@
 PATH
   remote: .
   specs:
-    my_gem (0.0.1)
+    rubocop-modularization (0.0.1)
+      rubocop
       sorbet-runtime
 
 GEM
@@ -107,10 +108,10 @@ PLATFORMS
 
 DEPENDENCIES
   bundler (~> 2.2.16)
-  my_gem!
   rake
   rspec (~> 3.0)
   rubocop-extension-generator
+  rubocop-modularization!
   sorbet
   tapioca
 
