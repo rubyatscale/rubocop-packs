@@ -1,8 +1,10 @@
+# typed: strict
 # frozen_string_literal: true
 
 require 'bundler/setup'
 require 'rubocop-modularization'
-require "rubocop/rspec/support"
+require 'rubocop/rspec/support'
+require_relative 'support/application_fixture_helper'
 require 'pry'
 
 RSpec.configure do |config|
@@ -17,6 +19,16 @@ RSpec.configure do |config|
   end
 
   config.include RuboCop::RSpec::ExpectOffense
+  config.include ApplicationFixtureHelper
+  config.around do |example|
+    prefix = [File.basename($0), Process.pid].join('-') # rubocop:disable Style/SpecialGlobalVars
+    tmpdir = Dir.mktmpdir(prefix)
+    Dir.chdir(tmpdir) do
+      example.run
+    end
+  ensure
+    FileUtils.rm_rf(T.must(tmpdir))
+  end
 
   config.raise_errors_for_deprecations!
   config.raise_on_warning = true

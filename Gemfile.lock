@@ -1,8 +1,11 @@
 PATH
   remote: .
   specs:
-    rubocop-modularization (0.0.1)
+    rubocop-modularization (0.0.2)
+      activesupport
+      parse_packwerk
       rubocop
+      rubocop-sorbet
       sorbet-runtime
 
 GEM
@@ -24,6 +27,8 @@ GEM
     minitest (5.16.3)
     netrc (0.11.0)
     parallel (1.22.1)
+    parse_packwerk (0.12.1)
+      sorbet-runtime
     parser (3.1.2.1)
       ast (~> 2.4.1)
     pry (0.14.1)
@@ -67,6 +72,8 @@ GEM
       activesupport
       bundler
       rubocop (>= 1.22.0)
+    rubocop-sorbet (0.6.11)
+      rubocop (>= 0.90.0)
     ruby-progressbar (1.11.0)
     sorbet (0.5.10479)
       sorbet-static (= 0.5.10479)
@@ -110,6 +117,7 @@ PLATFORMS
 
 DEPENDENCIES
   bundler (~> 2.2.16)
+  parser
   rake
   rspec (~> 3.0)
   rubocop-extension-generator

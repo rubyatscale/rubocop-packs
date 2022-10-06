@@ -1,1 +1,5 @@
-# Write it!
+Modularization/NamespacedUnderPackageName:
+  Enabled: false
+
+Modularization/TypedPublicApi:
+  Enabled: false

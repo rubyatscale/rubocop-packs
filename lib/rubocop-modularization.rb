@@ -1,10 +1,13 @@
+# typed: strict
 # frozen_string_literal: true
 
 require 'rubocop'
+require 'parse_packwerk'
 
 require_relative 'rubocop/modularization'
 require_relative 'rubocop/modularization/inject'
 
-RuboCop::Modularization::Inject.defaults!
+require 'rubocop/cop/modularization/namespaced_under_package_name'
+require 'rubocop/cop/modularization/typed_public_api'
 
-require_relative 'rubocop/cop/modularization_cops'
+RuboCop::Modularization::Inject.defaults!

@@ -1,6 +1,6 @@
 Gem::Specification.new do |spec|
-  spec.name          = "rubocop-modularization"
-  spec.version       = '0.0.1'
+  spec.name          = 'rubocop-modularization'
+  spec.version       = '0.0.2'
   spec.authors       = ['Gusto Engineers']
   spec.email         = ['dev@gusto.com']
   spec.summary       = 'Fill this out!'
@@ -23,13 +23,17 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
   spec.required_ruby_version = '>= 2.6'
 
-  spec.add_dependency 'sorbet-runtime'
+  spec.add_dependency 'activesupport'
+  spec.add_dependency 'parse_packwerk'
   spec.add_dependency 'rubocop'
+  spec.add_dependency 'rubocop-sorbet'
+  spec.add_dependency 'sorbet-runtime'
 
   spec.add_development_dependency 'bundler', '~> 2.2.16'
+  spec.add_development_dependency 'parser'
   spec.add_development_dependency 'rake'
   spec.add_development_dependency 'rspec', '~> 3.0'
+  spec.add_development_dependency 'rubocop-extension-generator'
   spec.add_development_dependency 'sorbet'
   spec.add_development_dependency 'tapioca'
-  spec.add_development_dependency 'rubocop-extension-generator'
 end
