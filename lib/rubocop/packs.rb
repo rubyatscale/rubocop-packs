@@ -1,10 +1,10 @@
 # typed: strict
 # frozen_string_literal: true
 
-require 'rubocop/modularization/private'
+require 'rubocop/packs/private'
 
 module RuboCop
-  module Modularization
+  module Packs
     class Error < StandardError; end
     extend T::Sig
 

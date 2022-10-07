@@ -2,11 +2,11 @@
 
 # For String#camelize
 require 'active_support/core_ext/string/inflections'
-require 'rubocop/cop/modularization/namespaced_under_package_name/desired_zeitwerk_api'
+require 'rubocop/cop/packs/namespaced_under_package_name/desired_zeitwerk_api'
 
 module RuboCop
   module Cop
-    module Modularization
+    module Packs
       # This cop helps ensure that each pack exposes one namespace.
       #
       # @example

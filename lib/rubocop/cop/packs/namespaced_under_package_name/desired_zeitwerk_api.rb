@@ -2,7 +2,7 @@
 
 module RuboCop
   module Cop
-    module Modularization
+    module Packs
       class NamespacedUnderPackageName < Base
         #
         # This is a private class that represents API that we would prefer to be available somehow in Zeitwerk.

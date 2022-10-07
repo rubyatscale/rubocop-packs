@@ -1,4 +1,4 @@
-Modularization/ClassMethodsAsPublicApis:
+Packs/ClassMethodsAsPublicApis:
   Enabled: true
   AcceptableParentClasses:
     - T::Enum
@@ -6,11 +6,11 @@ Modularization/ClassMethodsAsPublicApis:
     - Struct
     - OpenStruct
 
-Modularization/NamespacedUnderPackageName:
+Packs/NamespacedUnderPackageName:
   Enabled: false
 
-Modularization/TypedPublicApi:
+Packs/TypedPublicApi:
   Enabled: false
 
-RequireDocumentedPublicApis:
+Packs/RequireDocumentedPublicApis:
   Enabled: false

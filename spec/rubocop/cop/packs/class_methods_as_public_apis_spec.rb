@@ -1,7 +1,7 @@
 # typed: false
 # frozen_string_literal: true
 
-RSpec.describe RuboCop::Cop::Modularization::ClassMethodsAsPublicApis, :config do
+RSpec.describe RuboCop::Cop::Packs::ClassMethodsAsPublicApis, :config do
   let(:acceptable_parent_classes) do
     [
       'T::Struct',

@@ -3,7 +3,7 @@
 
 module RuboCop
   module Cop
-    module Modularization
+    module Packs
       # This cop states that public API should live on class methods, which are more easily statically analyzable,
       # searchable, and typically hold less state.
       #

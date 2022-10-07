@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    rubocop-modularization (0.0.6)
+    rubocop-packs (0.0.6)
       activesupport
       parse_packwerk
       rubocop
@@ -121,7 +121,7 @@ DEPENDENCIES
   rake
   rspec (~> 3.0)
   rubocop-extension-generator
-  rubocop-modularization!
+  rubocop-packs!
   sorbet
   tapioca
 
