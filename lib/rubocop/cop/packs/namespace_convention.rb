@@ -49,6 +49,7 @@ module RuboCop
 
           package_name = package_for_path.name
           actual_namespace = namespace_context.current_namespace
+          current_fully_qualified_constant = namespace_context.current_fully_qualified_constant
 
           if allowed_global_namespaces.include?(actual_namespace)
             # No problem!
@@ -62,21 +63,23 @@ module RuboCop
               add_offense(
                 source_range(processed_source.buffer, 1, 0),
                 message: format(
-                  '`%<package_name>s` prevents modules/classes that are not submodules of the package namespace. Should be namespaced under `%<expected_namespace>s` with path `%<expected_path>s`. See https://go/packwerk_cheatsheet_namespaces for more info.',
+                  'Based on the filepath, this file defines `%<current_fully_qualified_constant>s`, but it should be namespaced as `%<expected_namespace>s::%<current_fully_qualified_constant>s` with path `%<expected_path>s`.',
                   package_name: package_name,
                   expected_namespace: expected_namespace,
-                  expected_path: relative_desired_path
+                  expected_path: relative_desired_path,
+                  current_fully_qualified_constant: current_fully_qualified_constant
                 )
               )
             elsif pack_owning_this_namespace
               add_offense(
                 source_range(processed_source.buffer, 1, 0),
                 message: format(
-                  '`%<pack_owning_this_namespace>s` prevents other packs from sitting in the `%<actual_namespace>s` namespace. This should be namespaced under `%<expected_namespace>s` with path `%<expected_path>s`. See https://go/packwerk_cheatsheet_namespaces for more info.',
+                  'Based on the filepath, this file defines `%<current_fully_qualified_constant>s`. `%<pack_owning_this_namespace>s` prevents other packs from sitting in the `%<actual_namespace>s` namespace. This should be namespaced under `%<expected_namespace>s` with path `%<expected_path>s`.',
                   package_name: package_name,
                   pack_owning_this_namespace: pack_owning_this_namespace,
                   expected_namespace: expected_namespace,
                   actual_namespace: actual_namespace,
+                  current_fully_qualified_constant: current_fully_qualified_constant,
                   expected_path: relative_desired_path
                 )
               )

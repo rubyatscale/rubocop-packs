@@ -27,7 +27,7 @@ RSpec.describe RuboCop::Cop::Packs::NamespaceConvention, :config do
         let(:source) do
           <<~RUBY
             class Tool
-            ^ `packs/apples` prevents modules/classes that are not submodules of the package namespace. Should be namespaced under `Apples` with path `packs/apples/app/services/apples/tool.rb`. See https://go/packwerk_cheatsheet_namespaces for more info.
+            ^ Based on the filepath, this file defines `Tool`, but it should be namespaced as `Apples::Tool` with path `packs/apples/app/services/apples/tool.rb`.
             end
           RUBY
         end
@@ -39,7 +39,7 @@ RSpec.describe RuboCop::Cop::Packs::NamespaceConvention, :config do
         let(:source) do
           <<~RUBY
             module Tools
-            ^ `packs/apples` prevents modules/classes that are not submodules of the package namespace. Should be namespaced under `Apples` with path `packs/apples/app/services/apples/tools/blah.rb`. See https://go/packwerk_cheatsheet_namespaces for more info.
+            ^ Based on the filepath, this file defines `Tools::Blah`, but it should be namespaced as `Apples::Tools::Blah` with path `packs/apples/app/services/apples/tools/blah.rb`.
               class Blah
               end
             end
@@ -81,7 +81,7 @@ RSpec.describe RuboCop::Cop::Packs::NamespaceConvention, :config do
         let(:source) do
           <<~RUBY
             class Tool
-            ^ `packs/apples` prevents modules/classes that are not submodules of the package namespace. Should be namespaced under `Apples` with path `packs/apples/app/services/apples/tool.rb`. See https://go/packwerk_cheatsheet_namespaces for more info.
+            ^ Based on the filepath, this file defines `Tool`, but it should be namespaced as `Apples::Tool` with path `packs/apples/app/services/apples/tool.rb`.
             end
           RUBY
         end
@@ -93,7 +93,7 @@ RSpec.describe RuboCop::Cop::Packs::NamespaceConvention, :config do
         let(:source) do
           <<~RUBY
             module Tools
-            ^ `packs/apples` prevents modules/classes that are not submodules of the package namespace. Should be namespaced under `Apples` with path `packs/apples/app/services/apples/tools/blah.rb`. See https://go/packwerk_cheatsheet_namespaces for more info.
+            ^ Based on the filepath, this file defines `Tools::Blah`, but it should be namespaced as `Apples::Tools::Blah` with path `packs/apples/app/services/apples/tools/blah.rb`.
               class Blah
               end
             end
@@ -160,7 +160,7 @@ RSpec.describe RuboCop::Cop::Packs::NamespaceConvention, :config do
       let(:source) do
         <<~RUBY
           class Tool
-          ^ `packs/apples` prevents modules/classes that are not submodules of the package namespace. Should be namespaced under `Apples` with path `packs/apples/app/models/concerns/apples/tool.rb`. See https://go/packwerk_cheatsheet_namespaces for more info.
+          ^ Based on the filepath, this file defines `Tool`, but it should be namespaced as `Apples::Tool` with path `packs/apples/app/models/concerns/apples/tool.rb`.
           end
         RUBY
       end
@@ -203,7 +203,7 @@ RSpec.describe RuboCop::Cop::Packs::NamespaceConvention, :config do
           let(:source) do
             <<~RUBY
               module Tools
-              ^ `packs/tools` prevents other packs from sitting in the `Tools` namespace. This should be namespaced under `Apples` with path `packs/apples/app/services/apples/tools/blah.rb`. See https://go/packwerk_cheatsheet_namespaces for more info.
+              ^ Based on the filepath, this file defines `Tools::Blah`. `packs/tools` prevents other packs from sitting in the `Tools` namespace. This should be namespaced under `Apples` with path `packs/apples/app/services/apples/tools/blah.rb`.
                 class Blah
                 end
               end
@@ -224,7 +224,7 @@ RSpec.describe RuboCop::Cop::Packs::NamespaceConvention, :config do
         let(:source) do
           <<~RUBY
             class Tool
-            ^ `packs/fruits/apples` prevents modules/classes that are not submodules of the package namespace. Should be namespaced under `Apples` with path `packs/fruits/apples/app/services/apples/tool.rb`. See https://go/packwerk_cheatsheet_namespaces for more info.
+            ^ Based on the filepath, this file defines `Tool`, but it should be namespaced as `Apples::Tool` with path `packs/fruits/apples/app/services/apples/tool.rb`.
             end
           RUBY
         end
@@ -236,7 +236,7 @@ RSpec.describe RuboCop::Cop::Packs::NamespaceConvention, :config do
         let(:source) do
           <<~RUBY
             module Tools
-            ^ `packs/fruits/apples` prevents modules/classes that are not submodules of the package namespace. Should be namespaced under `Apples` with path `packs/fruits/apples/app/services/apples/tools/blah.rb`. See https://go/packwerk_cheatsheet_namespaces for more info.
+            ^ Based on the filepath, this file defines `Tools::Blah`, but it should be namespaced as `Apples::Tools::Blah` with path `packs/fruits/apples/app/services/apples/tools/blah.rb`.
               class Blah
               end
             end
@@ -278,7 +278,7 @@ RSpec.describe RuboCop::Cop::Packs::NamespaceConvention, :config do
         let(:source) do
           <<~RUBY
             class Tool
-            ^ `packs/fruits/apples` prevents modules/classes that are not submodules of the package namespace. Should be namespaced under `Apples` with path `packs/fruits/apples/app/services/apples/tool.rb`. See https://go/packwerk_cheatsheet_namespaces for more info.
+            ^ Based on the filepath, this file defines `Tool`, but it should be namespaced as `Apples::Tool` with path `packs/fruits/apples/app/services/apples/tool.rb`.
             end
           RUBY
         end
@@ -290,7 +290,7 @@ RSpec.describe RuboCop::Cop::Packs::NamespaceConvention, :config do
         let(:source) do
           <<~RUBY
             module Tools
-            ^ `packs/fruits/apples` prevents modules/classes that are not submodules of the package namespace. Should be namespaced under `Apples` with path `packs/fruits/apples/app/services/apples/tools/blah.rb`. See https://go/packwerk_cheatsheet_namespaces for more info.
+            ^ Based on the filepath, this file defines `Tools::Blah`, but it should be namespaced as `Apples::Tools::Blah` with path `packs/fruits/apples/app/services/apples/tools/blah.rb`.
               class Blah
               end
             end
@@ -357,7 +357,7 @@ RSpec.describe RuboCop::Cop::Packs::NamespaceConvention, :config do
       let(:source) do
         <<~RUBY
           class Tool
-          ^ `packs/fruits/apples` prevents modules/classes that are not submodules of the package namespace. Should be namespaced under `Apples` with path `packs/fruits/apples/app/models/concerns/apples/tool.rb`. See https://go/packwerk_cheatsheet_namespaces for more info.
+          ^ Based on the filepath, this file defines `Tool`, but it should be namespaced as `Apples::Tool` with path `packs/fruits/apples/app/models/concerns/apples/tool.rb`.
           end
         RUBY
       end

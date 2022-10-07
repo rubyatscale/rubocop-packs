@@ -12,6 +12,7 @@ module RuboCop
 
           class NamespaceContext < T::Struct
             const :current_namespace, String
+            const :current_fully_qualified_constant, String
             const :expected_namespace, String
             const :expected_filepath, String
           end
@@ -72,7 +73,8 @@ module RuboCop
             relative_desired_path = absolute_desired_path.relative_path_from(root_pathname)
 
             NamespaceContext.new(
-              current_namespace: actual_namespace,
+              current_namespace: T.must(actual_namespace.split('::').first),
+              current_fully_qualified_constant: actual_namespace,
               expected_namespace: get_pack_based_namespace(package_for_path),
               expected_filepath: relative_desired_path.to_s
             )
@@ -99,7 +101,7 @@ module RuboCop
           def get_actual_namespace(remaining_file_path, package_name)
             # If the remaining file path is a ruby file (not a directory), then it establishes a global namespace
             # Otherwise, per Zeitwerk's conventions as listed above, its a directory that establishes another global namespace
-            T.must(remaining_file_path.split('/').first).gsub('.rb', '').camelize
+            remaining_file_path.split('/').map { |entry| entry.gsub('.rb', '').camelize }.join('::')
           end
         end
 
