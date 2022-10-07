@@ -6,11 +6,11 @@ Packs/ClassMethodsAsPublicApis:
     - Struct
     - OpenStruct
 
-Packs/NamespacedUnderPackageName:
-  Enabled: false
+Packs/NamespaceConvention:
+  Enabled: true
 
 Packs/TypedPublicApi:
-  Enabled: false
+  Enabled: true
 
 Packs/RequireDocumentedPublicApis:
-  Enabled: false
+  Enabled: true

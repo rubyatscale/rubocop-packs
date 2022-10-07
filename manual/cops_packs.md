@@ -9,6 +9,10 @@ Enabled | Yes | No | - | -
 This cop states that public API should live on class methods, which are more easily statically analyzable,
 searchable, and typically hold less state.
 
+Options:
+
+* `AcceptableParentClasses`: A list of classes that, if inherited from, non-class methods are permitted (useful when value objects are a part of your public API)
+
 ### Examples
 
 ```ruby
@@ -26,18 +30,6 @@ module Foo
   end
 end
 ```
-#### AcceptableParentClasses: [T::Enum, T::Struct, Struct, OpenStruct] (default)
-
-```ruby
-You can define `AcceptableParentClasses` which are a list of classes that, if inherited from, non-class methods are permitted.
-This is useful when value objects are a part of your public API.
-
-# good
-# packs/foo/app/public/foo.rb
-class Foo < T::Enum
-  const :blah
-end
-```
 
 ### Configurable attributes
 
@@ -45,13 +37,15 @@ Name | Default value | Configurable values
 --- | --- | ---
 AcceptableParentClasses | `T::Enum`, `T::Struct`, `Struct`, `OpenStruct` | Array
 
-## Packs/NamespacedUnderPackageName
+## Packs/NamespaceConvention
 
 Enabled by default | Safe | Supports autocorrection | VersionAdded | VersionChanged
 --- | --- | --- | --- | ---
-Disabled | Yes | No | - | -
+Enabled | Yes | No | - | -
 
 This cop helps ensure that each pack exposes one namespace.
+Note that this cop doesn't necessarily expect you to be using stimpack (https://github.com/rubyatscale/stimpack),
+but it does expect packs to live in the organizational structure as described in the README.md of that gem.
 
 ### Examples
 
@@ -69,15 +63,34 @@ class Foo::Blah::Bar; end
 
 Enabled by default | Safe | Supports autocorrection | VersionAdded | VersionChanged
 --- | --- | --- | --- | ---
-Disabled | Yes | No | - | -
+Enabled | Yes | No | - | -
 
-No documentation
+This cop helps ensure that each pack has a documented public API
+
+### Examples
+
+```ruby
+# bad
+# packs/foo/app/public/foo.rb
+class Foo
+  sig { void }
+  def bar
+end
+
+# packs/foo/app/public/foo.rb
+class Foo
+  # This is a documentation comment.
+  # It can live below or below a sorbet type signature.
+  sig { void }
+  def bar
+end
+```
 
 ## Packs/TypedPublicApi
 
 Enabled by default | Safe | Supports autocorrection | VersionAdded | VersionChanged
 --- | --- | --- | --- | ---
-Disabled | Yes | Yes  | - | -
+Enabled | Yes | Yes  | - | -
 
 This cop helps ensure that each pack's public API is strictly typed, enforcing strong boundaries.
 

@@ -7,6 +7,10 @@ module RuboCop
       # This cop states that public API should live on class methods, which are more easily statically analyzable,
       # searchable, and typically hold less state.
       #
+      # Options:
+      #
+      # * `AcceptableParentClasses`: A list of classes that, if inherited from, non-class methods are permitted (useful when value objects are a part of your public API)
+      #
       # @example
       #
       #   # bad
@@ -21,16 +25,6 @@ module RuboCop
       #   module Foo
       #     def self.blah
       #     end
-      #   end
-      #
-      # @example AcceptableParentClasses: [T::Enum, T::Struct, Struct, OpenStruct] (default)
-      #   You can define `AcceptableParentClasses` which are a list of classes that, if inherited from, non-class methods are permitted.
-      #   This is useful when value objects are a part of your public API.
-      #
-      #   # good
-      #   # packs/foo/app/public/foo.rb
-      #   class Foo < T::Enum
-      #     const :blah
       #   end
       #
       class ClassMethodsAsPublicApis < Base
