@@ -9,6 +9,10 @@ Enabled | Yes | No | - | -
 This cop states that public API should live on class methods, which are more easily statically analyzable,
 searchable, and typically hold less state.
 
+Options:
+
+* `AcceptableParentClasses`: A list of classes that, if inherited from, non-class methods are permitted (useful when value objects are a part of your public API)
+
 ### Examples
 
 ```ruby
@@ -24,18 +28,6 @@ end
 module Foo
   def self.blah
   end
-end
-```
-#### AcceptableParentClasses: [T::Enum, T::Struct, Struct, OpenStruct] (default)
-
-```ruby
-You can define `AcceptableParentClasses` which are a list of classes that, if inherited from, non-class methods are permitted.
-This is useful when value objects are a part of your public API.
-
-# good
-# packs/foo/app/public/foo.rb
-class Foo < T::Enum
-  const :blah
 end
 ```
 
@@ -73,15 +65,26 @@ Enabled by default | Safe | Supports autocorrection | VersionAdded | VersionChan
 --- | --- | --- | --- | ---
 Enabled | Yes | No | - | -
 
-This cop does two things:
-1) It only activates for things in the public folder
-2) It allows `Style/DocumentationMethod` to work with sigs as expected.
+This cop helps ensure that each pack has a documented public API
 
-An alternate approach would be to monkey patch the existing cop, as `rubocop-sorbet` did here:
-https://github.com/Shopify/rubocop-sorbet/blob/6634f033611604cd76eeb73eae6d8728ec82d504/lib/rubocop/cop/sorbet/mutable_constant_sorbet_aware_behaviour.rb
-This monkey-patched cop could/should probably be upstreamed to `rubocop-sorbet`, and then `config/default.yml` could simply set `packs/*/app/public/**/*`
-in the default include paths. However, that strategy has the downside of resulting in more configuration for the consumer if they only want to
-support this for some packs.
+### Examples
+
+```ruby
+# bad
+# packs/foo/app/public/foo.rb
+class Foo
+  sig { void }
+  def bar
+end
+
+# packs/foo/app/public/foo.rb
+class Foo
+  # This is a documentation comment.
+  # It can live below or below a sorbet type signature.
+  sig { void }
+  def bar
+end
+```
 
 ## Packs/TypedPublicApi
 

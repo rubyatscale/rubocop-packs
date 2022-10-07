@@ -1,4 +1,4 @@
-<!-- START_COP_LIST -->
+,<!-- START_COP_LIST -->
 #### Department [Packs](cops_packs.md)
 
 * [Packs/ClassMethodsAsPublicApis](cops_packs.md#packsclassmethodsaspublicapis)
