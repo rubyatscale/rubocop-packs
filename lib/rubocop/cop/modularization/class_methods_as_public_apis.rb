@@ -33,6 +33,10 @@ module RuboCop
       #   end
       #
       class ClassMethodsAsPublicApis < Base
+        def support_autocorrect?
+          false
+        end
+
         def on_def(node)
           # This cop only applies for ruby files in `app/public`
           return if !processed_source.file_path.include?('app/public')
