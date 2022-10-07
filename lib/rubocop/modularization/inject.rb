@@ -1,3 +1,4 @@
+# typed: strict
 # frozen_string_literal: true
 
 # The original code is from https://github.com/rubocop/rubocop-rspec/blob/master/lib/rubocop/rspec/inject.rb
@@ -7,6 +8,9 @@ module RuboCop
     # Because RuboCop doesn't yet support plugins, we have to monkey patch in a
     # bit of our configuration.
     module Inject
+      extend T::Sig
+
+      sig { void }
       def self.defaults!
         path = CONFIG_DEFAULT.to_s
         hash = ConfigLoader.send(:load_yaml_configuration, path)
