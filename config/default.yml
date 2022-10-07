@@ -1,3 +1,11 @@
+Modularization/ClassMethodsAsPublicApis:
+  Enabled: true
+  AcceptableParentClasses:
+    - T::Enum
+    - T::Struct
+    - Struct
+    - OpenStruct
+
 Modularization/NamespacedUnderPackageName:
   Enabled: false
 
