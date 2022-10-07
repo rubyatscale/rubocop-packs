@@ -45,13 +45,15 @@ Name | Default value | Configurable values
 --- | --- | ---
 AcceptableParentClasses | `T::Enum`, `T::Struct`, `Struct`, `OpenStruct` | Array
 
-## Packs/NamespacedUnderPackageName
+## Packs/NamespaceConvention
 
 Enabled by default | Safe | Supports autocorrection | VersionAdded | VersionChanged
 --- | --- | --- | --- | ---
-Disabled | Yes | No | - | -
+Enabled | Yes | No | - | -
 
 This cop helps ensure that each pack exposes one namespace.
+Note that this cop doesn't necessarily expect you to be using stimpack (https://github.com/rubyatscale/stimpack),
+but it does expect packs to live in the organizational structure as described in the README.md of that gem.
 
 ### Examples
 
@@ -69,15 +71,23 @@ class Foo::Blah::Bar; end
 
 Enabled by default | Safe | Supports autocorrection | VersionAdded | VersionChanged
 --- | --- | --- | --- | ---
-Disabled | Yes | No | - | -
+Enabled | Yes | No | - | -
 
-No documentation
+This cop does two things:
+1) It only activates for things in the public folder
+2) It allows `Style/DocumentationMethod` to work with sigs as expected.
+
+An alternate approach would be to monkey patch the existing cop, as `rubocop-sorbet` did here:
+https://github.com/Shopify/rubocop-sorbet/blob/6634f033611604cd76eeb73eae6d8728ec82d504/lib/rubocop/cop/sorbet/mutable_constant_sorbet_aware_behaviour.rb
+This monkey-patched cop could/should probably be upstreamed to `rubocop-sorbet`, and then `config/default.yml` could simply set `packs/*/app/public/**/*`
+in the default include paths. However, that strategy has the downside of resulting in more configuration for the consumer if they only want to
+support this for some packs.
 
 ## Packs/TypedPublicApi
 
 Enabled by default | Safe | Supports autocorrection | VersionAdded | VersionChanged
 --- | --- | --- | --- | ---
-Disabled | Yes | Yes  | - | -
+Enabled | Yes | Yes  | - | -
 
 This cop helps ensure that each pack's public API is strictly typed, enforcing strong boundaries.
 

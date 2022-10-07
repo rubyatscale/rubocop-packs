@@ -2,7 +2,7 @@
 #### Department [Packs](cops_packs.md)
 
 * [Packs/ClassMethodsAsPublicApis](cops_packs.md#packsclassmethodsaspublicapis)
-* [Packs/NamespacedUnderPackageName](cops_packs.md#packsnamespacedunderpackagename)
+* [Packs/NamespaceConvention](cops_packs.md#packsnamespaceconvention)
 * [Packs/RequireDocumentedPublicApis](cops_packs.md#packsrequiredocumentedpublicapis)
 * [Packs/TypedPublicApi](cops_packs.md#packstypedpublicapi)
 
