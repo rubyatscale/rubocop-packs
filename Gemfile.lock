@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    rubocop-modularization (0.0.4)
+    rubocop-modularization (0.0.5)
       activesupport
       parse_packwerk
       rubocop

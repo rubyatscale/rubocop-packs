@@ -11,3 +11,6 @@ Modularization/NamespacedUnderPackageName:
 
 Modularization/TypedPublicApi:
   Enabled: false
+
+RequireDocumentedPublicApis:
+  Enabled: false
