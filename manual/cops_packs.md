@@ -1,6 +1,6 @@
-# Modularization
+# Packs
 
-## Modularization/ClassMethodsAsPublicApis
+## Packs/ClassMethodsAsPublicApis
 
 Enabled by default | Safe | Supports autocorrection | VersionAdded | VersionChanged
 --- | --- | --- | --- | ---
@@ -45,7 +45,7 @@ Name | Default value | Configurable values
 --- | --- | ---
 AcceptableParentClasses | `T::Enum`, `T::Struct`, `Struct`, `OpenStruct` | Array
 
-## Modularization/NamespacedUnderPackageName
+## Packs/NamespacedUnderPackageName
 
 Enabled by default | Safe | Supports autocorrection | VersionAdded | VersionChanged
 --- | --- | --- | --- | ---
@@ -65,7 +65,7 @@ class Blah::Bar; end
 class Foo::Blah::Bar; end
 ```
 
-## Modularization/RequireDocumentedPublicApis
+## Packs/RequireDocumentedPublicApis
 
 Enabled by default | Safe | Supports autocorrection | VersionAdded | VersionChanged
 --- | --- | --- | --- | ---
@@ -73,7 +73,7 @@ Disabled | Yes | No | - | -
 
 No documentation
 
-## Modularization/TypedPublicApi
+## Packs/TypedPublicApi
 
 Enabled by default | Safe | Supports autocorrection | VersionAdded | VersionChanged
 --- | --- | --- | --- | ---

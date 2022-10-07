@@ -1,7 +1,7 @@
 # typed: false
 # frozen_string_literal: true
 
-RSpec.describe RuboCop::Cop::Modularization::NamespacedUnderPackageName, :config do
+RSpec.describe RuboCop::Cop::Packs::NamespacedUnderPackageName, :config do
   subject(:cop) { described_class.new(config) }
   let(:pack_name) { 'packs/apples' }
   let(:include_packs) { [pack_name] }

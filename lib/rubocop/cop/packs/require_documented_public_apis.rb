@@ -2,7 +2,7 @@
 
 module RuboCop
   module Cop
-    module Modularization
+    module Packs
       class RequireDocumentedPublicApis < Style::DocumentationMethod
         extend T::Sig
 

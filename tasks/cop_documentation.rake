@@ -3,7 +3,7 @@
 
 require 'yard'
 require 'rubocop'
-require 'rubocop-modularization'
+require 'rubocop-packs'
 require 'parser'
 require 'parser/ruby25'
 
@@ -178,7 +178,7 @@ task generate_cops_documentation: :yard_for_generate_documentation do
 
   def print_cops_of_department(cops, department, config)
     selected_cops = cops_of_department(cops, department).select do |cop|
-      cop.to_s.start_with?('RuboCop::Cop::Modularization')
+      cop.to_s.start_with?('RuboCop::Cop::Packs')
     end
     return if selected_cops.empty?
 
@@ -211,7 +211,7 @@ task generate_cops_documentation: :yard_for_generate_documentation do
 
   def table_of_content_for_department(cops, department)
     selected_cops = cops_of_department(cops, department.to_sym).select do |cop|
-      cop.to_s.start_with?('RuboCop::Cop::Modularization')
+      cop.to_s.start_with?('RuboCop::Cop::Packs')
     end
     return if selected_cops.empty?
 

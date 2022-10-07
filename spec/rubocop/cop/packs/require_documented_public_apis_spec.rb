@@ -1,6 +1,6 @@
 # typed: false
 
-RSpec.describe RuboCop::Cop::Modularization::RequireDocumentedPublicApis, :config do
+RSpec.describe RuboCop::Cop::Packs::RequireDocumentedPublicApis, :config do
   # This is the way rubocop itself tests the Style/DocumentationMethod cop
   # https://github.com/rubocop/rubocop/blob/master/spec/rubocop/cop/style/documentation_method_spec.rb
   let(:config) do

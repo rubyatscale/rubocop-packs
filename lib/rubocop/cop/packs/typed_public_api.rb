@@ -4,7 +4,7 @@ require 'rubocop-sorbet'
 
 module RuboCop
   module Cop
-    module Modularization
+    module Packs
       # This cop helps ensure that each pack's public API is strictly typed, enforcing strong boundaries.
       #
       # @example

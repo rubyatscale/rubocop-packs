@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 require 'bundler/setup'
-require 'rubocop-modularization'
+require 'rubocop-packs'
 require 'rubocop/rspec/support'
 require_relative 'support/application_fixture_helper'
 require 'pry'

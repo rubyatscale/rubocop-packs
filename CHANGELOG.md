@@ -1,1 +1,1 @@
-See https://github.com/rubyatscale/rubocop-modularization/releases
+See https://github.com/rubyatscale/rubocop-packs/releases
