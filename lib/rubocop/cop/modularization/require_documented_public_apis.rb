@@ -1,4 +1,4 @@
-# typed: true
+# typed: strict
 
 module RuboCop
   module Cop
@@ -6,10 +6,12 @@ module RuboCop
       class RequireDocumentedPublicApis < Style::DocumentationMethod
         extend T::Sig
 
+        sig { returns(T::Boolean) }
         def support_autocorrect?
           false
         end
 
+        sig { params(node: T.untyped).void }
         def check(node)
           # This cop only applies for ruby files in `app/public`
           return if !processed_source.file_path.include?('app/public')

@@ -1,3 +1,4 @@
+# typed: strict
 # frozen_string_literal: true
 
 module RuboCop
@@ -33,10 +34,14 @@ module RuboCop
       #   end
       #
       class ClassMethodsAsPublicApis < Base
+        extend T::Sig
+
+        sig { returns(T::Boolean) }
         def support_autocorrect?
           false
         end
 
+        sig { params(node: T.untyped).void }
         def on_def(node)
           # This cop only applies for ruby files in `app/public`
           return if !processed_source.file_path.include?('app/public')
@@ -47,7 +52,7 @@ module RuboCop
           parent_class = class_node&.parent_class || module_node&.parent
 
           acceptable_parent_classes = cop_config['AcceptableParentClasses'] || []
-          
+
           # Used this PR as inspiration to check if we're within a `class << self` block
           uses_implicit_static_methods = node.each_ancestor(:sclass).first&.identifier&.source == 'self'
           class_is_allowed_to_have_instance_methods = acceptable_parent_classes.include?(parent_class&.const_name)

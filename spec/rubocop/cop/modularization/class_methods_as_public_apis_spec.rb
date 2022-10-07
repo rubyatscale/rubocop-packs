@@ -1,3 +1,4 @@
+# typed: false
 # frozen_string_literal: true
 
 RSpec.describe RuboCop::Cop::Modularization::ClassMethodsAsPublicApis, :config do
@@ -7,10 +8,10 @@ RSpec.describe RuboCop::Cop::Modularization::ClassMethodsAsPublicApis, :config d
       'T::Enum',
       'Objects::BaseInputObject', # GraphQL Input Object
       'Objects::BaseObject', # GraphQL Base Object
-      'Mutations::BaseMutation', # GraphQL Mutation
+      'Mutations::BaseMutation' # GraphQL Mutation
     ]
   end
-  let(:cop_config) { {'Enabled' => true, 'AcceptableParentClasses' => acceptable_parent_classes} }
+  let(:cop_config) { { 'Enabled' => true, 'AcceptableParentClasses' => acceptable_parent_classes } }
   subject(:cop) { described_class.new(config) }
 
   before do
@@ -60,7 +61,6 @@ RSpec.describe RuboCop::Cop::Modularization::ClassMethodsAsPublicApis, :config d
 
     it { expect_offense source, Pathname.pwd.join('packs/tool/app/public/tool.rb').to_s }
   end
-
 
   context 'when class defines a singleton method' do
     let(:source) do

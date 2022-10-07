@@ -1,13 +1,15 @@
+# typed: false
+
 RSpec.describe RuboCop::Cop::Modularization::RequireDocumentedPublicApis, :config do
   # This is the way rubocop itself tests the Style/DocumentationMethod cop
   # https://github.com/rubocop/rubocop/blob/master/spec/rubocop/cop/style/documentation_method_spec.rb
   let(:config) do
     RuboCop::Config.new(
       'Style/CommentAnnotation' => {
-        'Keywords' => %w(TODO FIXME OPTIMIZE HACK REVIEW),
+        'Keywords' => %w[TODO FIXME OPTIMIZE HACK REVIEW]
       },
       'Style/DocumentationMethod' => {
-        'RequireForNonPublicMethods' => true,
+        'RequireForNonPublicMethods' => true
       }
     )
   end
@@ -25,7 +27,6 @@ RSpec.describe RuboCop::Cop::Modularization::RequireDocumentedPublicApis, :confi
 
     it { expect_offense source, 'packs/foo/app/public/foo.rb' }
   end
-
 
   context 'when private class defines an instance method with no sig and no documentation' do
     let(:source) do
