@@ -3,7 +3,7 @@
 
 require 'yard'
 require 'rubocop'
-require_relative '../lib/rubocop-modularization'
+require 'rubocop-modularization'
 require 'parser'
 require 'parser/ruby25'
 

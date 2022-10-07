@@ -76,7 +76,7 @@ which will create a skeleton cop, a skeleton spec, an entry in the default confi
 Don't forget to update the documentation with:
 
 ```sh
-bundle exec rake generate_cops_documentation
+VERIFYING_DOCUMENTATION=1 bundle exec rake generate_cops_documentation
 ```
 
 ## License
