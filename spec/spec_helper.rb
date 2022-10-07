@@ -21,6 +21,11 @@ RSpec.configure do |config|
   config.include RuboCop::RSpec::ExpectOffense
   config.include ApplicationFixtureHelper
   config.around do |example|
+    ParsePackwerk.bust_cache!
+    example.run
+  end
+
+  config.around do |example|
     prefix = [File.basename($0), Process.pid].join('-') # rubocop:disable Style/SpecialGlobalVars
     tmpdir = Dir.mktmpdir(prefix)
     Dir.chdir(tmpdir) do
