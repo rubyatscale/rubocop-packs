@@ -1,6 +1,6 @@
 # rubocop-modularization
 
-A collection of Rubocop rules for modularization..
+A collection of Rubocop rules for modularization.
 
 ## Installation
 
