@@ -1,5 +1,50 @@
 # Modularization
 
+## Modularization/ClassMethodsAsPublicApis
+
+Enabled by default | Safe | Supports autocorrection | VersionAdded | VersionChanged
+--- | --- | --- | --- | ---
+Enabled | Yes | No | - | -
+
+This cop states that public API should live on class methods, which are more easily statically analyzable,
+searchable, and typically hold less state.
+
+### Examples
+
+```ruby
+# bad
+# packs/foo/app/public/foo.rb
+module Foo
+  def blah
+  end
+end
+
+# good
+# packs/foo/app/public/foo.rb
+module Foo
+  def self.blah
+  end
+end
+```
+#### AcceptableParentClasses: [T::Enum, T::Struct, Struct, OpenStruct] (default)
+
+```ruby
+You can define `AcceptableParentClasses` which are a list of classes that, if inherited from, non-class methods are permitted.
+This is useful when value objects are a part of your public API.
+
+# good
+# packs/foo/app/public/foo.rb
+class Foo < T::Enum
+  const :blah
+end
+```
+
+### Configurable attributes
+
+Name | Default value | Configurable values
+--- | --- | ---
+AcceptableParentClasses | `T::Enum`, `T::Struct`, `Struct`, `OpenStruct` | Array
+
 ## Modularization/NamespacedUnderPackageName
 
 Enabled by default | Safe | Supports autocorrection | VersionAdded | VersionChanged
@@ -19,6 +64,14 @@ class Blah::Bar; end
 # packs/foo/app/services/foo/blah/bar.rb
 class Foo::Blah::Bar; end
 ```
+
+## Modularization/RequireDocumentedPublicApis
+
+Enabled by default | Safe | Supports autocorrection | VersionAdded | VersionChanged
+--- | --- | --- | --- | ---
+Disabled | Yes | No | - | -
+
+No documentation
 
 ## Modularization/TypedPublicApi
 
