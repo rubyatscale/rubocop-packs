@@ -37,6 +37,7 @@ module RuboCop
         sig { params(processed_source: T.untyped).void }
         def investigate(processed_source)
           return unless processed_source.path.include?('app/public')
+
           super
         end
       end
