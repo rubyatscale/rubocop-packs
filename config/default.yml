@@ -1,3 +1,5 @@
+inherit_from: ./pack_config.yml
+
 Packs/ClassMethodsAsPublicApis:
   Enabled: true
   AcceptableParentClasses:
