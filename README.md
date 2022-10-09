@@ -61,6 +61,22 @@ Packs/NamespacedUnderPackageName:
   Exclude:
     - lib/example.rb
 ```
+
+## Other Utilities
+`rubocop-packs` also has some API that help you use rubocop in a pack-based context.
+
+### `RuboCop::Packs.auto_generate_rubocop_todo(packs: ParsePackwerk.all)`
+This API will auto-generate a `packs/some_pack/.rubocop_todo.yml`. This allows a pack to own its own exception list. Note that you need to configure `rubocop-packs` with an allow list of cops that can live in per-pack `.rubocop_todo.yml` files:
+```
+# `config/rubocop_packs.rb`
+RuboCop::Packs.configure do |config|
+  # For example:
+  config.permitted_pack_level_cops = ['Packs/NamespaceConvention']
+end
+```
+
+There is a supporting validation to ensure these `packs/*/.rubocop_todo.yml` files only add exceptions to the allow listed set of rules. Run this validation with `RuboCop::packs.validate`, which returns an array of errors.
+
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/rubyatscale/rubocop-packs. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Code Of Conduct](CODE_OF_CONDUCT.MD).
