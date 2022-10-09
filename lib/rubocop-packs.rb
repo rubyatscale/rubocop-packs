@@ -6,6 +6,7 @@ require 'parse_packwerk'
 
 require_relative 'rubocop/packs'
 require_relative 'rubocop/packs/inject'
+require_relative 'rubocop/packwerk_lite'
 
 require 'rubocop/cop/packs/namespace_convention'
 require 'rubocop/cop/packs/typed_public_api'

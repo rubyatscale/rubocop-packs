@@ -6,6 +6,8 @@ module RuboCop
       class NamespaceConvention < Base
         #
         # This is a private class that represents API that we would prefer to be available somehow in Zeitwerk.
+        # However, the boundaries between systems (packwerk/zeitwerk, rubocop/zeitwerk) are poor in this class, so
+        # that would need to be separated prior to proposing any API changes in zeitwerk.
         #
         class DesiredZeitwerkApi
           extend T::Sig
