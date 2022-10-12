@@ -178,7 +178,7 @@ task generate_cops_documentation: :yard_for_generate_documentation do
 
   def print_cops_of_department(cops, department, config)
     selected_cops = cops_of_department(cops, department).select do |cop|
-      cop.to_s.start_with?('RuboCop::Cop::Packs')
+      cop.to_s.start_with?('RuboCop::Cop::Packs') || cop.to_s.start_with?('RuboCop::Cop::PackwerkLite')
     end
     return if selected_cops.empty?
 

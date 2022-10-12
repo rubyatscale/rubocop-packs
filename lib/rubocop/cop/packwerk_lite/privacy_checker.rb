@@ -6,6 +6,7 @@ module RuboCop
       # This cop helps ensure that packs are using public API of other systems
       # The following examples assume this basic setup.
       #
+      # @example
       #   # packs/bar/app/public/bar.rb
       #   class Bar
       #     def my_public_api; end
@@ -17,10 +18,9 @@ module RuboCop
       #   end
       #
       #   # packs/bar/package.yml
-      #   enforces_dependencies: false
-      #   enforces_privacy: true
+      #   # enforces_dependencies: false
+      #   # enforces_privacy: true
       #
-      # @example
       #   # bad
       #   # packs/foo/app/services/foo.rb
       #   class Foo
@@ -29,6 +29,7 @@ module RuboCop
       #     end
       #   end
       #
+      #   # good
       #   # packs/foo/app/services/foo.rb
       #   class Bar
       #     def bar
@@ -38,6 +39,11 @@ module RuboCop
       #
       class Privacy < Base
         extend T::Sig
+
+        sig { returns(T::Boolean) }
+        def support_autocorrect?
+          false
+        end
 
         sig { params(node: RuboCop::AST::ConstNode).void }
         def on_const(node)

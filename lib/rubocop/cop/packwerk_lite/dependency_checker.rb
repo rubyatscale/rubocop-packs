@@ -39,6 +39,11 @@ module RuboCop
       class Dependency < Base
         extend T::Sig
 
+        sig { returns(T::Boolean) }
+        def support_autocorrect?
+          false
+        end
+
         sig { params(node: RuboCop::AST::ConstNode).void }
         def on_const(node)
           return if Private.partial_const_reference?(node)
