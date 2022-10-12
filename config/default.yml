@@ -16,3 +16,11 @@ Packs/TypedPublicApi:
 
 Packs/RequireDocumentedPublicApis:
   Enabled: true
+
+PackwerkLite/Privacy:
+  # It is recommended to use packwerk
+  Enabled: false
+
+PackwerkLite/Dependency:
+  # It is recommended to use packwerk
+  Enabled: false

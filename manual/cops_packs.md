@@ -66,6 +66,7 @@ Enabled by default | Safe | Supports autocorrection | VersionAdded | VersionChan
 Enabled | Yes | No | - | -
 
 This cop helps ensure that each pack has a documented public API
+The following examples assume this basic setup.
 
 ### Examples
 
@@ -73,16 +74,14 @@ This cop helps ensure that each pack has a documented public API
 # bad
 # packs/foo/app/public/foo.rb
 class Foo
-  sig { void }
-  def bar
+  def bar; end
 end
 
 # packs/foo/app/public/foo.rb
 class Foo
   # This is a documentation comment.
   # It can live below or below a sorbet type signature.
-  sig { void }
-  def bar
+  def bar; end
 end
 ```
 
