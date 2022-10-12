@@ -4,22 +4,21 @@ module RuboCop
   module Cop
     module Packs
       # This cop helps ensure that each pack has a documented public API
+      # The following examples assume this basic setup.
       #
       # @example
       #
       #   # bad
       #   # packs/foo/app/public/foo.rb
       #   class Foo
-      #     sig { void }
-      #     def bar
+      #     def bar; end
       #   end
       #
       #   # packs/foo/app/public/foo.rb
       #   class Foo
       #     # This is a documentation comment.
       #     # It can live below or below a sorbet type signature.
-      #     sig { void }
-      #     def bar
+      #     def bar; end
       #   end
       #
       class RequireDocumentedPublicApis < Style::DocumentationMethod

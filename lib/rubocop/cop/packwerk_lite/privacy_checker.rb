@@ -4,11 +4,7 @@ module RuboCop
   module Cop
     module PackwerkLite
       # This cop helps ensure that packs are using public API of other systems
-      #
-      # @example
-      #
-      #
-      #   # Given:
+      # The following examples assume this basic setup.
       #
       #   # packs/bar/app/public/bar.rb
       #   class Bar
@@ -24,6 +20,7 @@ module RuboCop
       #   enforces_dependencies: false
       #   enforces_privacy: true
       #
+      # @example
       #   # bad
       #   # packs/foo/app/services/foo.rb
       #   class Foo

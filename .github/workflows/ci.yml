@@ -68,4 +68,5 @@ jobs:
         run: |
           gem install bundler
           bundle install --jobs 4 --retry 3
+          bundle exec rake documentation_syntax_check
           bundle exec rake generate_cops_documentation

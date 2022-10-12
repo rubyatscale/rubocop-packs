@@ -16,10 +16,10 @@ module RuboCop
       #   end
       #
       #   # packs/foo/package.yml
-      #   enforces_dependencies: true
-      #   enforces_privacy: false
-      #   dependencies:
-      #     - packs/baz
+      #   # enforces_dependencies: true
+      #   # enforces_privacy: false
+      #   # dependencies:
+      #   #   - packs/baz
       #
       #   # good
       #   # packs/foo/app/services/foo.rb
@@ -30,11 +30,11 @@ module RuboCop
       #   end
       #
       #   # packs/foo/package.yml
-      #   enforces_dependencies: true
-      #   enforces_privacy: false
-      #   dependencies:
-      #     - packs/baz
-      #     - packs/bar
+      #   # enforces_dependencies: true
+      #   # enforces_privacy: false
+      #   # dependencies:
+      #   #   - packs/baz
+      #   #   - packs/bar
       #
       class Dependency < Base
         extend T::Sig
