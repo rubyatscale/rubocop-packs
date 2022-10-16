@@ -108,3 +108,49 @@ module Foo; end
 # typed: strict
 module Foo; end
 ```
+
+## Packs/ZeitwerkFriendlyConstant
+
+Enabled by default | Safe | Supports autocorrection | VersionAdded | VersionChanged
+--- | --- | --- | --- | ---
+Enabled | Yes | No | - | -
+
+This cop checks that every constant defined in a file matches the
+file name such that it is independently loadable by Zeitwerk.
+
+### Examples
+
+```ruby
+Good
+
+  # /some/directory/foo.rb
+  module Foo
+  end
+
+  # /some/directory/foo.rb
+  module Foo
+    module Bar
+    end
+  end
+
+  # /some/directory/foo/bar.rb
+  module Foo
+    module Bar
+    end
+  end
+
+Bad
+
+  # /some/directory/foo.rb
+  module Bar
+  end
+
+  # /some/directory/foo/bar.rb
+  module Foo
+    module Bar
+    end
+
+    module Baz
+    end
+  end
+```

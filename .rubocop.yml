@@ -19,6 +19,7 @@ Sorbet/StrictSigil:
   Enabled: true
   Exclude:
     - tasks/cop_documentation.rake
+    - lib/rubocop/cop/packs/zeitwerk_friendly_constant.rb
     - spec/**/*
 
 Metrics/ParameterLists:
@@ -126,4 +127,10 @@ Style/NumericPredicate:
   Enabled: false
 
 Naming/FileName:
+  Enabled: false
+
+Sorbet/ConstantsFromStrings:
+  Enabled: false
+
+Style/SlicingWithRange:
   Enabled: false
