@@ -47,6 +47,15 @@ This cop helps ensure that each pack exposes one namespace.
 Note that this cop doesn't necessarily expect you to be using stimpack (https://github.com/rubyatscale/stimpack),
 but it does expect packs to live in the organizational structure as described in the README.md of that gem.
 
+To use this, set the parameter: `IncludePacks` with your pack name, for example:
+Packs/NamespaceConvention:
+  Enabled: true
+  IncludePacks:
+    - packs/my_pack_1
+    - packs/my_pack_2
+
+This allows packs to opt in and also prevent *other* files from sitting in their namespace.
+
 ### Examples
 
 ```ruby
