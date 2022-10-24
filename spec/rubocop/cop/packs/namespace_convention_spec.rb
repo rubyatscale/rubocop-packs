@@ -214,6 +214,36 @@ RSpec.describe RuboCop::Cop::Packs::NamespaceConvention, :config do
         end
       end
     end
+
+    context 'IncludePacks not specified' do
+      let(:cop_config) do
+        {
+          'Enabled' => true
+        }
+      end
+
+      context 'when file establishes different namespace' do
+        let(:source) do
+          <<~RUBY
+            class Tool
+            end
+          RUBY
+        end
+
+        it { expect_no_offenses source, Pathname.pwd.join(write_file('packs/apples/app/services/tool.rb')).to_s }
+      end
+
+      context 'when file establishes primary namespace' do
+        let(:source) do
+          <<~RUBY
+            module Apples
+            end
+          RUBY
+        end
+
+        it { expect_no_offenses source, Pathname.pwd.join(write_file('packs/apples/app/services/apples.rb')).to_s }
+      end
+    end
   end
 
   context 'nested pack' do
