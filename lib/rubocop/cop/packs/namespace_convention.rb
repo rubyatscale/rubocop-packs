@@ -57,7 +57,7 @@ module RuboCop
           if allowed_global_namespaces.include?(actual_namespace)
             # No problem!
           else
-            package_enforces_namespaces = cop_config['IncludePacks'].include?(package_for_path.name)
+            package_enforces_namespaces = (cop_config['IncludePacks'] || []).include?(package_for_path.name)
             expected_namespace = namespace_context.expected_namespace
             relative_desired_path = namespace_context.expected_filepath
             pack_owning_this_namespace = namespaces_to_packs[actual_namespace]
@@ -110,7 +110,7 @@ module RuboCop
           @namespaces_to_packs = T.let(nil, T.nilable(T::Hash[String, String]))
           @namespaces_to_packs ||= begin
             all_packs_enforcing_namespaces = ParsePackwerk.all.select do |p|
-              cop_config['IncludePacks'].include?(p.name)
+              (cop_config['IncludePacks'] || []).include?(p.name)
             end
 
             namespaces_to_packs = {}
