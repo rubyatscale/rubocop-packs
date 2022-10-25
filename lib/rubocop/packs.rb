@@ -107,6 +107,10 @@ module RuboCop
       @config ||= Private::Configuration.new
     end
 
+    #
+    # Note: This is currently being used in `package_protections` to support what will become `FailureMode: strict` here.
+    # Later on, we can deprecate this API in favor of `Rubocop::Packs.validate`.
+    #
     sig { params(rule: String).returns(T::Set[String]) }
     def self.exclude_for_rule(rule)
       excludes = T.let(Set.new, T::Set[String])
@@ -126,6 +130,11 @@ module RuboCop
       excludes
     end
 
+    #
+    # Note: when we add per-pack `.rubocop.yml` files, we'll want to add some validations here
+    # to restrict what cops are permitted to be configured in those files.
+    # We might also want further (configurable?) constraints *requiring* that the "permitted pack level cops" be specified explicitly.
+    #
     sig { returns(T::Array[String]) }
     def self.validate
       errors = []
