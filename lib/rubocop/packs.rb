@@ -123,6 +123,7 @@ module RuboCop
       errors = T.let([], T::Array[String])
       ParsePackwerk.all.each do |package|
         next if package.name == ParsePackwerk::ROOT_PACKAGE_NAME
+
         errors += Private.validate_rubocop_todo_yml(package)
         errors += Private.validate_rubocop_yml(package)
         errors += Private.validate_failure_mode_strict(package)

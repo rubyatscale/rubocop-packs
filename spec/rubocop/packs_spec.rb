@@ -336,8 +336,8 @@ RSpec.describe RuboCop::Packs do
 
           it 'returns an empty list' do
             expect(errors).to eq([
-              'packs/some_pack has set `Packs/NamespaceConvention` to `FailureMode: strict` in `packs/some_pack/.rubocop.yml`, forbidding new exceptions. Please either remove `packs/some_pack/app/services/some_file.rb` from the top-level and pack-specific `.rubocop_todo.yml` files or remove `FailureMode: strict`.'
-            ])
+                                   'packs/some_pack has set `Packs/NamespaceConvention` to `FailureMode: strict` in `packs/some_pack/.rubocop.yml`, forbidding new exceptions. Please either remove `packs/some_pack/app/services/some_file.rb` from the top-level and pack-specific `.rubocop_todo.yml` files or remove `FailureMode: strict`.'
+                                 ])
           end
         end
 
@@ -362,8 +362,8 @@ RSpec.describe RuboCop::Packs do
 
           it 'returns an empty list' do
             expect(errors).to eq([
-              'packs/some_pack has set `Packs/NamespaceConvention` to `FailureMode: strict` in `packs/some_pack/.rubocop.yml`, forbidding new exceptions. Please either remove `packs/some_pack/app/services/some_file.rb` from the top-level and pack-specific `.rubocop_todo.yml` files or remove `FailureMode: strict`.'
-            ])
+                                   'packs/some_pack has set `Packs/NamespaceConvention` to `FailureMode: strict` in `packs/some_pack/.rubocop.yml`, forbidding new exceptions. Please either remove `packs/some_pack/app/services/some_file.rb` from the top-level and pack-specific `.rubocop_todo.yml` files or remove `FailureMode: strict`.'
+                                 ])
           end
         end
       end

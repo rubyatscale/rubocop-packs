@@ -84,7 +84,7 @@ module RuboCop
               Please only configure the following cops on a per-pack basis: #{Packs.config.permitted_pack_level_cops.inspect}"
               For ignoring other cops, please instead modify the top-level .rubocop.yml file.
             ERROR_MESSAGE
-          elsif (loaded_rubocop_yml[key].keys - ['Enabled', 'FailureMode']).any?
+          elsif (loaded_rubocop_yml[key].keys - %w[Enabled FailureMode]).any?
             errors << <<~ERROR_MESSAGE
               #{rubocop_yml} contains invalid configuration for #{key}.
               Please ensure the only configuration for #{key} is `Enabled` and `FailureMode`
@@ -119,21 +119,23 @@ module RuboCop
         errors = T.let([], T::Array[String])
 
         Packs.config.permitted_pack_level_cops.each do |cop|
-          excludes = self.exclude_for_rule(cop)
+          excludes = exclude_for_rule(cop)
 
           ParsePackwerk.all.each do |package|
             rubocop_yml = package.directory.join('.rubocop.yml')
 
             next unless rubocop_yml.exist?
+
             loaded_rubocop_yml = YAML.load_file(rubocop_yml)
-            if loaded_rubocop_yml[cop] && loaded_rubocop_yml[cop]['FailureMode'] == 'strict'
-              excludes_for_package = excludes.select do |exclude|
-                ParsePackwerk.package_from_path(exclude).name == package.name
-              end
-              next if excludes_for_package.empty?
-              formatted_excludes = excludes_for_package.map{|ex| "`#{ex}`"}.join(', ')
-              errors << "#{package.name} has set `#{cop}` to `FailureMode: strict` in `packs/some_pack/.rubocop.yml`, forbidding new exceptions. Please either remove #{formatted_excludes} from the top-level and pack-specific `.rubocop_todo.yml` files or remove `FailureMode: strict`."
+            next unless loaded_rubocop_yml[cop] && loaded_rubocop_yml[cop]['FailureMode'] == 'strict'
+
+            excludes_for_package = excludes.select do |exclude|
+              ParsePackwerk.package_from_path(exclude).name == package.name
             end
+            next if excludes_for_package.empty?
+
+            formatted_excludes = excludes_for_package.map { |ex| "`#{ex}`" }.join(', ')
+            errors << "#{package.name} has set `#{cop}` to `FailureMode: strict` in `packs/some_pack/.rubocop.yml`, forbidding new exceptions. Please either remove #{formatted_excludes} from the top-level and pack-specific `.rubocop_todo.yml` files or remove `FailureMode: strict`."
           end
         end
 

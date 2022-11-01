@@ -7,7 +7,7 @@ RSpec.describe RuboCop::Cop::Packs::NamespaceConvention, :config do
 
   let(:cop_config) do
     {
-      'Enabled' => true,
+      'Enabled' => true
     }
   end
 
