@@ -24,32 +24,11 @@ You need to tell RuboCop to load the Packs extension. There are three ways to do
 Put this into your `.rubocop.yml`:
 
 ```yaml
-require: rubocop-packs
-```
-
-Alternatively, use the following array notation when specifying multiple extensions:
-
-```yaml
 require:
-  - rubocop-other-extension
   - rubocop-packs
 ```
 
 Now you can run `rubocop` and it will automatically load the RuboCop Packs cops together with the standard cops.
-
-### Command line
-
-```sh
-rubocop --require rubocop-packs
-```
-
-### Rake task
-
-```ruby
-RuboCop::RakeTask.new do |task|
-  task.requires << 'rubocop-packs'
-end
-```
 
 ## The Cops
 All cops are located under [`lib/rubocop/cop/packs`](lib/rubocop/cop/packs), and contain examples/documentation.
@@ -57,25 +36,55 @@ All cops are located under [`lib/rubocop/cop/packs`](lib/rubocop/cop/packs), and
 In your `.rubocop.yml`, you may treat the Packs cops just like any other cop. For example:
 
 ```yaml
-Packs/NamespacedUnderPackageName:
+Packs/NamespaceConvention:
   Exclude:
     - lib/example.rb
 ```
 
-## Other Utilities
+## Pack-Level `.rubocop.yml` and `.rubocop_todo.yml` files
 `rubocop-packs` also has some API that help you use rubocop in a pack-based context.
 
-### `RuboCop::Packs.auto_generate_rubocop_todo(packs: ParsePackwerk.all)`
-This API will auto-generate a `packs/some_pack/.rubocop_todo.yml`. This allows a pack to own its own exception list. Note that you need to configure `rubocop-packs` with an allow list of cops that can live in per-pack `.rubocop_todo.yml` files:
+### Per-pack `.rubocop.yml`
+While `rubocop-packs` can be used like any other `rubocop` by configuring in your top-level `.rubocop.yml` file, we also have a number of tools to support per-pack configuration.
+
+To add a per-pack `.rubocop.yml`, you just need to create a `packs/your_pack/.rubocop.yml` and then include:
+```yml
+inherit_from: '../../.rubocop.yml'
 ```
-# `config/rubocop_packs.rb`
+
+Note though that inherited paths are relative to your pack-level `.rubocop.yml`. To avoid that, you can rename your `.rubocop.yml` to `.inherited_rubocop.yml`, set `.rubocop.yml` to:
+```
+inherit_from: '.inherited_rubocop.yml'
+```
+And then similarly change the `inherit_from` in `packs/your_pack/.rubocop.yml`.
+
+### Per-pack `.rubocop_todo.yml`
+To create a per-pack `.rubocop_todo.yml`, you can use the following API from `rubocop-packs`:
+```ruby
+RuboCop::Packs.auto_generate_rubocop_todo(packs: ParsePackwerk.all)
+```
+This API will auto-generate a `packs/some_pack/.rubocop_todo.yml`. This allows a pack to own its own exception list.
+
+### Configuration and Validation
+To use per-pack `.rubocop.yml` and `.rubocop_todo.yml` files, you need to configure `rubocop-packs`:
+```ruby
+# config/rubocop_packs.rb
 RuboCop::Packs.configure do |config|
-  # For example:
   config.permitted_pack_level_cops = ['Packs/NamespaceConvention']
+  config.required_pack_level_cops = ['Packs/NamespaceConvention']
 end
 ```
 
-There is a supporting validation to ensure these `packs/*/.rubocop_todo.yml` files only add exceptions to the allow listed set of rules. Run this validation with `RuboCop::packs.validate`, which returns an array of errors.
+The above two settings have associated validations that run with `RuboCop::Packs.validate`, which returns an array of errors. We recommend validating this in your test suite, for example:
+```ruby
+RSpec.describe 'rubocop-packs validations' do
+  it { expect(RuboCop::Packs.validate).to be_empty }
+end
+```
+
+Validations include:
+- Ensuring that `packs/*/.rubocop_todo.yml` files only contain exceptions for the allow-list of `permitted_pack_level_cops`
+- Ensuring that `packs/*/.rubocop.yml` files contain all of the cops listed in `required_pack_level_cops` and no other cops. This is to ensure that these files are only used to turn on and off an allow-list of cops, as most users would not want packs to configure most `rubocop` rules in a way that is different from the rest of the application.
 
 ## Contributing
 
