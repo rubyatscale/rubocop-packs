@@ -237,6 +237,81 @@ RSpec.describe RuboCop::Packs do
         end
       end
     end
+
+    describe 'pack based .rubocop.yml files' do
+      context 'no packs' do
+        it 'returns an empty list' do
+          expect(errors).to be_empty
+        end
+      end
+
+      context 'one pack with valid .rubocop.yml' do
+        before do
+          write_package_yml('packs/some_pack')
+          write_file('packs/some_pack/.rubocop.yml', <<~YML)
+            Packs/NamespaceConvention:
+              Enabled: true
+          YML
+        end
+
+        it 'returns an empty list' do
+          expect(errors).to be_empty
+        end
+      end
+
+      context 'one pack with valid .rubocop.yml with FailureMode specified' do
+        before do
+          write_package_yml('packs/some_pack')
+          write_file('packs/some_pack/.rubocop.yml', <<~YML)
+            Packs/NamespaceConvention:
+              Enabled: true
+              FailureMode: strict
+          YML
+        end
+
+        it 'returns an empty list' do
+          expect(errors).to be_empty
+        end
+      end
+
+      context 'one pack with disallowed cop key' do
+        before do
+          write_package_yml('packs/some_pack')
+          write_file('packs/some_pack/.rubocop.yml', <<~YML)
+            SomeOtherCop:
+              Enabled: true
+          YML
+        end
+
+        it 'returns an error' do
+          error = <<~ERROR
+            packs/some_pack/.rubocop.yml contains invalid configuration for SomeOtherCop.
+            Please ensure the only configuration is for package protection exclusions, which are one of the following cops: ["Packs/NamespaceConvention", "Packs/TypedPublicApi", "Packs/ClassMethodsAsPublicApis"]"
+            For ignoring other cops, please instead modify the top-level .rubocop.yml file.
+          ERROR
+          expect(errors).to eq([error])
+        end
+      end
+
+      context 'one pack with disallowed configuration key' do
+        before do
+          write_package_yml('packs/some_pack')
+          write_file('packs/some_pack/.rubocop.yml', <<~YML)
+            Packs/NamespaceConvention:
+              Enabled:
+                - 'packs/some_pack/app/services/bad_namespace.rb'
+          YML
+        end
+
+        it 'returns an error' do
+          error = <<~ERROR
+            packs/some_pack/.rubocop.yml contains invalid configuration for Packs/NamespaceConvention.
+            Please ensure the only configuration for Packs/NamespaceConvention is `Enabled` and `FailureMode`
+          ERROR
+          expect(errors).to eq([error])
+        end
+      end
+    end
   end
 
   describe 'exclude_for_rule' do
