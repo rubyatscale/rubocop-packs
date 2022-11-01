@@ -94,6 +94,51 @@ module RuboCop
 
         errors
       end
+
+      sig { params(rule: String).returns(T::Set[String]) }
+      def self.exclude_for_rule(rule)
+        excludes = T.let(Set.new, T::Set[String])
+
+        Private.rubocop_todo_ymls.each do |todo_yml|
+          next if !todo_yml
+
+          config = todo_yml[rule]
+          next if config.nil?
+
+          exclude_list = config['Exclude']
+          next if exclude_list.nil?
+
+          excludes += exclude_list
+        end
+
+        excludes
+      end
+
+      sig { params(package: ParsePackwerk::Package).returns(T::Array[String]) }
+      def self.validate_failure_mode_strict(package)
+        errors = T.let([], T::Array[String])
+
+        Packs.config.permitted_pack_level_cops.each do |cop|
+          excludes = self.exclude_for_rule(cop)
+
+          ParsePackwerk.all.each do |package|
+            rubocop_yml = package.directory.join('.rubocop.yml')
+
+            next unless rubocop_yml.exist?
+            loaded_rubocop_yml = YAML.load_file(rubocop_yml)
+            if loaded_rubocop_yml[cop] && loaded_rubocop_yml[cop]['FailureMode'] == 'strict'
+              excludes_for_package = excludes.select do |exclude|
+                ParsePackwerk.package_from_path(exclude).name == package.name
+              end
+              next if excludes_for_package.empty?
+              formatted_excludes = excludes_for_package.map{|ex| "`#{ex}`"}.join(', ')
+              errors << "#{package.name} has set `#{cop}` to `FailureMode: strict` in `packs/some_pack/.rubocop.yml`, forbidding new exceptions. Please either remove #{formatted_excludes} from the top-level and pack-specific `.rubocop_todo.yml` files or remove `FailureMode: strict`."
+            end
+          end
+        end
+
+        errors
+      end
     end
 
     private_constant :Private

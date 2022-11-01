@@ -107,27 +107,10 @@ module RuboCop
       @config ||= Private::Configuration.new
     end
 
-    #
-    # Note: This is currently being used in `package_protections` to support what will become `FailureMode: strict` here.
-    # Later on, we can deprecate this API in favor of `Rubocop::Packs.validate`.
-    #
+    # We can remove this function once package_protections is fully deprecated
     sig { params(rule: String).returns(T::Set[String]) }
     def self.exclude_for_rule(rule)
-      excludes = T.let(Set.new, T::Set[String])
-
-      Private.rubocop_todo_ymls.each do |todo_yml|
-        next if !todo_yml
-
-        config = todo_yml[rule]
-        next if config.nil?
-
-        exclude_list = config['Exclude']
-        next if exclude_list.nil?
-
-        excludes += exclude_list
-      end
-
-      excludes
+      Private.exclude_for_rule(rule)
     end
 
     #
@@ -142,6 +125,7 @@ module RuboCop
         next if package.name == ParsePackwerk::ROOT_PACKAGE_NAME
         errors += Private.validate_rubocop_todo_yml(package)
         errors += Private.validate_rubocop_yml(package)
+        errors += Private.validate_failure_mode_strict(package)
       end
 
       errors
