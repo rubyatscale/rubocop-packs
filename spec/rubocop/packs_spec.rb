@@ -311,6 +311,40 @@ RSpec.describe RuboCop::Packs do
           expect(errors).to eq([error])
         end
       end
+
+      context 'one pack with unspecified cops' do
+        before do
+          RuboCop::Packs.configure do |config|
+            config.required_pack_level_cops = ['Packs/NamespaceConvention', 'Packs/TypedPublicApi']
+          end
+        end
+
+        before do
+          write_package_yml('packs/some_pack')
+          write_file('packs/some_pack/.rubocop.yml', <<~YML)
+            Packs/NamespaceConvention:
+              Enabled: true
+          YML
+        end
+
+        it 'returns an error' do
+          error = <<~ERROR
+            packs/some_pack/.rubocop.yml is missing configuration for Packs/TypedPublicApi.
+          ERROR
+          expect(errors).to eq([error])
+        end
+      end
+
+      # For now, this is allowed. We might add this restriction back once we've completed the migration off of `package_protections`
+      context 'one pack without a .rubocop.yml' do
+        before do
+          write_package_yml('packs/some_pack')
+        end
+
+        it 'returns no errors' do
+          expect(errors).to eq([])
+        end
+      end
     end
 
     describe 'FailureMode: strict' do

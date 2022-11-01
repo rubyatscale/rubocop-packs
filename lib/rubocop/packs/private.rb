@@ -77,6 +77,13 @@ module RuboCop
         return errors unless rubocop_yml.exist?
 
         loaded_rubocop_yml = YAML.load_file(rubocop_yml)
+        missing_keys = Packs.config.required_pack_level_cops - loaded_rubocop_yml.keys
+        missing_keys.each do |key|
+          errors << <<~ERROR_MESSAGE
+            #{rubocop_yml} is missing configuration for #{key}.
+          ERROR_MESSAGE
+        end
+
         loaded_rubocop_yml.each_key do |key|
           if !Packs.config.permitted_pack_level_cops.include?(key)
             errors << <<~ERROR_MESSAGE
