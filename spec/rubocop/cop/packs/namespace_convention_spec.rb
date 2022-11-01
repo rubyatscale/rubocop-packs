@@ -4,12 +4,10 @@
 RSpec.describe RuboCop::Cop::Packs::NamespaceConvention, :config do
   subject(:cop) { described_class.new(config) }
   let(:pack_name) { 'packs/apples' }
-  let(:include_packs) { [pack_name] }
 
   let(:cop_config) do
     {
       'Enabled' => true,
-      'IncludePacks' => include_packs,
     }
   end
 
@@ -181,72 +179,6 @@ RSpec.describe RuboCop::Cop::Packs::NamespaceConvention, :config do
       end
 
       it { expect_no_offenses source, Pathname.pwd.join(write_file('packs/apples/app/models/concerns/apples.rb')).to_s }
-    end
-
-    context 'when the pack does not have namespace protection configured' do
-      context 'when no other pack has namespace protection configured' do
-        let(:include_packs) { [] }
-        context 'when file is in different namespace' do
-          let(:source) do
-            <<~RUBY
-              module Tools
-                class Blah
-                end
-              end
-            RUBY
-          end
-
-          it { expect_no_offenses source, Pathname.pwd.join(write_file('packs/apples/app/services/tools/blah.rb')).to_s }
-        end
-      end
-
-      context 'when another pack has namespace protection configured' do
-        let(:include_packs) { ['packs/tools'] }
-
-        context 'when file is in different namespace' do
-          let(:source) do
-            <<~RUBY
-              module Tools
-              ^ Based on the filepath, this file defines `Tools::Blah`. `packs/tools` prevents other packs from sitting in the `Tools` namespace. This should be namespaced under `Apples` with path `packs/apples/app/services/apples/tools/blah.rb`.
-                class Blah
-                end
-              end
-            RUBY
-          end
-
-          it { expect_offense source, Pathname.pwd.join(write_file('packs/apples/app/services/tools/blah.rb')).to_s }
-        end
-      end
-    end
-
-    context 'IncludePacks not specified' do
-      let(:cop_config) do
-        {
-          'Enabled' => true
-        }
-      end
-
-      context 'when file establishes different namespace' do
-        let(:source) do
-          <<~RUBY
-            class Tool
-            end
-          RUBY
-        end
-
-        it { expect_no_offenses source, Pathname.pwd.join(write_file('packs/apples/app/services/tool.rb')).to_s }
-      end
-
-      context 'when file establishes primary namespace' do
-        let(:source) do
-          <<~RUBY
-            module Apples
-            end
-          RUBY
-        end
-
-        it { expect_no_offenses source, Pathname.pwd.join(write_file('packs/apples/app/services/apples.rb')).to_s }
-      end
     end
   end
 

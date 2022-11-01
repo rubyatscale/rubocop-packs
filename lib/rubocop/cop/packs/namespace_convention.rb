@@ -11,13 +11,6 @@ module RuboCop
       # Note that this cop doesn't necessarily expect you to be using stimpack (https://github.com/rubyatscale/stimpack),
       # but it does expect packs to live in the organizational structure as described in the README.md of that gem.
       #
-      # To use this, set the parameter: `IncludePacks` with your pack name, for example:
-      # Packs/NamespaceConvention:
-      #   Enabled: true
-      #   IncludePacks:
-      #     - packs/my_pack_1
-      #     - packs/my_pack_2
-      #
       # This allows packs to opt in and also prevent *other* files from sitting in their namespace.
       #
       # @example
@@ -66,36 +59,18 @@ module RuboCop
           if allowed_global_namespaces.include?(actual_namespace)
             # No problem!
           else
-            package_enforces_namespaces = (cop_config['IncludePacks'] || []).include?(package_for_path.name)
             expected_namespace = namespace_context.expected_namespace
             relative_desired_path = namespace_context.expected_filepath
-            pack_owning_this_namespace = namespaces_to_packs[actual_namespace]
-
-            if package_enforces_namespaces
-              add_offense(
-                source_range(processed_source.buffer, 1, 0),
-                message: format(
-                  'Based on the filepath, this file defines `%<current_fully_qualified_constant>s`, but it should be namespaced as `%<expected_namespace>s::%<current_fully_qualified_constant>s` with path `%<expected_path>s`.',
-                  package_name: package_name,
-                  expected_namespace: expected_namespace,
-                  expected_path: relative_desired_path,
-                  current_fully_qualified_constant: current_fully_qualified_constant
-                )
+            add_offense(
+              source_range(processed_source.buffer, 1, 0),
+              message: format(
+                'Based on the filepath, this file defines `%<current_fully_qualified_constant>s`, but it should be namespaced as `%<expected_namespace>s::%<current_fully_qualified_constant>s` with path `%<expected_path>s`.',
+                package_name: package_name,
+                expected_namespace: expected_namespace,
+                expected_path: relative_desired_path,
+                current_fully_qualified_constant: current_fully_qualified_constant
               )
-            elsif pack_owning_this_namespace
-              add_offense(
-                source_range(processed_source.buffer, 1, 0),
-                message: format(
-                  'Based on the filepath, this file defines `%<current_fully_qualified_constant>s`. `%<pack_owning_this_namespace>s` prevents other packs from sitting in the `%<actual_namespace>s` namespace. This should be namespaced under `%<expected_namespace>s` with path `%<expected_path>s`.',
-                  package_name: package_name,
-                  pack_owning_this_namespace: pack_owning_this_namespace,
-                  expected_namespace: expected_namespace,
-                  actual_namespace: actual_namespace,
-                  current_fully_qualified_constant: current_fully_qualified_constant,
-                  expected_path: relative_desired_path
-                )
-              )
-            end
+            )
           end
         end
 
@@ -112,23 +87,6 @@ module RuboCop
         def desired_zeitwerk_api
           @desired_zeitwerk_api ||= T.let(nil, T.nilable(DesiredZeitwerkApi))
           @desired_zeitwerk_api ||= DesiredZeitwerkApi.new
-        end
-
-        sig { returns(T::Hash[String, String]) }
-        def namespaces_to_packs
-          @namespaces_to_packs = T.let(nil, T.nilable(T::Hash[String, String]))
-          @namespaces_to_packs ||= begin
-            all_packs_enforcing_namespaces = ParsePackwerk.all.select do |p|
-              (cop_config['IncludePacks'] || []).include?(p.name)
-            end
-
-            namespaces_to_packs = {}
-            all_packs_enforcing_namespaces.each do |package|
-              namespaces_to_packs[desired_zeitwerk_api.get_pack_based_namespace(package)] = package.name
-            end
-
-            namespaces_to_packs
-          end
         end
       end
     end
