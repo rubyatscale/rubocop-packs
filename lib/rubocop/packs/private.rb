@@ -34,6 +34,41 @@ module RuboCop
           end
         end
       end
+
+      sig { params(package: ParsePackwerk::Package).returns(T::Array[String]) }
+      def self.validate_rubocop_todo_yml(package)
+        errors = []
+        rubocop_todo = package.directory.join('.rubocop_todo.yml')
+        return errors unless rubocop_todo.exist?
+
+        loaded_rubocop_todo = YAML.load_file(rubocop_todo)
+        loaded_rubocop_todo.each_key do |key|
+          if !Packs.config.permitted_pack_level_cops.include?(key)
+            errors << <<~ERROR_MESSAGE
+              #{rubocop_todo} contains invalid configuration for #{key}.
+              Please ensure the only configuration is for package protection exclusions, which are one of the following cops: #{Packs.config.permitted_pack_level_cops.inspect}"
+              For ignoring other cops, please instead modify the top-level .rubocop_todo.yml file.
+            ERROR_MESSAGE
+          elsif loaded_rubocop_todo[key].keys != ['Exclude']
+            errors << <<~ERROR_MESSAGE
+              #{rubocop_todo} contains invalid configuration for #{key}.
+              Please ensure the only configuration for #{key} is `Exclude`
+            ERROR_MESSAGE
+          else
+            loaded_rubocop_todo[key]['Exclude'].each do |filepath|
+              return [] unless ParsePackwerk.package_from_path(filepath).name != package.name
+
+              errors << <<~ERROR_MESSAGE
+                #{rubocop_todo} contains invalid configuration for #{key}.
+                #{filepath} does not belong to #{package.name}. Please ensure you only add exclusions
+                for files within this pack.
+              ERROR_MESSAGE
+            end
+          end
+        end
+
+        errors
+      end
     end
 
     private_constant :Private
