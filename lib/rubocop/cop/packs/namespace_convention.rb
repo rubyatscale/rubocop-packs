@@ -56,7 +56,7 @@ module RuboCop
 
           allowed_global_namespaces = Set.new([
                                                 namespace_context.expected_namespace,
-                                                *cop_config['GloballyPermittedNamespaces']
+                                                *RuboCop::Packs.config.globally_permitted_namespaces
                                               ])
 
           package_name = package_for_path.name

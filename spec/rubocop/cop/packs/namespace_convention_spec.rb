@@ -5,11 +5,11 @@ RSpec.describe RuboCop::Cop::Packs::NamespaceConvention, :config do
   subject(:cop) { described_class.new(config) }
   let(:pack_name) { 'packs/apples' }
   let(:include_packs) { [pack_name] }
+
   let(:cop_config) do
     {
       'Enabled' => true,
       'IncludePacks' => include_packs,
-      'GloballyPermittedNamespaces' => global_namespaces
     }
   end
 
@@ -19,6 +19,10 @@ RSpec.describe RuboCop::Cop::Packs::NamespaceConvention, :config do
     write_package_yml('packs/apples')
     write_package_yml('packs/tools')
     write_package_yml('packs/fruits/apples')
+
+    RuboCop::Packs.configure do |config|
+      config.globally_permitted_namespaces = global_namespaces
+    end
   end
 
   context 'unnested pack' do
