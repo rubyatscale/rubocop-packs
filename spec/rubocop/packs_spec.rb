@@ -187,7 +187,7 @@ RSpec.describe RuboCop::Packs do
         it 'returns an error' do
           error = <<~ERROR
             packs/some_pack/.rubocop_todo.yml contains invalid configuration for SomeOtherCop.
-            Please ensure the only configuration is for package protection exclusions, which are one of the following cops: ["Packs/NamespaceConvention", "Packs/TypedPublicApi", "Packs/ClassMethodsAsPublicApis"]"
+            Please only configure the following cops on a per-pack basis: ["Packs/NamespaceConvention", "Packs/TypedPublicApi", "Packs/ClassMethodsAsPublicApis"]"
             For ignoring other cops, please instead modify the top-level .rubocop_todo.yml file.
           ERROR
           expect(errors).to eq([error])
@@ -237,33 +237,170 @@ RSpec.describe RuboCop::Packs do
         end
       end
     end
-  end
 
-  describe 'exclude_for_rule' do
-    it 'finds the right exclusions' do
-      write_file('.rubocop_todo.yml', <<~YML)
-        Packs/NamespaceConvention:
-          Exclude:
-            - app/services/foo.rb
-        Packs/TypedPublicApi:
-          Exclude:
-            - app/services/foo.rb
-      YML
+    describe 'pack based .rubocop.yml files' do
+      context 'no packs' do
+        it 'returns an empty list' do
+          expect(errors).to be_empty
+        end
+      end
 
-      write_file('packs/my_pack/.rubocop_todo.yml', <<~YML)
-        Packs/TypedPublicApi:
-          Exclude:
-            - packs/my_pack/app/services/foo.rb
-      YML
+      context 'one pack with valid .rubocop.yml' do
+        before do
+          write_package_yml('packs/some_pack')
+          write_file('packs/some_pack/.rubocop.yml', <<~YML)
+            Packs/NamespaceConvention:
+              Enabled: true
+          YML
+        end
 
-      expect(RuboCop::Packs.exclude_for_rule('Packs/NamespaceConvention')).to eq(Set.new([
-                                                                                           'app/services/foo.rb'
-                                                                                         ]))
+        it 'returns an empty list' do
+          expect(errors).to be_empty
+        end
+      end
 
-      expect(RuboCop::Packs.exclude_for_rule('Packs/TypedPublicApi')).to eq(Set.new([
-                                                                                      'app/services/foo.rb',
-                                                                                      'packs/my_pack/app/services/foo.rb'
-                                                                                    ]))
+      context 'one pack with valid .rubocop.yml with FailureMode specified' do
+        before do
+          write_package_yml('packs/some_pack')
+          write_file('packs/some_pack/.rubocop.yml', <<~YML)
+            Packs/NamespaceConvention:
+              Enabled: true
+              FailureMode: strict
+          YML
+        end
+
+        it 'returns an empty list' do
+          expect(errors).to be_empty
+        end
+      end
+
+      context 'one pack with disallowed cop key' do
+        before do
+          write_package_yml('packs/some_pack')
+          write_file('packs/some_pack/.rubocop.yml', <<~YML)
+            SomeOtherCop:
+              Enabled: true
+          YML
+        end
+
+        it 'returns an error' do
+          error = <<~ERROR
+            packs/some_pack/.rubocop.yml contains invalid configuration for SomeOtherCop.
+            Please only configure the following cops on a per-pack basis: ["Packs/NamespaceConvention", "Packs/TypedPublicApi", "Packs/ClassMethodsAsPublicApis"]"
+            For ignoring other cops, please instead modify the top-level .rubocop.yml file.
+          ERROR
+          expect(errors).to eq([error])
+        end
+      end
+
+      context 'one pack with disallowed configuration key' do
+        before do
+          write_package_yml('packs/some_pack')
+          write_file('packs/some_pack/.rubocop.yml', <<~YML)
+            Packs/NamespaceConvention:
+              Exclude:
+                - 'packs/some_pack/app/services/bad_namespace.rb'
+          YML
+        end
+
+        it 'returns an error' do
+          error = <<~ERROR
+            packs/some_pack/.rubocop.yml contains invalid configuration for Packs/NamespaceConvention.
+            Please ensure the only configuration for Packs/NamespaceConvention is `Enabled` and `FailureMode`
+          ERROR
+          expect(errors).to eq([error])
+        end
+      end
+
+      context 'one pack with unspecified cops' do
+        before do
+          RuboCop::Packs.configure do |config|
+            config.required_pack_level_cops = ['Packs/NamespaceConvention', 'Packs/TypedPublicApi']
+          end
+        end
+
+        before do
+          write_package_yml('packs/some_pack')
+          write_file('packs/some_pack/.rubocop.yml', <<~YML)
+            Packs/NamespaceConvention:
+              Enabled: true
+          YML
+        end
+
+        it 'returns an error' do
+          error = <<~ERROR
+            packs/some_pack/.rubocop.yml is missing configuration for Packs/TypedPublicApi.
+          ERROR
+          expect(errors).to eq([error])
+        end
+      end
+
+      # For now, this is allowed. We might add this restriction back once we've completed the migration off of `package_protections`
+      context 'one pack without a .rubocop.yml' do
+        before do
+          write_package_yml('packs/some_pack')
+        end
+
+        it 'returns no errors' do
+          expect(errors).to eq([])
+        end
+      end
+    end
+
+    describe 'FailureMode: strict' do
+      context 'package has specified FailureMode: strict for a cop' do
+        context 'package has pack-based .rubocop_todo.yml entries for that cop' do
+          before do
+            write_package_yml('packs/some_pack')
+
+            write_file('packs/some_pack/app/services/some_file.rb', '')
+
+            write_file('packs/some_pack/.rubocop.yml', <<~YML)
+              Packs/NamespaceConvention:
+                Enabled: true
+                FailureMode: strict
+            YML
+
+            write_file('packs/some_pack/.rubocop_todo.yml', <<~YML)
+              Packs/NamespaceConvention:
+                Exclude:
+                  - 'packs/some_pack/app/services/some_file.rb'
+            YML
+          end
+
+          it 'returns an empty list' do
+            expect(errors).to eq([
+                                   'packs/some_pack has set `Packs/NamespaceConvention` to `FailureMode: strict` in `packs/some_pack/.rubocop.yml`, forbidding new exceptions. Please either remove `packs/some_pack/app/services/some_file.rb` from the top-level and pack-specific `.rubocop_todo.yml` files or remove `FailureMode: strict`.'
+                                 ])
+          end
+        end
+
+        context 'package has top-level .rubocop_todo.yml entries for that cop' do
+          before do
+            write_package_yml('packs/some_pack')
+
+            write_file('packs/some_pack/app/services/some_file.rb', '')
+
+            write_file('packs/some_pack/.rubocop.yml', <<~YML)
+              Packs/NamespaceConvention:
+                Enabled: true
+                FailureMode: strict
+            YML
+
+            write_file('.rubocop_todo.yml', <<~YML)
+              Packs/NamespaceConvention:
+                Exclude:
+                  - 'packs/some_pack/app/services/some_file.rb'
+            YML
+          end
+
+          it 'returns an empty list' do
+            expect(errors).to eq([
+                                   'packs/some_pack has set `Packs/NamespaceConvention` to `FailureMode: strict` in `packs/some_pack/.rubocop.yml`, forbidding new exceptions. Please either remove `packs/some_pack/app/services/some_file.rb` from the top-level and pack-specific `.rubocop_todo.yml` files or remove `FailureMode: strict`.'
+                                 ])
+          end
+        end
+      end
     end
   end
 end
