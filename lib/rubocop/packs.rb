@@ -141,6 +141,7 @@ module RuboCop
       ParsePackwerk.all.each do |package|
         next if package.name == ParsePackwerk::ROOT_PACKAGE_NAME
         errors += Private.validate_rubocop_todo_yml(package)
+        errors += Private.validate_rubocop_yml(package)
       end
 
       errors

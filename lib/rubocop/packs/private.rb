@@ -46,7 +46,7 @@ module RuboCop
           if !Packs.config.permitted_pack_level_cops.include?(key)
             errors << <<~ERROR_MESSAGE
               #{rubocop_todo} contains invalid configuration for #{key}.
-              Please ensure the only configuration is for package protection exclusions, which are one of the following cops: #{Packs.config.permitted_pack_level_cops.inspect}"
+              Please only configure the following cops on a per-pack basis: #{Packs.config.permitted_pack_level_cops.inspect}"
               For ignoring other cops, please instead modify the top-level .rubocop_todo.yml file.
             ERROR_MESSAGE
           elsif loaded_rubocop_todo[key].keys != ['Exclude']
@@ -64,6 +64,31 @@ module RuboCop
                 for files within this pack.
               ERROR_MESSAGE
             end
+          end
+        end
+
+        errors
+      end
+
+      sig { params(package: ParsePackwerk::Package).returns(T::Array[String]) }
+      def self.validate_rubocop_yml(package)
+        errors = []
+        rubocop_yml = package.directory.join('.rubocop.yml')
+        return errors unless rubocop_yml.exist?
+
+        loaded_rubocop_yml = YAML.load_file(rubocop_yml)
+        loaded_rubocop_yml.each_key do |key|
+          if !Packs.config.permitted_pack_level_cops.include?(key)
+            errors << <<~ERROR_MESSAGE
+              #{rubocop_yml} contains invalid configuration for #{key}.
+              Please only configure the following cops on a per-pack basis: #{Packs.config.permitted_pack_level_cops.inspect}"
+              For ignoring other cops, please instead modify the top-level .rubocop.yml file.
+            ERROR_MESSAGE
+          elsif (loaded_rubocop_yml[key].keys - ['Enabled', 'FailureMode']).any?
+            errors << <<~ERROR_MESSAGE
+              #{rubocop_yml} contains invalid configuration for #{key}.
+              Please ensure the only configuration for #{key} is `Enabled` and `FailureMode`
+            ERROR_MESSAGE
           end
         end
 

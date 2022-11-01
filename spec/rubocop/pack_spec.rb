@@ -187,7 +187,7 @@ RSpec.describe RuboCop::Packs do
         it 'returns an error' do
           error = <<~ERROR
             packs/some_pack/.rubocop_todo.yml contains invalid configuration for SomeOtherCop.
-            Please ensure the only configuration is for package protection exclusions, which are one of the following cops: ["Packs/NamespaceConvention", "Packs/TypedPublicApi", "Packs/ClassMethodsAsPublicApis"]"
+            Please only configure the following cops on a per-pack basis: ["Packs/NamespaceConvention", "Packs/TypedPublicApi", "Packs/ClassMethodsAsPublicApis"]"
             For ignoring other cops, please instead modify the top-level .rubocop_todo.yml file.
           ERROR
           expect(errors).to eq([error])
@@ -286,7 +286,7 @@ RSpec.describe RuboCop::Packs do
         it 'returns an error' do
           error = <<~ERROR
             packs/some_pack/.rubocop.yml contains invalid configuration for SomeOtherCop.
-            Please ensure the only configuration is for package protection exclusions, which are one of the following cops: ["Packs/NamespaceConvention", "Packs/TypedPublicApi", "Packs/ClassMethodsAsPublicApis"]"
+            Please only configure the following cops on a per-pack basis: ["Packs/NamespaceConvention", "Packs/TypedPublicApi", "Packs/ClassMethodsAsPublicApis"]"
             For ignoring other cops, please instead modify the top-level .rubocop.yml file.
           ERROR
           expect(errors).to eq([error])
@@ -298,7 +298,7 @@ RSpec.describe RuboCop::Packs do
           write_package_yml('packs/some_pack')
           write_file('packs/some_pack/.rubocop.yml', <<~YML)
             Packs/NamespaceConvention:
-              Enabled:
+              Exclude:
                 - 'packs/some_pack/app/services/bad_namespace.rb'
           YML
         end
