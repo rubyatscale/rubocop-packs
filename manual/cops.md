@@ -4,6 +4,6 @@
 * [Packs/ClassMethodsAsPublicApis](cops_packs.md#packsclassmethodsaspublicapis)
 * [Packs/RequireDocumentedPublicApis](cops_packs.md#packsrequiredocumentedpublicapis)
 * [Packs/RootNamespaceIsPackName](cops_packs.md#packsrootnamespaceispackname)
-* [Packs/TypedPublicApi](cops_packs.md#packstypedpublicapi)
+* [Packs/TypedPublicApis](cops_packs.md#packstypedpublicapis)
 
 <!-- END_COP_LIST -->

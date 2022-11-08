@@ -1,6 +1,6 @@
 # typed: false
 
-RSpec.describe RuboCop::Cop::Packs::TypedPublicApi, :config do
+RSpec.describe RuboCop::Cop::Packs::TypedPublicApis, :config do
   let(:config) do
     RuboCop::Config.new
   end

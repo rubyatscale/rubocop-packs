@@ -19,7 +19,7 @@ module RuboCop
       #   # typed: strict
       #   module Foo; end
       #
-      class TypedPublicApi < Sorbet::StrictSigil
+      class TypedPublicApis < Sorbet::StrictSigil
         #
         # This inherits from `Sorbet::StrictSigil` and doesn't change any behavior of it.
         # The only reason we do this is so that configuration for this cop can live under a different cop namespace.

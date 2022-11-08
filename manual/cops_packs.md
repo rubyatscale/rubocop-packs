@@ -87,7 +87,7 @@ class Blah::Bar; end
 class Foo::Blah::Bar; end
 ```
 
-## Packs/TypedPublicApi
+## Packs/TypedPublicApis
 
 Enabled by default | Safe | Supports autocorrection | VersionAdded | VersionChanged
 --- | --- | --- | --- | ---

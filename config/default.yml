@@ -11,7 +11,7 @@ Packs/ClassMethodsAsPublicApis:
 Packs/RootNamespaceIsPackName:
   Enabled: true
 
-Packs/TypedPublicApi:
+Packs/TypedPublicApis:
   Enabled: true
 
 Packs/RequireDocumentedPublicApis:
