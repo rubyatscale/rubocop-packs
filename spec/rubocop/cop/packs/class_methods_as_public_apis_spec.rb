@@ -23,7 +23,7 @@ RSpec.describe RuboCop::Cop::Packs::ClassMethodsAsPublicApis, :config do
       <<~RUBY
         class Tool
           def my_instance_method
-          ^^^^^^^^^^^^^^^^^^^^^^ Top-level files in the public/ folder may only define class methods.
+          ^^^^^^^^^^^^^^^^^^^^^^ Public API method must be a class method (e.g. `self.my_instance_method(...)`)
           end
         end
       RUBY
@@ -53,7 +53,7 @@ RSpec.describe RuboCop::Cop::Packs::ClassMethodsAsPublicApis, :config do
 
           sig { params(id: Integer).void }
           def my_instance_method(id)
-          ^^^^^^^^^^^^^^^^^^^^^^^^^^ Top-level files in the public/ folder may only define class methods.
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^ Public API method must be a class method (e.g. `self.my_instance_method(...)`)
           end
         end
       RUBY

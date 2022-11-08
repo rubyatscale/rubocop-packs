@@ -55,7 +55,7 @@ module RuboCop
           add_offense(
             node.source_range,
             message: format(
-              'Top-level files in the public/ folder may only define class methods.'
+              "Public API method must be a class method (e.g. `self.#{node.method_name}(...)`)"
             )
           )
         end
