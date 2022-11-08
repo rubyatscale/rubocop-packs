@@ -236,6 +236,20 @@ RSpec.describe RuboCop::Packs do
           expect(errors).to eq([error])
         end
       end
+
+      context 'one pack with inherit_from set' do
+        before do
+          write_package_yml('packs/some_pack')
+
+          write_file('packs/some_pack/.rubocop.yml', <<~YML)
+            inherit_from: "../../.base_rubocop.yml"
+          YML
+        end
+
+        it 'has no errors' do
+          expect(errors).to be_empty
+        end
+      end
     end
 
     describe 'pack based .rubocop.yml files' do
