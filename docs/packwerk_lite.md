@@ -1,6 +1,6 @@
 # [PackwerkLite](/lib/rubocop/cop/packwerk_lite)
 
-This is a proof-of-concept for Packwerk Lite, an implementation of Packwerk that is made simpler by assuming the application adheres to [`Packs/NamespaceConvention`](/lib/rubocop/cop/packs/namespace_convention.rb).
+This is a proof-of-concept for Packwerk Lite, an implementation of Packwerk that is made simpler by assuming the application adheres to [`Packs/RootNamespaceIsPackName`](/lib/rubocop/cop/packs/namespace_convention.rb).
 
 [`PackwerkLite/Privacy`](/lib/rubocop/cop/packwerk_lite/privacy_checker.rb)
 

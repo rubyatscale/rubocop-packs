@@ -37,30 +37,6 @@ Name | Default value | Configurable values
 --- | --- | ---
 AcceptableParentClasses | `T::Enum`, `T::Struct`, `Struct`, `OpenStruct` | Array
 
-## Packs/NamespaceConvention
-
-Enabled by default | Safe | Supports autocorrection | VersionAdded | VersionChanged
---- | --- | --- | --- | ---
-Enabled | Yes | No | - | -
-
-This cop helps ensure that each pack exposes one namespace.
-Note that this cop doesn't necessarily expect you to be using stimpack (https://github.com/rubyatscale/stimpack),
-but it does expect packs to live in the organizational structure as described in the README.md of that gem.
-
-This allows packs to opt in and also prevent *other* files from sitting in their namespace.
-
-### Examples
-
-```ruby
-# bad
-# packs/foo/app/services/blah/bar.rb
-class Blah::Bar; end
-
-# good
-# packs/foo/app/services/foo/blah/bar.rb
-class Foo::Blah::Bar; end
-```
-
 ## Packs/RequireDocumentedPublicApis
 
 Enabled by default | Safe | Supports autocorrection | VersionAdded | VersionChanged
@@ -85,6 +61,30 @@ class Foo
   # It can live below or below a sorbet type signature.
   def bar; end
 end
+```
+
+## Packs/RootNamespaceIsPackName
+
+Enabled by default | Safe | Supports autocorrection | VersionAdded | VersionChanged
+--- | --- | --- | --- | ---
+Enabled | Yes | No | - | -
+
+This cop helps ensure that each pack exposes one namespace.
+Note that this cop doesn't necessarily expect you to be using stimpack (https://github.com/rubyatscale/stimpack),
+but it does expect packs to live in the organizational structure as described in the README.md of that gem.
+
+This allows packs to opt in and also prevent *other* files from sitting in their namespace.
+
+### Examples
+
+```ruby
+# bad
+# packs/foo/app/services/blah/bar.rb
+class Blah::Bar; end
+
+# good
+# packs/foo/app/services/foo/blah/bar.rb
+class Foo::Blah::Bar; end
 ```
 
 ## Packs/TypedPublicApi

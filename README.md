@@ -36,7 +36,7 @@ All cops are located under [`lib/rubocop/cop/packs`](lib/rubocop/cop/packs), and
 In your `.rubocop.yml`, you may treat the Packs cops just like any other cop. For example:
 
 ```yaml
-Packs/NamespaceConvention:
+Packs/RootNamespaceIsPackName:
   Exclude:
     - lib/example.rb
 ```
@@ -70,8 +70,8 @@ To use per-pack `.rubocop.yml` and `.rubocop_todo.yml` files, you need to config
 ```ruby
 # config/rubocop_packs.rb
 RuboCop::Packs.configure do |config|
-  config.permitted_pack_level_cops = ['Packs/NamespaceConvention']
-  config.required_pack_level_cops = ['Packs/NamespaceConvention']
+  config.permitted_pack_level_cops = ['Packs/RootNamespaceIsPackName']
+  config.required_pack_level_cops = ['Packs/RootNamespaceIsPackName']
 end
 ```
 

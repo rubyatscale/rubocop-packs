@@ -8,7 +8,7 @@ Packs/ClassMethodsAsPublicApis:
     - Struct
     - OpenStruct
 
-Packs/NamespaceConvention:
+Packs/RootNamespaceIsPackName:
   Enabled: true
 
 Packs/TypedPublicApi:
