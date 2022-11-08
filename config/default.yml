@@ -14,7 +14,7 @@ Packs/RootNamespaceIsPackName:
 Packs/TypedPublicApis:
   Enabled: true
 
-Packs/RequireDocumentedPublicApis:
+Packs/DocumentedPublicApis:
   Enabled: true
 
 PackwerkLite/Privacy:

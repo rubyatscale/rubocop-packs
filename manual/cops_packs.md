@@ -37,7 +37,7 @@ Name | Default value | Configurable values
 --- | --- | ---
 AcceptableParentClasses | `T::Enum`, `T::Struct`, `Struct`, `OpenStruct` | Array
 
-## Packs/RequireDocumentedPublicApis
+## Packs/DocumentedPublicApis
 
 Enabled by default | Safe | Supports autocorrection | VersionAdded | VersionChanged
 --- | --- | --- | --- | ---
