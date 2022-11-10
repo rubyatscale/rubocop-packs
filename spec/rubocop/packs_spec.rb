@@ -8,6 +8,43 @@ RSpec.describe RuboCop::Packs do
     end
   end
 
+  describe 'set_default_rubocop_yml' do
+    before do
+      write_package_yml('packs/my_pack')
+      RuboCop::Packs.configure do |config|
+        config.required_pack_level_cops = ['Style/SomeCop', 'Lint/SomeCop']
+      end
+    end
+
+    let(:rubocop_yml) { ParsePackwerk.find('packs/my_pack').directory.join('.rubocop.yml') }
+
+    it 'generates a .rubocop.yml with the right required pack level cops' do
+      expect(rubocop_yml).to_not exist
+      RuboCop::Packs.set_default_rubocop_yml(packs: ParsePackwerk.all)
+      expect(rubocop_yml).to exist
+      expect(YAML.load_file(rubocop_yml)).to eq({
+                                                  'inherit_from' => '../../.base_rubocop.yml',
+                                                  'Style/SomeCop' => { 'Enabled' => true },
+                                                  'Lint/SomeCop' => { 'Enabled' => true }
+                                                })
+    end
+
+    it 'formats the .rubocop.yml file nicely' do
+      expect(rubocop_yml).to_not exist
+      RuboCop::Packs.set_default_rubocop_yml(packs: ParsePackwerk.all)
+      expect(rubocop_yml).to exist
+      expect(rubocop_yml.read).to eq(<<~YML)
+        inherit_from: "../../.base_rubocop.yml"
+
+        Style/SomeCop:
+          Enabled: true
+
+        Lint/SomeCop:
+          Enabled: true
+      YML
+    end
+  end
+
   describe 'auto_generate_rubocop_todo' do
     let(:rubocop_todo_yml) { Pathname.new('packs/my_pack/.rubocop_todo.yml') }
 

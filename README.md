@@ -52,9 +52,9 @@ To add a per-pack `.rubocop.yml`, you just need to create a `packs/your_pack/.ru
 inherit_from: '../../.rubocop.yml'
 ```
 
-Note though that inherited paths are relative to your pack-level `.rubocop.yml`. To avoid that, you can rename your `.rubocop.yml` to `.inherited_rubocop.yml`, set `.rubocop.yml` to:
+Note though that inherited paths are relative to your pack-level `.rubocop.yml`. To avoid that, you can rename your `.rubocop.yml` to `.base_rubocop.yml`, set `.rubocop.yml` to:
 ```
-inherit_from: '.inherited_rubocop.yml'
+inherit_from: '.base_rubocop.yml'
 ```
 And then similarly change the `inherit_from` in `packs/your_pack/.rubocop.yml`.
 

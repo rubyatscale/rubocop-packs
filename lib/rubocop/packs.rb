@@ -64,6 +64,31 @@ module RuboCop
       end
     end
 
+    #
+    # Ideally, this is API that is available to us via `rubocop` itself.
+    # That is: the ability to preserve the location of `.rubocop_todo.yml` files and associate
+    # exclusions with the closest ancestor `.rubocop_todo.yml`
+    #
+    sig { params(packs: T::Array[ParsePackwerk::Package]).void }
+    def self.set_default_rubocop_yml(packs:)
+      packs.each do |pack|
+        rubocop_yml = Pathname.new(pack.directory.join('.rubocop.yml'))
+        rubocop_yml_hash = {}
+        rubocop_yml_hash['inherit_from'] = '../../.base_rubocop.yml'
+        config.required_pack_level_cops.each do |cop|
+          rubocop_yml_hash[cop] = { 'Enabled' => true }
+        end
+
+        formatted_yml = YAML.dump(rubocop_yml_hash).
+          # Remove the `---` header at the top of the file
+          gsub("---\n", '').
+          # Find lines of the form \nCopDepartment/CopName: and add a new line before it.
+          gsub(%r{^(\w+/\w+:)}, "\n\\1")
+
+        rubocop_yml.write(formatted_yml)
+      end
+    end
+
     sig { params(root_pathname: String).returns(String) }
     # It would be great if rubocop (upstream) could take in a glob for `inherit_from`, which
     # would allow us to delete this method and this additional complexity.
