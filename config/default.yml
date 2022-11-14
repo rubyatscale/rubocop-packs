@@ -8,13 +8,13 @@ Packs/ClassMethodsAsPublicApis:
     - Struct
     - OpenStruct
 
-Packs/NamespaceConvention:
+Packs/RootNamespaceIsPackName:
   Enabled: true
 
-Packs/TypedPublicApi:
+Packs/TypedPublicApis:
   Enabled: true
 
-Packs/RequireDocumentedPublicApis:
+Packs/DocumentedPublicApis:
   Enabled: true
 
 PackwerkLite/Privacy:

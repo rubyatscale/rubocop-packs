@@ -2,7 +2,7 @@
 
 # For String#camelize
 require 'active_support/core_ext/string/inflections'
-require 'rubocop/cop/packs/namespace_convention/desired_zeitwerk_api'
+require 'rubocop/cop/packs/root_namespace_is_pack_name/desired_zeitwerk_api'
 
 module RuboCop
   module Cop
@@ -23,7 +23,7 @@ module RuboCop
       #   # packs/foo/app/services/foo/blah/bar.rb
       #   class Foo::Blah::Bar; end
       #
-      class NamespaceConvention < Base
+      class RootNamespaceIsPackName < Base
         extend T::Sig
 
         include RangeHelp

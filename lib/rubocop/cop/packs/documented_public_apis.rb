@@ -21,7 +21,7 @@ module RuboCop
       #     def bar; end
       #   end
       #
-      class RequireDocumentedPublicApis < Style::DocumentationMethod
+      class DocumentedPublicApis < Style::DocumentationMethod
         # This cop does two things:
         # 1) It only activates for things in the public folder
         # 2) It allows `Style/DocumentationMethod` to work with sigs as expected.

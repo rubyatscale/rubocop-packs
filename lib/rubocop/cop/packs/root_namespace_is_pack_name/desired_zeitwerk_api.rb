@@ -3,7 +3,7 @@
 module RuboCop
   module Cop
     module Packs
-      class NamespaceConvention < Base
+      class RootNamespaceIsPackName < Base
         #
         # This is a private class that represents API that we would prefer to be available somehow in Zeitwerk.
         # However, the boundaries between systems (packwerk/zeitwerk, rubocop/zeitwerk) are poor in this class, so

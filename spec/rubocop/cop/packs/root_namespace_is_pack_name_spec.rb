@@ -1,7 +1,7 @@
 # typed: false
 # frozen_string_literal: true
 
-RSpec.describe RuboCop::Cop::Packs::NamespaceConvention, :config do
+RSpec.describe RuboCop::Cop::Packs::RootNamespaceIsPackName, :config do
   subject(:cop) { described_class.new(config) }
   let(:pack_name) { 'packs/apples' }
 
