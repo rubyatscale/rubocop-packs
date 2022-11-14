@@ -103,10 +103,10 @@ RSpec.describe RuboCop::Packs do
     end
   end
 
-  describe 'pack_based_rubocop_todos' do
+  describe 'pack_based_rubocop_config' do
     let(:config) do
       write_file('config/default.yml', <<~YML.strip)
-        <%= RuboCop::Packs.pack_based_rubocop_todos(root_pathname: Pathname.pwd.to_s) %>
+        <%= RuboCop::Packs.pack_based_rubocop_config(root_pathname: Pathname.pwd.to_s) %>
       YML
       YAML.safe_load(ERB.new(File.read('config/default.yml')).result(binding))
     end

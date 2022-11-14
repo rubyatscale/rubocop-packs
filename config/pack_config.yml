@@ -3,4 +3,4 @@
 #    - https://docs.rubocop.org/rubocop/configuration.html#inheriting-configuration-from-a-dependency-gem
 #  - ERB in a .rubocop.yml file
 #    - https://docs.rubocop.org/rubocop/configuration.html#pre-processing
-<%= RuboCop::Packs.pack_based_rubocop_todos %>
+<%= RuboCop::Packs.pack_based_rubocop_config %>

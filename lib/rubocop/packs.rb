@@ -92,7 +92,7 @@ module RuboCop
     sig { params(root_pathname: String).returns(String) }
     # It would be great if rubocop (upstream) could take in a glob for `inherit_from`, which
     # would allow us to delete this method and this additional complexity.
-    def self.pack_based_rubocop_todos(root_pathname: Bundler.root)
+    def self.pack_based_rubocop_config(root_pathname: Bundler.root)
       rubocop_todos = {}
       # We do this because when the ERB is evaluated Dir.pwd is at the directory containing the YML.
       # Ideally rubocop wouldn't change the PWD before invoking this method.
