@@ -7,15 +7,19 @@ Packs/ClassMethodsAsPublicApis:
     - T::Struct
     - Struct
     - OpenStruct
+  FailureMode: default
 
 Packs/RootNamespaceIsPackName:
   Enabled: true
+  FailureMode: default
 
 Packs/TypedPublicApis:
   Enabled: true
+  FailureMode: default
 
 Packs/DocumentedPublicApis:
   Enabled: true
+  FailureMode: default
 
 PackwerkLite/Privacy:
   # It is recommended to use packwerk
