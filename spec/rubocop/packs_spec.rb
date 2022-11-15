@@ -23,7 +23,6 @@ RSpec.describe RuboCop::Packs do
       RuboCop::Packs.set_default_rubocop_yml(packs: ParsePackwerk.all)
       expect(rubocop_yml).to exist
       expect(YAML.load_file(rubocop_yml)).to eq({
-                                                  'inherit_from' => '../../.base_rubocop.yml',
                                                   'Style/SomeCop' => { 'Enabled' => true },
                                                   'Lint/SomeCop' => { 'Enabled' => true }
                                                 })
@@ -34,8 +33,6 @@ RSpec.describe RuboCop::Packs do
       RuboCop::Packs.set_default_rubocop_yml(packs: ParsePackwerk.all)
       expect(rubocop_yml).to exist
       expect(rubocop_yml.read).to eq(<<~YML)
-        inherit_from: "../../.base_rubocop.yml"
-
         Style/SomeCop:
           Enabled: true
 
