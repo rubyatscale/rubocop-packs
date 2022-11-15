@@ -4,7 +4,7 @@
 
 Enabled by default | Safe | Supports autocorrection | VersionAdded | VersionChanged
 --- | --- | --- | --- | ---
-Enabled | Yes | No | - | -
+Disabled | Yes | No | - | -
 
 This cop states that public API should live on class methods, which are more easily statically analyzable,
 searchable, and typically hold less state.

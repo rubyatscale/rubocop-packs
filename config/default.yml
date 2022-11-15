@@ -1,7 +1,5 @@
-inherit_from: ./pack_config.yml
-
 Packs/ClassMethodsAsPublicApis:
-  Enabled: true
+  Enabled: false
   AcceptableParentClasses:
     - T::Enum
     - T::Struct
@@ -28,3 +26,6 @@ PackwerkLite/Privacy:
 PackwerkLite/Dependency:
   # It is recommended to use packwerk
   Enabled: false
+
+# We do this inherit *after* setting the defaults so that pack-specific rubocops can override the defaults
+inherit_from: ./pack_config.yml
