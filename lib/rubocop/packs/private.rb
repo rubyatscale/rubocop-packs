@@ -28,7 +28,7 @@ module RuboCop
       def self.rubocop_todo_ymls
         @rubocop_todo_ymls = T.let(@rubocop_todo_ymls, T.nilable(T::Array[T::Hash[T.untyped, T.untyped]]))
         @rubocop_todo_ymls ||= begin
-          todo_files = Pathname.glob('**/.rubocop_todo.yml')
+          todo_files = Pathname.glob("**/#{PACK_LEVEL_RUBOCOP_TODO_YML}")
           todo_files.map do |todo_file|
             YAML.load_file(todo_file)
           end
@@ -38,7 +38,7 @@ module RuboCop
       sig { params(package: ParsePackwerk::Package).returns(T::Array[String]) }
       def self.validate_rubocop_todo_yml(package)
         errors = []
-        rubocop_todo = package.directory.join('.rubocop_todo.yml')
+        rubocop_todo = package.directory.join(PACK_LEVEL_RUBOCOP_TODO_YML)
         return errors unless rubocop_todo.exist?
 
         loaded_rubocop_todo = YAML.load_file(rubocop_todo)
@@ -47,7 +47,7 @@ module RuboCop
             errors << <<~ERROR_MESSAGE
               #{rubocop_todo} contains invalid configuration for #{key}.
               Please only configure the following cops on a per-pack basis: #{Packs.config.permitted_pack_level_cops.inspect}"
-              For ignoring other cops, please instead modify the top-level .rubocop_todo.yml file.
+              For ignoring other cops, please instead modify the top-level #{PACK_LEVEL_RUBOCOP_TODO_YML} file.
             ERROR_MESSAGE
           elsif loaded_rubocop_todo[key].keys != ['Exclude']
             errors << <<~ERROR_MESSAGE
@@ -73,7 +73,7 @@ module RuboCop
       sig { params(package: ParsePackwerk::Package).returns(T::Array[String]) }
       def self.validate_rubocop_yml(package)
         errors = []
-        rubocop_yml = package.directory.join('.rubocop.yml')
+        rubocop_yml = package.directory.join(PACK_LEVEL_RUBOCOP_YML)
         return errors unless rubocop_yml.exist?
 
         loaded_rubocop_yml = YAML.load_file(rubocop_yml)
@@ -85,8 +85,6 @@ module RuboCop
         end
 
         loaded_rubocop_yml.each_key do |key|
-          next if key.to_s == 'inherit_from'
-
           if !Packs.config.permitted_pack_level_cops.include?(key)
             errors << <<~ERROR_MESSAGE
               #{rubocop_yml} contains invalid configuration for #{key}.
@@ -130,7 +128,7 @@ module RuboCop
         Packs.config.permitted_pack_level_cops.each do |cop|
           excludes = exclude_for_rule(cop)
 
-          rubocop_yml = package.directory.join('.rubocop.yml')
+          rubocop_yml = package.directory.join(PACK_LEVEL_RUBOCOP_YML)
 
           next unless rubocop_yml.exist?
 
@@ -143,7 +141,7 @@ module RuboCop
           next if excludes_for_package.empty?
 
           formatted_excludes = excludes_for_package.map { |ex| "`#{ex}`" }.join(', ')
-          errors << "#{package.name} has set `#{cop}` to `FailureMode: strict` in `packs/some_pack/.rubocop.yml`, forbidding new exceptions. Please either remove #{formatted_excludes} from the top-level and pack-specific `.rubocop_todo.yml` files or remove `FailureMode: strict`."
+          errors << "#{package.name} has set `#{cop}` to `FailureMode: strict` in `packs/some_pack/#{PACK_LEVEL_RUBOCOP_YML}`, forbidding new exceptions. Please either remove #{formatted_excludes} from the top-level and pack-specific `#{PACK_LEVEL_RUBOCOP_TODO_YML}` files or remove `FailureMode: strict`."
         end
 
         errors

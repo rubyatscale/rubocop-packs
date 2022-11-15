@@ -5,6 +5,14 @@ require 'rubocop/packs/private'
 
 module RuboCop
   module Packs
+    # Pack-level rubocop and rubocop_todo YML files are named differently because they are not integrated
+    # into rubocop in the standard way. For example, we could call these the standard `.rubocop.yml` and
+    # `.rubocop_todo.yml`. However, this introduces a number of path relativity issues (https://docs.rubocop.org/rubocop/configuration.html#path-relativity)
+    # that make this approach not possible. Therefore, for pack level rubocops, we name them in a way that mirrors packwerk `package_todo.yml` files
+    # for consistency and to ensure that thes are not read by rubocop except via the ERB templating mechanism.
+    PACK_LEVEL_RUBOCOP_YML = 'package_rubocop.yml'
+    PACK_LEVEL_RUBOCOP_TODO_YML = 'package_rubocop_todo.yml'
+
     class Error < StandardError; end
     extend T::Sig
 
@@ -45,7 +53,7 @@ module RuboCop
 
       new_rubocop_todo_exclusions.each do |pack_name, file_hash|
         pack = T.must(ParsePackwerk.find(pack_name))
-        rubocop_todo_yml = pack.directory.join('.rubocop_todo.yml')
+        rubocop_todo_yml = pack.directory.join(PACK_LEVEL_RUBOCOP_TODO_YML)
         if rubocop_todo_yml.exist?
           rubocop_todo = YAML.load_file(rubocop_todo_yml)
         else
@@ -72,18 +80,17 @@ module RuboCop
     sig { params(packs: T::Array[ParsePackwerk::Package]).void }
     def self.set_default_rubocop_yml(packs:)
       packs.each do |pack|
-        rubocop_yml = Pathname.new(pack.directory.join('.rubocop.yml'))
+        rubocop_yml = Pathname.new(pack.directory.join(PACK_LEVEL_RUBOCOP_YML))
         rubocop_yml_hash = {}
-        rubocop_yml_hash['inherit_from'] = '../../.base_rubocop.yml'
         config.required_pack_level_cops.each do |cop|
           rubocop_yml_hash[cop] = { 'Enabled' => true }
         end
 
         formatted_yml = YAML.dump(rubocop_yml_hash).
-          # Remove the `---` header at the top of the file
-          gsub("---\n", '').
           # Find lines of the form \nCopDepartment/CopName: and add a new line before it.
-          gsub(%r{^(\w+/\w+:)}, "\n\\1")
+          gsub(%r{^(\w+/\w+:)}, "\n\\1").
+          # Remove the `---` header at the top of the file
+          gsub("---\n\n", '')
 
         rubocop_yml.write(formatted_yml)
       end
@@ -92,26 +99,39 @@ module RuboCop
     sig { params(root_pathname: String).returns(String) }
     # It would be great if rubocop (upstream) could take in a glob for `inherit_from`, which
     # would allow us to delete this method and this additional complexity.
-    def self.pack_based_rubocop_todos(root_pathname: Bundler.root)
-      rubocop_todos = {}
+    def self.pack_based_rubocop_config(root_pathname: Bundler.root)
+      rubocop_config = {}
       # We do this because when the ERB is evaluated Dir.pwd is at the directory containing the YML.
       # Ideally rubocop wouldn't change the PWD before invoking this method.
       Dir.chdir(root_pathname) do
         ParsePackwerk.all.each do |package|
           next if package.name == ParsePackwerk::ROOT_PACKAGE_NAME
 
-          rubocop_todo = package.directory.join('.rubocop_todo.yml')
-          next unless rubocop_todo.exist?
+          rubocop_todo = package.directory.join(PACK_LEVEL_RUBOCOP_TODO_YML)
+          if rubocop_todo.exist?
+            loaded_rubocop_todo = YAML.load_file(rubocop_todo)
+            loaded_rubocop_todo.each do |cop_name, key_config|
+              rubocop_config[cop_name] ||= {}
+              rubocop_config[cop_name]['Exclude'] ||= []
+              rubocop_config[cop_name]['Exclude'] += key_config['Exclude']
+            end
+          end
 
-          loaded_rubocop_todo = YAML.load_file(rubocop_todo)
-          loaded_rubocop_todo.each do |protection_key, key_config|
-            rubocop_todos[protection_key] ||= { 'Exclude' => [] }
-            rubocop_todos[protection_key]['Exclude'] += key_config['Exclude']
+          pack_rubocop = package.directory.join('.pack_rubocop.yml')
+          next unless pack_rubocop.exist?
+
+          loaded_pack_rubocop = YAML.load_file(pack_rubocop)
+          loaded_pack_rubocop.each do |cop_name, key_config|
+            next unless key_config['Enabled']
+
+            rubocop_config[cop_name] ||= {}
+            rubocop_config[cop_name]['Include'] ||= []
+            rubocop_config[cop_name]['Include'] << package.directory.join('**/*').to_s
           end
         end
       end
 
-      YAML.dump(rubocop_todos)
+      YAML.dump(rubocop_config)
     end
 
     sig { void }
