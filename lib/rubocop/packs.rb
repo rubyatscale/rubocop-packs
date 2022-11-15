@@ -74,16 +74,15 @@ module RuboCop
       packs.each do |pack|
         rubocop_yml = Pathname.new(pack.directory.join('.rubocop.yml'))
         rubocop_yml_hash = {}
-        rubocop_yml_hash['inherit_from'] = '../../.base_rubocop.yml'
         config.required_pack_level_cops.each do |cop|
           rubocop_yml_hash[cop] = { 'Enabled' => true }
         end
 
         formatted_yml = YAML.dump(rubocop_yml_hash).
-          # Remove the `---` header at the top of the file
-          gsub("---\n", '').
           # Find lines of the form \nCopDepartment/CopName: and add a new line before it.
-          gsub(%r{^(\w+/\w+:)}, "\n\\1")
+          gsub(%r{^(\w+/\w+:)}, "\n\\1").
+          # Remove the `---` header at the top of the file
+          gsub("---\n\n", '')
 
         rubocop_yml.write(formatted_yml)
       end
