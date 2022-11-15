@@ -93,7 +93,7 @@ module RuboCop
     # It would be great if rubocop (upstream) could take in a glob for `inherit_from`, which
     # would allow us to delete this method and this additional complexity.
     def self.pack_based_rubocop_config(root_pathname: Bundler.root)
-      rubocop_todos = {}
+      rubocop_config = {}
       # We do this because when the ERB is evaluated Dir.pwd is at the directory containing the YML.
       # Ideally rubocop wouldn't change the PWD before invoking this method.
       Dir.chdir(root_pathname) do
@@ -101,17 +101,30 @@ module RuboCop
           next if package.name == ParsePackwerk::ROOT_PACKAGE_NAME
 
           rubocop_todo = package.directory.join('.rubocop_todo.yml')
-          next unless rubocop_todo.exist?
+          if rubocop_todo.exist?
+            loaded_rubocop_todo = YAML.load_file(rubocop_todo)
+            loaded_rubocop_todo.each do |cop_name, key_config|
+              rubocop_config[cop_name] ||= {}
+              rubocop_config[cop_name]['Exclude'] ||= []
+              rubocop_config[cop_name]['Exclude'] += key_config['Exclude']
+            end
+          end
 
-          loaded_rubocop_todo = YAML.load_file(rubocop_todo)
-          loaded_rubocop_todo.each do |protection_key, key_config|
-            rubocop_todos[protection_key] ||= { 'Exclude' => [] }
-            rubocop_todos[protection_key]['Exclude'] += key_config['Exclude']
+          pack_rubocop = package.directory.join('.pack_rubocop.yml')
+          next unless pack_rubocop.exist?
+
+          loaded_pack_rubocop = YAML.load_file(pack_rubocop)
+          loaded_pack_rubocop.each do |cop_name, key_config|
+            next unless key_config['Enabled']
+
+            rubocop_config[cop_name] ||= {}
+            rubocop_config[cop_name]['Include'] ||= []
+            rubocop_config[cop_name]['Include'] << package.directory.join('**/*').to_s
           end
         end
       end
 
-      YAML.dump(rubocop_todos)
+      YAML.dump(rubocop_config)
     end
 
     sig { void }

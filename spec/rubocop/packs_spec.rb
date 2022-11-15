@@ -166,6 +166,104 @@ RSpec.describe RuboCop::Packs do
         expect(config['Packs/RootNamespaceIsPackName']['Exclude'].sort).to eq(['packs/some_other_pack/app/services/bad_namespace.rb', 'packs/some_pack/app/services/bad_namespace.rb'])
       end
     end
+
+    context 'one pack with include' do
+      before do
+        write_package_yml('packs/some_pack')
+
+        write_file('packs/some_pack/.pack_rubocop.yml', <<~YML)
+          Packs/RootNamespaceIsPackName:
+            Enabled: true
+        YML
+      end
+
+      it 'returns a config with the right packs in the include field' do
+        expect(config).to eq(
+          {
+            'Packs/RootNamespaceIsPackName' => {
+              'Include' => [
+                'packs/some_pack/**/*'
+              ]
+            }
+          }
+        )
+      end
+    end
+
+    context 'three packs with include' do
+      before do
+        write_package_yml('packs/some_pack')
+
+        write_file('packs/some_pack/.pack_rubocop.yml', <<~YML)
+          Packs/RootNamespaceIsPackName:
+            Enabled: false
+        YML
+
+        write_package_yml('packs/some_other_pack')
+
+        write_file('packs/some_other_pack/.pack_rubocop.yml', <<~YML)
+          Packs/RootNamespaceIsPackName:
+            Enabled: true
+        YML
+
+        write_package_yml('packs/yet_another_pack')
+
+        write_file('packs/yet_another_pack/.pack_rubocop.yml', <<~YML)
+          Packs/RootNamespaceIsPackName:
+            Enabled: true
+        YML
+      end
+
+      it 'returns a config with the right packs in the include field' do
+        expect(config.keys).to eq(['Packs/RootNamespaceIsPackName'])
+        expect(config['Packs/RootNamespaceIsPackName'].keys).to eq(['Include'])
+        expect(config['Packs/RootNamespaceIsPackName']['Include'].sort).to eq(['packs/some_other_pack/**/*', 'packs/yet_another_pack/**/*'])
+      end
+    end
+
+    context 'packs with inclusions and exclusions' do
+      before do
+        write_package_yml('packs/some_pack')
+
+        write_file('packs/some_pack/.pack_rubocop.yml', <<~YML)
+          Packs/RootNamespaceIsPackName:
+            Enabled: false
+        YML
+
+        write_package_yml('packs/some_other_pack')
+
+        write_file('packs/some_other_pack/.pack_rubocop.yml', <<~YML)
+          Packs/RootNamespaceIsPackName:
+            Enabled: true
+        YML
+
+        write_file('packs/some_other_pack/.rubocop_todo.yml', <<~YML)
+          Packs/RootNamespaceIsPackName:
+            Exclude:
+              - packs/some_other_pack/my_file.rb
+        YML
+
+        write_package_yml('packs/yet_another_pack')
+
+        write_file('packs/yet_another_pack/.pack_rubocop.yml', <<~YML)
+          Packs/RootNamespaceIsPackName:
+            Enabled: true
+        YML
+
+        write_file('packs/yet_another_pack/.rubocop_todo.yml', <<~YML)
+          Packs/RootNamespaceIsPackName:
+            Exclude:
+              - packs/yet_another_pack/my_file.rb
+        YML
+      end
+
+      it 'correctly merges into a single rule specification' do
+        expect(config.keys).to eq(['Packs/RootNamespaceIsPackName'])
+        expect(config['Packs/RootNamespaceIsPackName'].keys.sort).to eq(%w[Exclude Include])
+        expect(config['Packs/RootNamespaceIsPackName']['Include'].sort).to eq(['packs/some_other_pack/**/*', 'packs/yet_another_pack/**/*'])
+        expect(config['Packs/RootNamespaceIsPackName']['Exclude'].sort).to eq(['packs/some_other_pack/my_file.rb', 'packs/yet_another_pack/my_file.rb'])
+      end
+    end
   end
 
   describe 'validations' do
