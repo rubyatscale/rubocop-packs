@@ -117,7 +117,7 @@ module RuboCop
             end
           end
 
-          pack_rubocop = package.directory.join('.pack_rubocop.yml')
+          pack_rubocop = package.directory.join(PACK_LEVEL_RUBOCOP_YML)
           next unless pack_rubocop.exist?
 
           loaded_pack_rubocop = YAML.load_file(pack_rubocop)
