@@ -8,15 +8,15 @@ Packs/ClassMethodsAsPublicApis:
   FailureMode: default
 
 Packs/RootNamespaceIsPackName:
-  Enabled: true
+  Enabled: false
   FailureMode: default
 
 Packs/TypedPublicApis:
-  Enabled: true
+  Enabled: false
   FailureMode: default
 
 Packs/DocumentedPublicApis:
-  Enabled: true
+  Enabled: false
   FailureMode: default
 
 PackwerkLite/Privacy:
