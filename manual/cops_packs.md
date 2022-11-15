@@ -42,7 +42,7 @@ FailureMode | `default` | String
 
 Enabled by default | Safe | Supports autocorrection | VersionAdded | VersionChanged
 --- | --- | --- | --- | ---
-Enabled | Yes | No | - | -
+Disabled | Yes | No | - | -
 
 This cop helps ensure that each pack has a documented public API
 The following examples assume this basic setup.
@@ -74,7 +74,7 @@ FailureMode | `default` | String
 
 Enabled by default | Safe | Supports autocorrection | VersionAdded | VersionChanged
 --- | --- | --- | --- | ---
-Enabled | Yes | No | - | -
+Disabled | Yes | No | - | -
 
 This cop helps ensure that each pack exposes one namespace.
 Note that this cop doesn't necessarily expect you to be using stimpack (https://github.com/rubyatscale/stimpack),
@@ -104,7 +104,7 @@ FailureMode | `default` | String
 
 Enabled by default | Safe | Supports autocorrection | VersionAdded | VersionChanged
 --- | --- | --- | --- | ---
-Enabled | Yes | Yes  | - | -
+Disabled | Yes | Yes  | - | -
 
 This cop helps ensure that each pack's public API is strictly typed, enforcing strong boundaries.
 
