@@ -5,6 +5,14 @@ require 'rubocop/packs/private'
 
 module RuboCop
   module Packs
+    # Pack-level rubocop and rubocop_todo YML files are named differently because they are not integrated
+    # into rubocop in the standard way. For example, we could call these the standard `.rubocop.yml` and
+    # `.rubocop_todo.yml`. However, this introduces a number of path relativity issues (https://docs.rubocop.org/rubocop/configuration.html#path-relativity)
+    # that make this approach not possible. Therefore, for pack level rubocops, we name them in a way that mirrors packwerk `package_todo.yml` files
+    # for consistency and to ensure that thes are not read by rubocop except via the ERB templating mechanism.
+    PACK_LEVEL_RUBOCOP_YML = 'package_rubocop.yml'
+    PACK_LEVEL_RUBOCOP_TODO_YML = 'package_rubocop_todo.yml'
+
     class Error < StandardError; end
     extend T::Sig
 
@@ -45,7 +53,7 @@ module RuboCop
 
       new_rubocop_todo_exclusions.each do |pack_name, file_hash|
         pack = T.must(ParsePackwerk.find(pack_name))
-        rubocop_todo_yml = pack.directory.join('.rubocop_todo.yml')
+        rubocop_todo_yml = pack.directory.join(PACK_LEVEL_RUBOCOP_TODO_YML)
         if rubocop_todo_yml.exist?
           rubocop_todo = YAML.load_file(rubocop_todo_yml)
         else
@@ -72,7 +80,7 @@ module RuboCop
     sig { params(packs: T::Array[ParsePackwerk::Package]).void }
     def self.set_default_rubocop_yml(packs:)
       packs.each do |pack|
-        rubocop_yml = Pathname.new(pack.directory.join('.rubocop.yml'))
+        rubocop_yml = Pathname.new(pack.directory.join(PACK_LEVEL_RUBOCOP_YML))
         rubocop_yml_hash = {}
         config.required_pack_level_cops.each do |cop|
           rubocop_yml_hash[cop] = { 'Enabled' => true }
@@ -99,7 +107,7 @@ module RuboCop
         ParsePackwerk.all.each do |package|
           next if package.name == ParsePackwerk::ROOT_PACKAGE_NAME
 
-          rubocop_todo = package.directory.join('.rubocop_todo.yml')
+          rubocop_todo = package.directory.join(PACK_LEVEL_RUBOCOP_TODO_YML)
           if rubocop_todo.exist?
             loaded_rubocop_todo = YAML.load_file(rubocop_todo)
             loaded_rubocop_todo.each do |cop_name, key_config|
