@@ -16,9 +16,9 @@ RSpec.describe RuboCop::Packs do
       end
     end
 
-    let(:rubocop_yml) { ParsePackwerk.find('packs/my_pack').directory.join('.rubocop.yml') }
+    let(:rubocop_yml) { ParsePackwerk.find('packs/my_pack').directory.join('package_rubocop.yml') }
 
-    it 'generates a .rubocop.yml with the right required pack level cops' do
+    it 'generates a package_rubocop.yml with the right required pack level cops' do
       expect(rubocop_yml).to_not exist
       RuboCop::Packs.set_default_rubocop_yml(packs: ParsePackwerk.all)
       expect(rubocop_yml).to exist
@@ -28,7 +28,7 @@ RSpec.describe RuboCop::Packs do
                                                 })
     end
 
-    it 'formats the .rubocop.yml file nicely' do
+    it 'formats the package_rubocop.yml file nicely' do
       expect(rubocop_yml).to_not exist
       RuboCop::Packs.set_default_rubocop_yml(packs: ParsePackwerk.all)
       expect(rubocop_yml).to exist
@@ -43,7 +43,7 @@ RSpec.describe RuboCop::Packs do
   end
 
   describe 'auto_generate_rubocop_todo' do
-    let(:rubocop_todo_yml) { Pathname.new('packs/my_pack/.rubocop_todo.yml') }
+    let(:rubocop_todo_yml) { Pathname.new('packs/my_pack/package_rubocop_todo.yml') }
 
     before do
       write_package_yml('packs/my_pack')
@@ -118,7 +118,7 @@ RSpec.describe RuboCop::Packs do
       before do
         write_package_yml('packs/some_pack')
 
-        write_file('packs/some_pack/.rubocop_todo.yml', <<~YML)
+        write_file('packs/some_pack/package_rubocop_todo.yml', <<~YML)
           Packs/RootNamespaceIsPackName:
             Exclude:
               - 'packs/some_pack/app/services/bad_namespace.rb'
@@ -142,7 +142,7 @@ RSpec.describe RuboCop::Packs do
       before do
         write_package_yml('packs/some_pack')
 
-        write_file('packs/some_pack/.rubocop_todo.yml', <<~YML)
+        write_file('packs/some_pack/package_rubocop_todo.yml', <<~YML)
           Packs/RootNamespaceIsPackName:
             Exclude:
               - 'packs/some_pack/app/services/bad_namespace.rb'
@@ -150,7 +150,7 @@ RSpec.describe RuboCop::Packs do
 
         write_package_yml('packs/some_other_pack')
 
-        write_file('packs/some_other_pack/.rubocop_todo.yml', <<~YML)
+        write_file('packs/some_other_pack/package_rubocop_todo.yml', <<~YML)
           Packs/RootNamespaceIsPackName:
             Exclude:
               - 'packs/some_other_pack/app/services/bad_namespace.rb'
@@ -234,7 +234,7 @@ RSpec.describe RuboCop::Packs do
             Enabled: true
         YML
 
-        write_file('packs/some_other_pack/.rubocop_todo.yml', <<~YML)
+        write_file('packs/some_other_pack/package_rubocop_todo.yml', <<~YML)
           Packs/RootNamespaceIsPackName:
             Exclude:
               - packs/some_other_pack/my_file.rb
@@ -247,7 +247,7 @@ RSpec.describe RuboCop::Packs do
             Enabled: true
         YML
 
-        write_file('packs/yet_another_pack/.rubocop_todo.yml', <<~YML)
+        write_file('packs/yet_another_pack/package_rubocop_todo.yml', <<~YML)
           Packs/RootNamespaceIsPackName:
             Exclude:
               - packs/yet_another_pack/my_file.rb
@@ -265,7 +265,7 @@ RSpec.describe RuboCop::Packs do
 
   describe 'validations' do
     let(:errors) { RuboCop::Packs.validate }
-    describe 'pack based .rubocop_todo.yml files' do
+    describe 'pack based package_rubocop_todo.yml files' do
       context 'no packs' do
         it 'returns an empty list' do
           expect(errors).to be_empty
@@ -278,7 +278,7 @@ RSpec.describe RuboCop::Packs do
 
           write_file('packs/some_pack/app/services/bad_namespace.rb', '')
 
-          write_file('packs/some_pack/.rubocop_todo.yml', <<~YML)
+          write_file('packs/some_pack/package_rubocop_todo.yml', <<~YML)
             Packs/RootNamespaceIsPackName:
               Exclude:
                 - 'packs/some_pack/app/services/bad_namespace.rb'
@@ -294,7 +294,7 @@ RSpec.describe RuboCop::Packs do
         before do
           write_package_yml('packs/some_pack')
 
-          write_file('packs/some_pack/.rubocop_todo.yml', <<~YML)
+          write_file('packs/some_pack/package_rubocop_todo.yml', <<~YML)
             Packs/RootNamespaceIsPackName:
               Exclude:
                 - 'packs/some_pack/app/services/bad_namespace.rb'
@@ -309,7 +309,7 @@ RSpec.describe RuboCop::Packs do
       context 'one pack with disallowed cop key' do
         before do
           write_package_yml('packs/some_pack')
-          write_file('packs/some_pack/.rubocop_todo.yml', <<~YML)
+          write_file('packs/some_pack/package_rubocop_todo.yml', <<~YML)
             SomeOtherCop:
               Exclude:
                 - 'packs/some_pack/app/services/bad_namespace.rb'
@@ -318,9 +318,9 @@ RSpec.describe RuboCop::Packs do
 
         it 'returns an error' do
           error = <<~ERROR
-            packs/some_pack/.rubocop_todo.yml contains invalid configuration for SomeOtherCop.
+            packs/some_pack/package_rubocop_todo.yml contains invalid configuration for SomeOtherCop.
             Please only configure the following cops on a per-pack basis: ["Packs/RootNamespaceIsPackName", "Packs/TypedPublicApi", "Packs/ClassMethodsAsPublicApis"]"
-            For ignoring other cops, please instead modify the top-level .rubocop_todo.yml file.
+            For ignoring other cops, please instead modify the top-level package_rubocop_todo.yml file.
           ERROR
           expect(errors).to eq([error])
         end
@@ -329,7 +329,7 @@ RSpec.describe RuboCop::Packs do
       context 'one pack with disallowed configuration key' do
         before do
           write_package_yml('packs/some_pack')
-          write_file('packs/some_pack/.rubocop_todo.yml', <<~YML)
+          write_file('packs/some_pack/package_rubocop_todo.yml', <<~YML)
             Packs/RootNamespaceIsPackName:
               SomethingElse:
                 - 'packs/some_pack/app/services/bad_namespace.rb'
@@ -338,7 +338,7 @@ RSpec.describe RuboCop::Packs do
 
         it 'returns an error' do
           error = <<~ERROR
-            packs/some_pack/.rubocop_todo.yml contains invalid configuration for Packs/RootNamespaceIsPackName.
+            packs/some_pack/package_rubocop_todo.yml contains invalid configuration for Packs/RootNamespaceIsPackName.
             Please ensure the only configuration for Packs/RootNamespaceIsPackName is `Exclude`
           ERROR
           expect(errors).to eq([error])
@@ -351,7 +351,7 @@ RSpec.describe RuboCop::Packs do
 
           write_package_yml('packs/some_other_pack')
 
-          write_file('packs/some_pack/.rubocop_todo.yml', <<~YML)
+          write_file('packs/some_pack/package_rubocop_todo.yml', <<~YML)
             Packs/RootNamespaceIsPackName:
               Exclude:
                 - 'packs/some_other_pack/app/services/bad_namespace.rb'
@@ -360,7 +360,7 @@ RSpec.describe RuboCop::Packs do
 
         it 'returns an error' do
           error = <<~ERROR
-            packs/some_pack/.rubocop_todo.yml contains invalid configuration for Packs/RootNamespaceIsPackName.
+            packs/some_pack/package_rubocop_todo.yml contains invalid configuration for Packs/RootNamespaceIsPackName.
             packs/some_other_pack/app/services/bad_namespace.rb does not belong to packs/some_pack. Please ensure you only add exclusions
             for files within this pack.
           ERROR
@@ -373,28 +373,34 @@ RSpec.describe RuboCop::Packs do
         before do
           write_package_yml('packs/some_pack')
 
-          write_file('packs/some_pack/.rubocop.yml', <<~YML)
-            inherit_from: "../../.base_rubocop.yml"
+          write_file('packs/some_pack/package_rubocop.yml', <<~YML)
+            inherit_from: "something_else.yml"
           YML
         end
 
-        it 'has no errors' do
-          expect(errors).to be_empty
+        it 'has an error' do
+          error = <<~ERROR
+            packs/some_pack/package_rubocop.yml contains invalid configuration for inherit_from.
+            Please only configure the following cops on a per-pack basis: ["Packs/RootNamespaceIsPackName", "Packs/TypedPublicApi", "Packs/ClassMethodsAsPublicApis"]"
+            For ignoring other cops, please instead modify the top-level .rubocop.yml file.
+          ERROR
+
+          expect(errors).to eq([error])
         end
       end
     end
 
-    describe 'pack based .rubocop.yml files' do
+    describe 'pack based package_rubocop.yml files' do
       context 'no packs' do
         it 'returns an empty list' do
           expect(errors).to be_empty
         end
       end
 
-      context 'one pack with valid .rubocop.yml' do
+      context 'one pack with valid package_rubocop.yml' do
         before do
           write_package_yml('packs/some_pack')
-          write_file('packs/some_pack/.rubocop.yml', <<~YML)
+          write_file('packs/some_pack/package_rubocop.yml', <<~YML)
             Packs/RootNamespaceIsPackName:
               Enabled: true
           YML
@@ -405,10 +411,10 @@ RSpec.describe RuboCop::Packs do
         end
       end
 
-      context 'one pack with valid .rubocop.yml with FailureMode specified' do
+      context 'one pack with valid package_rubocop.yml with FailureMode specified' do
         before do
           write_package_yml('packs/some_pack')
-          write_file('packs/some_pack/.rubocop.yml', <<~YML)
+          write_file('packs/some_pack/package_rubocop.yml', <<~YML)
             Packs/RootNamespaceIsPackName:
               Enabled: true
               FailureMode: strict
@@ -423,7 +429,7 @@ RSpec.describe RuboCop::Packs do
       context 'one pack with disallowed cop key' do
         before do
           write_package_yml('packs/some_pack')
-          write_file('packs/some_pack/.rubocop.yml', <<~YML)
+          write_file('packs/some_pack/package_rubocop.yml', <<~YML)
             SomeOtherCop:
               Enabled: true
           YML
@@ -431,7 +437,7 @@ RSpec.describe RuboCop::Packs do
 
         it 'returns an error' do
           error = <<~ERROR
-            packs/some_pack/.rubocop.yml contains invalid configuration for SomeOtherCop.
+            packs/some_pack/package_rubocop.yml contains invalid configuration for SomeOtherCop.
             Please only configure the following cops on a per-pack basis: ["Packs/RootNamespaceIsPackName", "Packs/TypedPublicApi", "Packs/ClassMethodsAsPublicApis"]"
             For ignoring other cops, please instead modify the top-level .rubocop.yml file.
           ERROR
@@ -442,7 +448,7 @@ RSpec.describe RuboCop::Packs do
       context 'one pack with disallowed configuration key' do
         before do
           write_package_yml('packs/some_pack')
-          write_file('packs/some_pack/.rubocop.yml', <<~YML)
+          write_file('packs/some_pack/package_rubocop.yml', <<~YML)
             Packs/RootNamespaceIsPackName:
               Exclude:
                 - 'packs/some_pack/app/services/bad_namespace.rb'
@@ -451,7 +457,7 @@ RSpec.describe RuboCop::Packs do
 
         it 'returns an error' do
           error = <<~ERROR
-            packs/some_pack/.rubocop.yml contains invalid configuration for Packs/RootNamespaceIsPackName.
+            packs/some_pack/package_rubocop.yml contains invalid configuration for Packs/RootNamespaceIsPackName.
             Please ensure the only configuration for Packs/RootNamespaceIsPackName is `Enabled` and `FailureMode`
           ERROR
           expect(errors).to eq([error])
@@ -467,7 +473,7 @@ RSpec.describe RuboCop::Packs do
 
         before do
           write_package_yml('packs/some_pack')
-          write_file('packs/some_pack/.rubocop.yml', <<~YML)
+          write_file('packs/some_pack/package_rubocop.yml', <<~YML)
             Packs/RootNamespaceIsPackName:
               Enabled: true
           YML
@@ -475,14 +481,14 @@ RSpec.describe RuboCop::Packs do
 
         it 'returns an error' do
           error = <<~ERROR
-            packs/some_pack/.rubocop.yml is missing configuration for Packs/TypedPublicApi.
+            packs/some_pack/package_rubocop.yml is missing configuration for Packs/TypedPublicApi.
           ERROR
           expect(errors).to eq([error])
         end
       end
 
       # For now, this is allowed. We might add this restriction back once we've completed the migration off of `package_protections`
-      context 'one pack without a .rubocop.yml' do
+      context 'one pack without a package_rubocop.yml' do
         before do
           write_package_yml('packs/some_pack')
         end
@@ -495,19 +501,19 @@ RSpec.describe RuboCop::Packs do
 
     describe 'FailureMode: strict' do
       context 'package has specified FailureMode: strict for a cop' do
-        context 'package has pack-based .rubocop_todo.yml entries for that cop' do
+        context 'package has pack-based package_rubocop_todo.yml entries for that cop' do
           before do
             write_package_yml('packs/some_pack')
 
             write_file('packs/some_pack/app/services/some_file.rb', '')
 
-            write_file('packs/some_pack/.rubocop.yml', <<~YML)
+            write_file('packs/some_pack/package_rubocop.yml', <<~YML)
               Packs/RootNamespaceIsPackName:
                 Enabled: true
                 FailureMode: strict
             YML
 
-            write_file('packs/some_pack/.rubocop_todo.yml', <<~YML)
+            write_file('packs/some_pack/package_rubocop_todo.yml', <<~YML)
               Packs/RootNamespaceIsPackName:
                 Exclude:
                   - 'packs/some_pack/app/services/some_file.rb'
@@ -516,24 +522,24 @@ RSpec.describe RuboCop::Packs do
 
           it 'returns an empty list' do
             expect(errors).to eq([
-                                   'packs/some_pack has set `Packs/RootNamespaceIsPackName` to `FailureMode: strict` in `packs/some_pack/.rubocop.yml`, forbidding new exceptions. Please either remove `packs/some_pack/app/services/some_file.rb` from the top-level and pack-specific `.rubocop_todo.yml` files or remove `FailureMode: strict`.'
+                                   'packs/some_pack has set `Packs/RootNamespaceIsPackName` to `FailureMode: strict` in `packs/some_pack/package_rubocop.yml`, forbidding new exceptions. Please either remove `packs/some_pack/app/services/some_file.rb` from the top-level and pack-specific `package_rubocop_todo.yml` files or remove `FailureMode: strict`.'
                                  ])
           end
         end
 
-        context 'package has top-level .rubocop_todo.yml entries for that cop' do
+        context 'package has top-level package_rubocop_todo.yml entries for that cop' do
           before do
             write_package_yml('packs/some_pack')
 
             write_file('packs/some_pack/app/services/some_file.rb', '')
 
-            write_file('packs/some_pack/.rubocop.yml', <<~YML)
+            write_file('packs/some_pack/package_rubocop.yml', <<~YML)
               Packs/RootNamespaceIsPackName:
                 Enabled: true
                 FailureMode: strict
             YML
 
-            write_file('.rubocop_todo.yml', <<~YML)
+            write_file('package_rubocop_todo.yml', <<~YML)
               Packs/RootNamespaceIsPackName:
                 Exclude:
                   - 'packs/some_pack/app/services/some_file.rb'
@@ -542,7 +548,7 @@ RSpec.describe RuboCop::Packs do
 
           it 'returns an empty list' do
             expect(errors).to eq([
-                                   'packs/some_pack has set `Packs/RootNamespaceIsPackName` to `FailureMode: strict` in `packs/some_pack/.rubocop.yml`, forbidding new exceptions. Please either remove `packs/some_pack/app/services/some_file.rb` from the top-level and pack-specific `.rubocop_todo.yml` files or remove `FailureMode: strict`.'
+                                   'packs/some_pack has set `Packs/RootNamespaceIsPackName` to `FailureMode: strict` in `packs/some_pack/package_rubocop.yml`, forbidding new exceptions. Please either remove `packs/some_pack/app/services/some_file.rb` from the top-level and pack-specific `package_rubocop_todo.yml` files or remove `FailureMode: strict`.'
                                  ])
           end
         end
