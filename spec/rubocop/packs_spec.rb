@@ -168,7 +168,7 @@ RSpec.describe RuboCop::Packs do
       before do
         write_package_yml('packs/some_pack')
 
-        write_file('packs/some_pack/.pack_rubocop.yml', <<~YML)
+        write_file('packs/some_pack/package_rubocop.yml', <<~YML)
           Packs/RootNamespaceIsPackName:
             Enabled: true
         YML
@@ -191,21 +191,21 @@ RSpec.describe RuboCop::Packs do
       before do
         write_package_yml('packs/some_pack')
 
-        write_file('packs/some_pack/.pack_rubocop.yml', <<~YML)
+        write_file('packs/some_pack/package_rubocop.yml', <<~YML)
           Packs/RootNamespaceIsPackName:
             Enabled: false
         YML
 
         write_package_yml('packs/some_other_pack')
 
-        write_file('packs/some_other_pack/.pack_rubocop.yml', <<~YML)
+        write_file('packs/some_other_pack/package_rubocop.yml', <<~YML)
           Packs/RootNamespaceIsPackName:
             Enabled: true
         YML
 
         write_package_yml('packs/yet_another_pack')
 
-        write_file('packs/yet_another_pack/.pack_rubocop.yml', <<~YML)
+        write_file('packs/yet_another_pack/package_rubocop.yml', <<~YML)
           Packs/RootNamespaceIsPackName:
             Enabled: true
         YML
@@ -222,14 +222,14 @@ RSpec.describe RuboCop::Packs do
       before do
         write_package_yml('packs/some_pack')
 
-        write_file('packs/some_pack/.pack_rubocop.yml', <<~YML)
+        write_file('packs/some_pack/package_rubocop.yml', <<~YML)
           Packs/RootNamespaceIsPackName:
             Enabled: false
         YML
 
         write_package_yml('packs/some_other_pack')
 
-        write_file('packs/some_other_pack/.pack_rubocop.yml', <<~YML)
+        write_file('packs/some_other_pack/package_rubocop.yml', <<~YML)
           Packs/RootNamespaceIsPackName:
             Enabled: true
         YML
@@ -242,7 +242,7 @@ RSpec.describe RuboCop::Packs do
 
         write_package_yml('packs/yet_another_pack')
 
-        write_file('packs/yet_another_pack/.pack_rubocop.yml', <<~YML)
+        write_file('packs/yet_another_pack/package_rubocop.yml', <<~YML)
           Packs/RootNamespaceIsPackName:
             Enabled: true
         YML
