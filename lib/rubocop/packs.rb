@@ -23,6 +23,40 @@ module RuboCop
 
     private_constant(:CONFIG_DEFAULT, :PROJECT_ROOT)
 
+    class Offense < T::Struct
+      extend T::Sig
+
+      const :cop_name, String
+      const :filepath, String
+
+      sig { returns(ParsePackwerk::Package) }
+      def pack
+        ParsePackwerk.package_from_path(filepath)
+      end
+    end
+
+    sig { params(paths: T::Array[String], cop_names: T::Array[String]).returns(T::Array[Offense]) }
+    def self.offenses_for(paths:, cop_names:)
+      path_arguments = paths.join(' ')
+      cop_arguments = cop_names.join(',')
+      # I think we can potentially use `RuboCop::CLI.new(args)` for this to avoid shelling out and starting another process that needs to reload the bundle
+      args = [path_arguments, "--only=#{cop_arguments}", '--format=json']
+      puts "Executing: bundle exec rubocop #{args.join(' ')}"
+      json = JSON.parse(Private.execute_rubocop(args))
+      offenses = T.let([], T::Array[Offense])
+      json['files'].each do |file_hash|
+        filepath = file_hash['path']
+        file_hash['offenses'].each do |offense_hash|
+          offenses << Offense.new(
+            cop_name: offense_hash['cop_name'],
+            filepath: filepath
+          )
+        end
+      end
+
+      offenses
+    end
+
     #
     # Ideally, this is API that is available to us via `rubocop` itself.
     # That is: the ability to preserve the location of `.rubocop_todo.yml` files and associate
@@ -30,40 +64,22 @@ module RuboCop
     #
     sig { params(packs: T::Array[ParsePackwerk::Package]).void }
     def self.auto_generate_rubocop_todo(packs:)
-      pack_arguments = packs.map(&:name).join(' ')
-      cop_arguments = config.permitted_pack_level_cops.join(',')
-      command = "bundle exec rubocop #{pack_arguments} --only=#{cop_arguments} --format=json"
-      puts "Executing: #{command}"
-      json = JSON.parse(`#{command}`)
-      new_rubocop_todo_exclusions = {}
-      json['files'].each do |file_hash|
-        filepath = file_hash['path']
-        pack = ParsePackwerk.package_from_path(filepath)
-        next if pack.name == ParsePackwerk::ROOT_PACKAGE_NAME
+      offenses = offenses_for(
+        paths: packs.map(&:name).reject { |name| name == ParsePackwerk::ROOT_PACKAGE_NAME },
+        cop_names: config.permitted_pack_level_cops
+      )
 
-        file_hash['offenses'].each do |offense_hash|
-          cop_name = offense_hash['cop_name']
-          next unless config.permitted_pack_level_cops.include?(cop_name)
-
-          new_rubocop_todo_exclusions[pack.name] ||= {}
-          new_rubocop_todo_exclusions[pack.name][filepath] ||= []
-          new_rubocop_todo_exclusions[pack.name][filepath] << cop_name
-        end
-      end
-
-      new_rubocop_todo_exclusions.each do |pack_name, file_hash|
-        pack = T.must(ParsePackwerk.find(pack_name))
+      offenses.group_by(&:pack).each do |pack, offenses_for_pack|
         rubocop_todo_yml = pack.directory.join(PACK_LEVEL_RUBOCOP_TODO_YML)
         if rubocop_todo_yml.exist?
           rubocop_todo = YAML.load_file(rubocop_todo_yml)
         else
           rubocop_todo = {}
         end
-        file_hash.each do |file, failing_cops|
-          failing_cops.each do |failing_cop|
-            rubocop_todo[failing_cop] ||= { 'Exclude' => [] }
-            rubocop_todo[failing_cop]['Exclude'] << file
-          end
+
+        offenses_for_pack.each do |offense|
+          rubocop_todo[offense.cop_name] ||= { 'Exclude' => [] }
+          rubocop_todo[offense.cop_name]['Exclude'] << offense.filepath
         end
 
         next if rubocop_todo.empty?
