@@ -63,7 +63,7 @@ module RuboCop
     # exclusions with the closest ancestor `.rubocop_todo.yml`
     #
     sig { params(packs: T::Array[ParsePackwerk::Package]).void }
-    def self.auto_generate_rubocop_todo(packs:)
+    def self.regenerate_todo(packs:)
       offenses = offenses_for(
         paths: packs.map(&:name).reject { |name| name == ParsePackwerk::ROOT_PACKAGE_NAME },
         cop_names: config.permitted_pack_level_cops
@@ -71,11 +71,8 @@ module RuboCop
 
       offenses.group_by(&:pack).each do |pack, offenses_for_pack|
         rubocop_todo_yml = pack.directory.join(PACK_LEVEL_RUBOCOP_TODO_YML)
-        if rubocop_todo_yml.exist?
-          rubocop_todo = YAML.load_file(rubocop_todo_yml)
-        else
-          rubocop_todo = {}
-        end
+        rubocop_todo_yml.delete if rubocop_todo_yml.exist?
+        rubocop_todo = {}
 
         offenses_for_pack.each do |offense|
           rubocop_todo[offense.cop_name] ||= { 'Exclude' => [] }

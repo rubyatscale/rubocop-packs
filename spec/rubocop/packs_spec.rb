@@ -4,7 +4,7 @@ RSpec.describe RuboCop::Packs do
   before do
     RuboCop::Packs.bust_cache!
     RuboCop::Packs.configure do |config|
-      config.permitted_pack_level_cops = ['Packs/RootNamespaceIsPackName', 'Packs/TypedPublicApi', 'Packs/ClassMethodsAsPublicApis']
+      config.permitted_pack_level_cops = ['Packs/RootNamespaceIsPackName', 'Packs/TypedPublicApis', 'Packs/ClassMethodsAsPublicApis']
     end
   end
 
@@ -42,12 +42,12 @@ RSpec.describe RuboCop::Packs do
     end
   end
 
-  describe 'auto_generate_rubocop_todo' do
+  describe 'regenerate_todo' do
     let(:rubocop_todo_yml) { Pathname.new('packs/my_pack/package_rubocop_todo.yml') }
 
     before do
       write_package_yml('packs/my_pack')
-      allow_any_instance_of(RuboCop::CLI).to receive(:run).with(['', '--only=Packs/RootNamespaceIsPackName,Packs/TypedPublicApi,Packs/ClassMethodsAsPublicApis', '--format=json']) do
+      allow_any_instance_of(RuboCop::CLI).to receive(:run).with(['', '--only=Packs/RootNamespaceIsPackName,Packs/TypedPublicApis,Packs/ClassMethodsAsPublicApis', '--format=json']) do
         json = {
           'files' => [
             {
@@ -63,7 +63,7 @@ RSpec.describe RuboCop::Packs do
     context 'pack has no current rubocop todo' do
       it 'creates the TODO' do
         expect(rubocop_todo_yml).to_not exist
-        RuboCop::Packs.auto_generate_rubocop_todo(packs: [])
+        RuboCop::Packs.regenerate_todo(packs: [])
         expect(rubocop_todo_yml).to exist
         expect(YAML.load_file(rubocop_todo_yml)).to eq(
           {
@@ -80,21 +80,20 @@ RSpec.describe RuboCop::Packs do
           YAML.dump(
             {
               'Packs/RootNamespaceIsPackName' => { 'Exclude' => ['packs/my_pack/path/to/existing_file.rb'] },
-              'Packs/TypedPublicApi' => { 'Exclude' => ['packs/my_pack/path/to/file.rb'] }
+              'Packs/TypedPublicApis' => { 'Exclude' => ['packs/my_pack/path/to/file.rb'] }
             }
           )
         )
       end
 
-      it 'creates the TODO' do
+      it 'recreates the TODO from scratch' do
         expect(rubocop_todo_yml).to exist
-        RuboCop::Packs.auto_generate_rubocop_todo(packs: [])
+        RuboCop::Packs.regenerate_todo(packs: [])
         expect(rubocop_todo_yml).to exist
         expect(YAML.load_file(rubocop_todo_yml)).to eq(
           {
-            'Packs/RootNamespaceIsPackName' => { 'Exclude' => ['packs/my_pack/path/to/existing_file.rb', 'packs/my_pack/path/to/file.rb'] },
-            'Packs/ClassMethodsAsPublicApis' => { 'Exclude' => ['packs/my_pack/path/to/file.rb'] },
-            'Packs/TypedPublicApi' => { 'Exclude' => ['packs/my_pack/path/to/file.rb'] }
+            'Packs/RootNamespaceIsPackName' => { 'Exclude' => ['packs/my_pack/path/to/file.rb'] },
+            'Packs/ClassMethodsAsPublicApis' => { 'Exclude' => ['packs/my_pack/path/to/file.rb'] }
           }
         )
       end
@@ -320,7 +319,7 @@ RSpec.describe RuboCop::Packs do
         it 'returns an error' do
           error = <<~ERROR
             packs/some_pack/package_rubocop_todo.yml contains invalid configuration for SomeOtherCop.
-            Please only configure the following cops on a per-pack basis: ["Packs/RootNamespaceIsPackName", "Packs/TypedPublicApi", "Packs/ClassMethodsAsPublicApis"]"
+            Please only configure the following cops on a per-pack basis: ["Packs/RootNamespaceIsPackName", "Packs/TypedPublicApis", "Packs/ClassMethodsAsPublicApis"]"
             For ignoring other cops, please instead modify the top-level package_rubocop_todo.yml file.
           ERROR
           expect(errors).to eq([error])
@@ -382,7 +381,7 @@ RSpec.describe RuboCop::Packs do
         it 'has an error' do
           error = <<~ERROR
             packs/some_pack/package_rubocop.yml contains invalid configuration for inherit_from.
-            Please only configure the following cops on a per-pack basis: ["Packs/RootNamespaceIsPackName", "Packs/TypedPublicApi", "Packs/ClassMethodsAsPublicApis"]"
+            Please only configure the following cops on a per-pack basis: ["Packs/RootNamespaceIsPackName", "Packs/TypedPublicApis", "Packs/ClassMethodsAsPublicApis"]"
             For ignoring other cops, please instead modify the top-level .rubocop.yml file.
           ERROR
 
@@ -439,7 +438,7 @@ RSpec.describe RuboCop::Packs do
         it 'returns an error' do
           error = <<~ERROR
             packs/some_pack/package_rubocop.yml contains invalid configuration for SomeOtherCop.
-            Please only configure the following cops on a per-pack basis: ["Packs/RootNamespaceIsPackName", "Packs/TypedPublicApi", "Packs/ClassMethodsAsPublicApis"]"
+            Please only configure the following cops on a per-pack basis: ["Packs/RootNamespaceIsPackName", "Packs/TypedPublicApis", "Packs/ClassMethodsAsPublicApis"]"
             For ignoring other cops, please instead modify the top-level .rubocop.yml file.
           ERROR
           expect(errors).to eq([error])
@@ -468,7 +467,7 @@ RSpec.describe RuboCop::Packs do
       context 'one pack with unspecified cops' do
         before do
           RuboCop::Packs.configure do |config|
-            config.required_pack_level_cops = ['Packs/RootNamespaceIsPackName', 'Packs/TypedPublicApi']
+            config.required_pack_level_cops = ['Packs/RootNamespaceIsPackName', 'Packs/TypedPublicApis']
           end
         end
 
@@ -482,7 +481,7 @@ RSpec.describe RuboCop::Packs do
 
         it 'returns an error' do
           error = <<~ERROR
-            packs/some_pack/package_rubocop.yml is missing configuration for Packs/TypedPublicApi.
+            packs/some_pack/package_rubocop.yml is missing configuration for Packs/TypedPublicApis.
           ERROR
           expect(errors).to eq([error])
         end
