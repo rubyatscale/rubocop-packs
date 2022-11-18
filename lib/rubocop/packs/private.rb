@@ -155,28 +155,27 @@ module RuboCop
         end
       end
 
-
-    sig { params(paths: T::Array[String], cop_names: T::Array[String]).returns(T::Array[Offense]) }
-    def self.offenses_for(paths:, cop_names:)
-      path_arguments = paths.join(' ')
-      cop_arguments = cop_names.join(',')
-      # I think we can potentially use `RuboCop::CLI.new(args)` for this to avoid shelling out and starting another process that needs to reload the bundle
-      args = [path_arguments, "--only=#{cop_arguments}", '--format=json']
-      puts "Executing: bundle exec rubocop #{args.join(' ')}"
-      json = JSON.parse(Private.execute_rubocop(args))
-      offenses = T.let([], T::Array[Offense])
-      json['files'].each do |file_hash|
-        filepath = file_hash['path']
-        file_hash['offenses'].each do |offense_hash|
-          offenses << Offense.new(
-            cop_name: offense_hash['cop_name'],
-            filepath: filepath
-          )
+      sig { params(paths: T::Array[String], cop_names: T::Array[String]).returns(T::Array[Offense]) }
+      def self.offenses_for(paths:, cop_names:)
+        path_arguments = paths.join(' ')
+        cop_arguments = cop_names.join(',')
+        # I think we can potentially use `RuboCop::CLI.new(args)` for this to avoid shelling out and starting another process that needs to reload the bundle
+        args = [path_arguments, "--only=#{cop_arguments}", '--format=json']
+        puts "Executing: bundle exec rubocop #{args.join(' ')}"
+        json = JSON.parse(Private.execute_rubocop(args))
+        offenses = T.let([], T::Array[Offense])
+        json['files'].each do |file_hash|
+          filepath = file_hash['path']
+          file_hash['offenses'].each do |offense_hash|
+            offenses << Offense.new(
+              cop_name: offense_hash['cop_name'],
+              filepath: filepath
+            )
+          end
         end
-      end
 
-      offenses
-    end
+        offenses
+      end
 
       sig { params(block: T.untyped).returns(String) }
       def self.with_captured_stdout(&block)
