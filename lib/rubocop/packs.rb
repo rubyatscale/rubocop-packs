@@ -5,6 +5,8 @@ require 'rubocop/packs/private'
 
 module RuboCop
   module Packs
+    extend T::Sig
+
     # Pack-level rubocop and rubocop_todo YML files are named differently because they are not integrated
     # into rubocop in the standard way. For example, we could call these the standard `.rubocop.yml` and
     # `.rubocop_todo.yml`. However, this introduces a number of path relativity issues (https://docs.rubocop.org/rubocop/configuration.html#path-relativity)
@@ -13,9 +15,6 @@ module RuboCop
     PACK_LEVEL_RUBOCOP_YML = 'package_rubocop.yml'
     PACK_LEVEL_RUBOCOP_TODO_YML = 'package_rubocop_todo.yml'
 
-    extend T::Sig
-
-    # Your code goes here...
     PROJECT_ROOT   = T.let(Pathname.new(__dir__).parent.parent.expand_path.freeze, Pathname)
     CONFIG_DEFAULT = T.let(PROJECT_ROOT.join('config', 'default.yml').freeze, Pathname)
     CONFIG         = T.let(YAML.safe_load(CONFIG_DEFAULT.read).freeze, T.untyped)
