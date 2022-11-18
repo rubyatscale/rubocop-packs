@@ -47,8 +47,8 @@ RSpec.describe RuboCop::Packs do
 
     before do
       write_package_yml('packs/my_pack')
-      allow(RuboCop::Packs).to receive(:`).with('bundle exec rubocop  --only=Packs/RootNamespaceIsPackName,Packs/TypedPublicApi,Packs/ClassMethodsAsPublicApis --format=json').and_return(
-        {
+      allow_any_instance_of(RuboCop::CLI).to receive(:run).with(['', '--only=Packs/RootNamespaceIsPackName,Packs/TypedPublicApi,Packs/ClassMethodsAsPublicApis', '--format=json']) do
+        json = {
           'files' => [
             {
               'path' => 'packs/my_pack/path/to/file.rb',
@@ -56,7 +56,8 @@ RSpec.describe RuboCop::Packs do
             }
           ]
         }.to_json
-      )
+        puts json
+      end
     end
 
     context 'pack has no current rubocop todo' do

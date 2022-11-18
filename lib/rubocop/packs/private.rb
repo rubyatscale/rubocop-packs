@@ -146,6 +146,23 @@ module RuboCop
 
         errors
       end
+
+      sig { params(args: T.untyped).returns(String) }
+      def self.execute_rubocop(args)
+        with_captured_stdout do
+          RuboCop::CLI.new.run(args)
+        end
+      end
+
+      sig { params(block: T.untyped).returns(String) }
+      def self.with_captured_stdout(&block)
+        original_stdout = $stdout  # capture previous value of $stdout
+        $stdout = StringIO.new     # assign a string buffer to $stdout
+        yield                      # perform the body of the user code
+        $stdout.string             # return the contents of the string buffer
+      ensure
+        $stdout = original_stdout  # restore $stdout to its previous value
+      end
     end
 
     private_constant :Private
