@@ -13,7 +13,6 @@ module RuboCop
     PACK_LEVEL_RUBOCOP_YML = 'package_rubocop.yml'
     PACK_LEVEL_RUBOCOP_TODO_YML = 'package_rubocop_todo.yml'
 
-    class Error < StandardError; end
     extend T::Sig
 
     # Your code goes here...
