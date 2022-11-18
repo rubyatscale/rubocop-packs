@@ -60,17 +60,44 @@ module RuboCop
     # That is: the ability to preserve the location of `.rubocop_todo.yml` files and associate
     # exclusions with the closest ancestor `.rubocop_todo.yml`
     #
-    sig { params(packs: T::Array[ParsePackwerk::Package]).void }
-    def self.regenerate_todo(packs:)
+    sig { params(packs: T::Array[ParsePackwerk::Package], files: T::Array[String]).void }
+    def self.regenerate_todo(packs: [], files: [])
+      paths = packs.empty? ? files : packs.map(&:name).reject { |name| name == ParsePackwerk::ROOT_PACKAGE_NAME }
       offenses = offenses_for(
-        paths: packs.map(&:name).reject { |name| name == ParsePackwerk::ROOT_PACKAGE_NAME },
+        paths: paths,
         cop_names: config.permitted_pack_level_cops
       )
 
       offenses.group_by(&:pack).each do |pack, offenses_for_pack|
+        next if pack.name == ParsePackwerk::ROOT_PACKAGE_NAME
+
         rubocop_todo_yml = pack.directory.join(PACK_LEVEL_RUBOCOP_TODO_YML)
-        rubocop_todo_yml.delete if rubocop_todo_yml.exist?
-        rubocop_todo = {}
+        # If the user is passing in packs, then regenerate from scratch.
+        if packs.any? && rubocop_todo_yml.exist?
+          rubocop_todo_yml.delete
+          rubocop_todo = {}
+        elsif rubocop_todo_yml.exist?
+          rubocop_todo = YAML.load_file(rubocop_todo_yml)
+        else
+          rubocop_todo = {}
+        end
+
+        offenses_for_pack.each do |offense|
+          rubocop_todo[offense.cop_name] ||= { 'Exclude' => [] }
+          rubocop_todo[offense.cop_name]['Exclude'] << offense.filepath
+        end
+
+        next if rubocop_todo.empty?
+
+        rubocop_todo_yml.write(YAML.dump(rubocop_todo))
+      end
+    end
+
+    sig { params(offenses: T::Array[Offense]).void }
+    def self.add_offenses(offenses)
+      offenses.group_by(&:pack).each do |pack, offenses_for_pack|
+        rubocop_todo_yml = pack.directory.join(PACK_LEVEL_RUBOCOP_TODO_YML)
+        rubocop_todo = rubocop_todo_yml.exist? ? YAML.load_file(rubocop_todo_yml) : {}
 
         offenses_for_pack.each do |offense|
           rubocop_todo[offense.cop_name] ||= { 'Exclude' => [] }
