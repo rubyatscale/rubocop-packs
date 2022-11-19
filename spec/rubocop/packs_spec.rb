@@ -116,13 +116,81 @@ RSpec.describe RuboCop::Packs do
       end
     end
 
-    context 'regenerating TODO for files' do
+    context 'regenerating TODO for one file' do
       context 'pack has no current rubocop todo' do
         before { write_file('packs/my_pack/package_rubocop.yml') }
 
         it 'creates the TODO' do
           expect(rubocop_todo_yml).to_not exist
           RuboCop::Packs.regenerate_todo(files: ['packs/my_pack/path/to/file.rb'])
+          expect(rubocop_todo_yml).to exist
+          expect(YAML.load_file(rubocop_todo_yml)).to eq(
+            {
+              'Packs/RootNamespaceIsPackName' => { 'Exclude' => ['packs/my_pack/path/to/file.rb'] },
+              'Packs/ClassMethodsAsPublicApis' => { 'Exclude' => ['packs/my_pack/path/to/file.rb'] }
+            }
+          )
+        end
+      end
+
+      context 'pack does not use pack-based rubocop' do
+        it 'does not create the TODO' do
+          expect(rubocop_todo_yml).to_not exist
+          RuboCop::Packs.regenerate_todo(files: ['packs/my_pack/path/to/file.rb'])
+          expect(rubocop_todo_yml).to_not exist
+        end
+      end
+
+      context 'pack has an existing rubocop todo' do
+        before do
+          rubocop_todo_yml.write(
+            YAML.dump(
+              {
+                'Packs/RootNamespaceIsPackName' => { 'Exclude' => ['packs/my_pack/path/to/existing_file.rb'] },
+                'Packs/TypedPublicApis' => { 'Exclude' => ['packs/my_pack/path/to/file.rb'] }
+              }
+            )
+          )
+          write_file('packs/my_pack/package_rubocop.yml')
+        end
+
+        it 'adds to the TODO with the new files' do
+          expect(rubocop_todo_yml).to exist
+          RuboCop::Packs.regenerate_todo(files: ['packs/my_pack/path/to/file.rb'])
+          expect(rubocop_todo_yml).to exist
+          expect(YAML.load_file(rubocop_todo_yml)).to eq(
+            {
+              'Packs/RootNamespaceIsPackName' => { 'Exclude' => ['packs/my_pack/path/to/existing_file.rb', 'packs/my_pack/path/to/file.rb'] },
+              'Packs/TypedPublicApis' => { 'Exclude' => ['packs/my_pack/path/to/file.rb'] },
+              'Packs/ClassMethodsAsPublicApis' => { 'Exclude' => ['packs/my_pack/path/to/file.rb'] }
+            }
+          )
+        end
+      end
+    end
+
+    context 'regenerating TODO for multiple files' do
+      before do
+        rubocop_json = {
+          'files' => [
+            {
+              'path' => 'packs/my_pack/path/to/file.rb',
+              'offenses' => [{ 'cop_name' => 'Packs/RootNamespaceIsPackName' }, { 'cop_name' => 'Packs/ClassMethodsAsPublicApis' }]
+            }
+          ]
+        }.to_json
+
+        allow_any_instance_of(RuboCop::CLI).to receive(:run).with(['packs/my_pack/path/to/file.rb', 'packs/my_pack/path/to/other_file.rb', '--only=Packs/RootNamespaceIsPackName,Packs/TypedPublicApis,Packs/ClassMethodsAsPublicApis', '--format=json']) do
+          puts rubocop_json
+        end
+      end
+
+      context 'pack has no current rubocop todo' do
+        before { write_file('packs/my_pack/package_rubocop.yml') }
+
+        it 'creates the TODO' do
+          expect(rubocop_todo_yml).to_not exist
+          RuboCop::Packs.regenerate_todo(files: ['packs/my_pack/path/to/file.rb', 'packs/my_pack/path/to/other_file.rb'])
           expect(rubocop_todo_yml).to exist
           expect(YAML.load_file(rubocop_todo_yml)).to eq(
             {
