@@ -157,10 +157,9 @@ module RuboCop
 
       sig { params(paths: T::Array[String], cop_names: T::Array[String]).returns(T::Array[Offense]) }
       def self.offenses_for(paths:, cop_names:)
-        path_arguments = paths.join(' ')
         cop_arguments = cop_names.join(',')
         # I think we can potentially use `RuboCop::CLI.new(args)` for this to avoid shelling out and starting another process that needs to reload the bundle
-        args = [path_arguments, "--only=#{cop_arguments}", '--format=json']
+        args = [*paths, "--only=#{cop_arguments}", '--format=json']
         puts "Executing: bundle exec rubocop #{args.join(' ')}"
         json = JSON.parse(Private.execute_rubocop(args))
         offenses = T.let([], T::Array[Offense])
