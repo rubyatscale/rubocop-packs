@@ -148,20 +148,22 @@ module RuboCop
         errors
       end
 
-      sig { params(args: T.untyped).returns(String) }
+      sig { params(args: T.untyped).void }
       def self.execute_rubocop(args)
-        with_captured_stdout do
-          RuboCop::CLI.new.run(args)
-        end
+        RuboCop::CLI.new.run(args)
       end
 
       sig { params(paths: T::Array[String], cop_names: T::Array[String]).returns(T::Array[Offense]) }
       def self.offenses_for(paths:, cop_names:)
         cop_arguments = cop_names.join(',')
         # I think we can potentially use `RuboCop::CLI.new(args)` for this to avoid shelling out and starting another process that needs to reload the bundle
-        args = [*paths, "--only=#{cop_arguments}", '--format=json']
+        args = [*paths, "--only=#{cop_arguments}", '--format=json', '--out=tmp/rubocop-output']
+        FileUtils.mkdir_p('tmp')
         puts "Executing: bundle exec rubocop #{args.join(' ')}"
-        json = JSON.parse(Private.execute_rubocop(args))
+        Private.execute_rubocop(args)
+        output = Pathname.new('tmp/rubocop-output')
+        json = JSON.parse(Pathname.new('tmp/rubocop-output').read)
+        output.delete
         offenses = T.let([], T::Array[Offense])
         json['files'].each do |file_hash|
           filepath = file_hash['path']
@@ -174,16 +176,6 @@ module RuboCop
         end
 
         offenses
-      end
-
-      sig { params(block: T.untyped).returns(String) }
-      def self.with_captured_stdout(&block)
-        original_stdout = $stdout  # capture previous value of $stdout
-        $stdout = StringIO.new     # assign a string buffer to $stdout
-        yield                      # perform the body of the user code
-        $stdout.string             # return the contents of the string buffer
-      ensure
-        $stdout = original_stdout  # restore $stdout to its previous value
       end
     end
 

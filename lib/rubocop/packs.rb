@@ -28,6 +28,12 @@ module RuboCop
     #
     sig { params(packs: T::Array[ParsePackwerk::Package], files: T::Array[String]).void }
     def self.regenerate_todo(packs: [], files: [])
+      # Delete the old pack-level rubocop todo files so that we can regenerate the new one from scratch
+      packs.each do |pack|
+        rubocop_todo_yml = pack.directory.join(PACK_LEVEL_RUBOCOP_TODO_YML)
+        rubocop_todo_yml.delete if rubocop_todo_yml.exist?
+      end
+
       paths = packs.empty? ? files : packs.map(&:name).reject { |name| name == ParsePackwerk::ROOT_PACKAGE_NAME }
       offenses = Private.offenses_for(
         paths: paths,
@@ -39,11 +45,7 @@ module RuboCop
         next if !pack.directory.join(PACK_LEVEL_RUBOCOP_YML).exist?
 
         rubocop_todo_yml = pack.directory.join(PACK_LEVEL_RUBOCOP_TODO_YML)
-        # If the user is passing in packs, then regenerate from scratch.
-        if packs.any? && rubocop_todo_yml.exist?
-          rubocop_todo_yml.delete
-          rubocop_todo = {}
-        elsif rubocop_todo_yml.exist?
+        if rubocop_todo_yml.exist?
           rubocop_todo = YAML.load_file(rubocop_todo_yml)
         else
           rubocop_todo = {}

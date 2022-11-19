@@ -55,12 +55,12 @@ RSpec.describe RuboCop::Packs do
           }
         ]
       }.to_json
-      allow_any_instance_of(RuboCop::CLI).to receive(:run).with(['packs/my_pack', '--only=Packs/RootNamespaceIsPackName,Packs/TypedPublicApis,Packs/ClassMethodsAsPublicApis', '--format=json']) do
-        puts rubocop_json
+      allow_any_instance_of(RuboCop::CLI).to receive(:run).with(['packs/my_pack', '--only=Packs/RootNamespaceIsPackName,Packs/TypedPublicApis,Packs/ClassMethodsAsPublicApis', '--format=json', '--out=tmp/rubocop-output']) do
+        Pathname.new('tmp/rubocop-output').write(rubocop_json)
       end
 
-      allow_any_instance_of(RuboCop::CLI).to receive(:run).with(['packs/my_pack/path/to/file.rb', '--only=Packs/RootNamespaceIsPackName,Packs/TypedPublicApis,Packs/ClassMethodsAsPublicApis', '--format=json']) do
-        puts rubocop_json
+      allow_any_instance_of(RuboCop::CLI).to receive(:run).with(['packs/my_pack/path/to/file.rb', '--only=Packs/RootNamespaceIsPackName,Packs/TypedPublicApis,Packs/ClassMethodsAsPublicApis', '--format=json', '--out=tmp/rubocop-output']) do
+        Pathname.new('tmp/rubocop-output').write(rubocop_json)
       end
     end
 
@@ -180,8 +180,8 @@ RSpec.describe RuboCop::Packs do
           ]
         }.to_json
 
-        allow_any_instance_of(RuboCop::CLI).to receive(:run).with(['packs/my_pack/path/to/file.rb', 'packs/my_pack/path/to/other_file.rb', '--only=Packs/RootNamespaceIsPackName,Packs/TypedPublicApis,Packs/ClassMethodsAsPublicApis', '--format=json']) do
-          puts rubocop_json
+        allow_any_instance_of(RuboCop::CLI).to receive(:run).with(['packs/my_pack/path/to/file.rb', 'packs/my_pack/path/to/other_file.rb', '--only=Packs/RootNamespaceIsPackName,Packs/TypedPublicApis,Packs/ClassMethodsAsPublicApis', '--format=json', '--out=tmp/rubocop-output']) do
+          Pathname.new('tmp/rubocop-output').write(rubocop_json)
         end
       end
 
