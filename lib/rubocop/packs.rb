@@ -5,6 +5,8 @@ require 'rubocop/packs/private'
 
 module RuboCop
   module Packs
+    extend T::Sig
+
     # Pack-level rubocop and rubocop_todo YML files are named differently because they are not integrated
     # into rubocop in the standard way. For example, we could call these the standard `.rubocop.yml` and
     # `.rubocop_todo.yml`. However, this introduces a number of path relativity issues (https://docs.rubocop.org/rubocop/configuration.html#path-relativity)
@@ -13,66 +15,39 @@ module RuboCop
     PACK_LEVEL_RUBOCOP_YML = 'package_rubocop.yml'
     PACK_LEVEL_RUBOCOP_TODO_YML = 'package_rubocop_todo.yml'
 
-    class Error < StandardError; end
-    extend T::Sig
-
-    # Your code goes here...
     PROJECT_ROOT   = T.let(Pathname.new(__dir__).parent.parent.expand_path.freeze, Pathname)
     CONFIG_DEFAULT = T.let(PROJECT_ROOT.join('config', 'default.yml').freeze, Pathname)
     CONFIG         = T.let(YAML.safe_load(CONFIG_DEFAULT.read).freeze, T.untyped)
 
     private_constant(:CONFIG_DEFAULT, :PROJECT_ROOT)
 
-    class Offense < T::Struct
-      extend T::Sig
-
-      const :cop_name, String
-      const :filepath, String
-
-      sig { returns(ParsePackwerk::Package) }
-      def pack
-        ParsePackwerk.package_from_path(filepath)
-      end
-    end
-
-    sig { params(paths: T::Array[String], cop_names: T::Array[String]).returns(T::Array[Offense]) }
-    def self.offenses_for(paths:, cop_names:)
-      path_arguments = paths.join(' ')
-      cop_arguments = cop_names.join(',')
-      # I think we can potentially use `RuboCop::CLI.new(args)` for this to avoid shelling out and starting another process that needs to reload the bundle
-      args = [path_arguments, "--only=#{cop_arguments}", '--format=json']
-      puts "Executing: bundle exec rubocop #{args.join(' ')}"
-      json = JSON.parse(Private.execute_rubocop(args))
-      offenses = T.let([], T::Array[Offense])
-      json['files'].each do |file_hash|
-        filepath = file_hash['path']
-        file_hash['offenses'].each do |offense_hash|
-          offenses << Offense.new(
-            cop_name: offense_hash['cop_name'],
-            filepath: filepath
-          )
-        end
-      end
-
-      offenses
-    end
-
     #
     # Ideally, this is API that is available to us via `rubocop` itself.
     # That is: the ability to preserve the location of `.rubocop_todo.yml` files and associate
     # exclusions with the closest ancestor `.rubocop_todo.yml`
     #
-    sig { params(packs: T::Array[ParsePackwerk::Package]).void }
-    def self.regenerate_todo(packs:)
-      offenses = offenses_for(
-        paths: packs.map(&:name).reject { |name| name == ParsePackwerk::ROOT_PACKAGE_NAME },
+    sig { params(packs: T::Array[ParsePackwerk::Package], files: T::Array[String]).void }
+    def self.regenerate_todo(packs: [], files: [])
+      paths = packs.empty? ? files : packs.map(&:name).reject { |name| name == ParsePackwerk::ROOT_PACKAGE_NAME }
+      offenses = Private.offenses_for(
+        paths: paths,
         cop_names: config.permitted_pack_level_cops
       )
 
       offenses.group_by(&:pack).each do |pack, offenses_for_pack|
+        next if pack.name == ParsePackwerk::ROOT_PACKAGE_NAME
+        next if !pack.directory.join(PACK_LEVEL_RUBOCOP_YML).exist?
+
         rubocop_todo_yml = pack.directory.join(PACK_LEVEL_RUBOCOP_TODO_YML)
-        rubocop_todo_yml.delete if rubocop_todo_yml.exist?
-        rubocop_todo = {}
+        # If the user is passing in packs, then regenerate from scratch.
+        if packs.any? && rubocop_todo_yml.exist?
+          rubocop_todo_yml.delete
+          rubocop_todo = {}
+        elsif rubocop_todo_yml.exist?
+          rubocop_todo = YAML.load_file(rubocop_todo_yml)
+        else
+          rubocop_todo = {}
+        end
 
         offenses_for_pack.each do |offense|
           rubocop_todo[offense.cop_name] ||= { 'Exclude' => [] }
