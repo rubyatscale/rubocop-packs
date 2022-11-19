@@ -66,6 +66,8 @@ RSpec.describe RuboCop::Packs do
 
     context 'regenerating TODO for entire packs' do
       context 'pack has no current rubocop todo' do
+        before { write_file('packs/my_pack/package_rubocop.yml') }
+
         it 'creates the TODO' do
           expect(rubocop_todo_yml).to_not exist
           RuboCop::Packs.regenerate_todo(packs: [ParsePackwerk.find('packs/my_pack')])
@@ -79,8 +81,17 @@ RSpec.describe RuboCop::Packs do
         end
       end
 
+      context 'pack does not use pack-based rubocop' do
+        it 'does not create the TODO' do
+          expect(rubocop_todo_yml).to_not exist
+          RuboCop::Packs.regenerate_todo(packs: [ParsePackwerk.find('packs/my_pack')])
+          expect(rubocop_todo_yml).to_not exist
+        end
+      end
+
       context 'pack has an existing rubocop todo' do
         before do
+          write_file('packs/my_pack/package_rubocop.yml')
           rubocop_todo_yml.write(
             YAML.dump(
               {
@@ -107,6 +118,8 @@ RSpec.describe RuboCop::Packs do
 
     context 'regenerating TODO for files' do
       context 'pack has no current rubocop todo' do
+        before { write_file('packs/my_pack/package_rubocop.yml') }
+
         it 'creates the TODO' do
           expect(rubocop_todo_yml).to_not exist
           RuboCop::Packs.regenerate_todo(files: ['packs/my_pack/path/to/file.rb'])
@@ -120,6 +133,14 @@ RSpec.describe RuboCop::Packs do
         end
       end
 
+      context 'pack does not use pack-based rubocop' do
+        it 'does not create the TODO' do
+          expect(rubocop_todo_yml).to_not exist
+          RuboCop::Packs.regenerate_todo(files: ['packs/my_pack/path/to/file.rb'])
+          expect(rubocop_todo_yml).to_not exist
+        end
+      end
+
       context 'pack has an existing rubocop todo' do
         before do
           rubocop_todo_yml.write(
@@ -130,6 +151,7 @@ RSpec.describe RuboCop::Packs do
               }
             )
           )
+          write_file('packs/my_pack/package_rubocop.yml')
         end
 
         it 'adds to the TODO with the new files' do

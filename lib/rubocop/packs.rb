@@ -36,6 +36,7 @@ module RuboCop
 
       offenses.group_by(&:pack).each do |pack, offenses_for_pack|
         next if pack.name == ParsePackwerk::ROOT_PACKAGE_NAME
+        next if !pack.directory.join(PACK_LEVEL_RUBOCOP_YML).exist?
 
         rubocop_todo_yml = pack.directory.join(PACK_LEVEL_RUBOCOP_TODO_YML)
         # If the user is passing in packs, then regenerate from scratch.
