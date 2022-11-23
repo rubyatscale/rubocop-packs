@@ -45,16 +45,13 @@ RSpec.describe RuboCop::Packs do
   describe 'regenerate_todo' do
     let(:rubocop_todo_yml) { Pathname.new('packs/my_pack/package_rubocop_todo.yml') }
 
+    let(:offenses) do
+      [{ 'cop_name' => 'Packs/RootNamespaceIsPackName' }, { 'cop_name' => 'Packs/ClassMethodsAsPublicApis' }]
+    end
+
     before do
       write_package_yml('packs/my_pack')
-      rubocop_json = {
-        'files' => [
-          {
-            'path' => 'packs/my_pack/path/to/file.rb',
-            'offenses' => [{ 'cop_name' => 'Packs/RootNamespaceIsPackName' }, { 'cop_name' => 'Packs/ClassMethodsAsPublicApis' }]
-          }
-        ]
-      }.to_json
+      rubocop_json = { 'files' => [{ 'path' => 'packs/my_pack/path/to/file.rb', 'offenses' => offenses }] }.to_json
       allow_any_instance_of(RuboCop::CLI).to receive(:run).with(['packs/my_pack', '--only=Packs/RootNamespaceIsPackName,Packs/TypedPublicApis,Packs/ClassMethodsAsPublicApis', '--format=json', '--out=tmp/rubocop-output']) do
         Pathname.new('tmp/rubocop-output').write(rubocop_json)
       end
@@ -104,6 +101,26 @@ RSpec.describe RuboCop::Packs do
 
         it 'recreates the TODO from scratch' do
           expect(rubocop_todo_yml).to exist
+          RuboCop::Packs.regenerate_todo(packs: [ParsePackwerk.find('packs/my_pack')])
+          expect(rubocop_todo_yml).to exist
+          expect(YAML.load_file(rubocop_todo_yml)).to eq(
+            {
+              'Packs/RootNamespaceIsPackName' => { 'Exclude' => ['packs/my_pack/path/to/file.rb'] },
+              'Packs/ClassMethodsAsPublicApis' => { 'Exclude' => ['packs/my_pack/path/to/file.rb'] }
+            }
+          )
+        end
+      end
+
+      # This can happen because a cop can fail on multiple lines in the same file
+      context 'pack has multiple offenses for the same file' do
+        before { write_file('packs/my_pack/package_rubocop.yml') }
+
+        let(:offenses) do
+          [{ 'cop_name' => 'Packs/RootNamespaceIsPackName' }, { 'cop_name' => 'Packs/ClassMethodsAsPublicApis' }, { 'cop_name' => 'Packs/ClassMethodsAsPublicApis' }, { 'cop_name' => 'Packs/ClassMethodsAsPublicApis' }]
+        end
+
+        it 'does not list the same TODO multiple times' do
           RuboCop::Packs.regenerate_todo(packs: [ParsePackwerk.find('packs/my_pack')])
           expect(rubocop_todo_yml).to exist
           expect(YAML.load_file(rubocop_todo_yml)).to eq(
