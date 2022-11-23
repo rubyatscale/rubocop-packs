@@ -5,6 +5,7 @@ Packs/ClassMethodsAsPublicApis:
     - T::Struct
     - Struct
     - OpenStruct
+  AcceptableMixins: []
   FailureMode: default
 
 Packs/RootNamespaceIsPackName:

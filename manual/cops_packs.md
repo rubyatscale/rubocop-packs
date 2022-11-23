@@ -12,6 +12,7 @@ searchable, and typically hold less state.
 Options:
 
 * `AcceptableParentClasses`: A list of classes that, if inherited from, non-class methods are permitted (useful when value objects are a part of your public API)
+* `AcceptableMixins`: A list of modules that, if included, non-class methods are permitted
 
 ### Examples
 
@@ -36,6 +37,7 @@ end
 Name | Default value | Configurable values
 --- | --- | ---
 AcceptableParentClasses | `T::Enum`, `T::Struct`, `Struct`, `OpenStruct` | Array
+AcceptableMixins | `[]` | Array
 FailureMode | `default` | String
 
 ## Packs/DocumentedPublicApis
