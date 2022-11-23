@@ -45,18 +45,29 @@ RSpec.describe RuboCop::Packs do
   describe 'regenerate_todo' do
     let(:rubocop_todo_yml) { Pathname.new('packs/my_pack/package_rubocop_todo.yml') }
 
+    let(:cop_cli_args) do
+      '--only=Packs/RootNamespaceIsPackName,Packs/TypedPublicApis,Packs/ClassMethodsAsPublicApis'
+    end
     let(:offenses) do
       [{ 'cop_name' => 'Packs/RootNamespaceIsPackName' }, { 'cop_name' => 'Packs/ClassMethodsAsPublicApis' }]
     end
 
     before do
+      write_file('.rubocop.yml', <<~YML)
+        Packs/ClassMethodsAsPublicApis:
+          Enabled: true
+        Packs/RootNamespaceIsPackName:
+          Enabled: true
+        Packs/TypedPublicApis:
+          Enabled: true
+      YML
       write_package_yml('packs/my_pack')
       rubocop_json = { 'files' => [{ 'path' => 'packs/my_pack/path/to/file.rb', 'offenses' => offenses }] }.to_json
-      allow_any_instance_of(RuboCop::CLI).to receive(:run).with(['packs/my_pack', '--only=Packs/RootNamespaceIsPackName,Packs/TypedPublicApis,Packs/ClassMethodsAsPublicApis', '--format=json', '--out=tmp/rubocop-output']) do
+      allow_any_instance_of(RuboCop::CLI).to receive(:run).with(['packs/my_pack', cop_cli_args, '--format=json', '--out=tmp/rubocop-output']) do
         Pathname.new('tmp/rubocop-output').write(rubocop_json)
       end
 
-      allow_any_instance_of(RuboCop::CLI).to receive(:run).with(['packs/my_pack/path/to/file.rb', '--only=Packs/RootNamespaceIsPackName,Packs/TypedPublicApis,Packs/ClassMethodsAsPublicApis', '--format=json', '--out=tmp/rubocop-output']) do
+      allow_any_instance_of(RuboCop::CLI).to receive(:run).with(['packs/my_pack/path/to/file.rb', cop_cli_args, '--format=json', '--out=tmp/rubocop-output']) do
         Pathname.new('tmp/rubocop-output').write(rubocop_json)
       end
     end
@@ -116,6 +127,62 @@ RSpec.describe RuboCop::Packs do
       context 'pack has multiple offenses for the same file' do
         before { write_file('packs/my_pack/package_rubocop.yml') }
 
+        let(:offenses) do
+          [{ 'cop_name' => 'Packs/RootNamespaceIsPackName' }, { 'cop_name' => 'Packs/ClassMethodsAsPublicApis' }, { 'cop_name' => 'Packs/ClassMethodsAsPublicApis' }, { 'cop_name' => 'Packs/ClassMethodsAsPublicApis' }]
+        end
+
+        it 'does not list the same TODO multiple times' do
+          RuboCop::Packs.regenerate_todo(packs: [ParsePackwerk.find('packs/my_pack')])
+          expect(rubocop_todo_yml).to exist
+          expect(YAML.load_file(rubocop_todo_yml)).to eq(
+            {
+              'Packs/ClassMethodsAsPublicApis' => { 'Exclude' => ['packs/my_pack/path/to/file.rb'] },
+              'Packs/RootNamespaceIsPackName' => { 'Exclude' => ['packs/my_pack/path/to/file.rb'] }
+            }
+          )
+        end
+      end
+
+      context 'pack has offenses for a cop that is explicitly globally off' do
+        before do
+          write_file('.rubocop.yml', <<~YML)
+            Packs/ClassMethodsAsPublicApis:
+              Enabled: false
+            Packs/RootNamespaceIsPackName:
+              Enabled: true
+          YML
+          write_file('packs/my_pack/package_rubocop.yml')
+        end
+
+        let(:offenses) do
+          [{ 'cop_name' => 'Packs/RootNamespaceIsPackName' }]
+        end
+
+        let(:cop_cli_args) { '--only=Packs/RootNamespaceIsPackName' }
+
+        it 'does not list the same TODO multiple times' do
+          RuboCop::Packs.regenerate_todo(packs: [ParsePackwerk.find('packs/my_pack')])
+          expect(rubocop_todo_yml).to exist
+          expect(YAML.load_file(rubocop_todo_yml)).to eq(
+            {
+              'Packs/RootNamespaceIsPackName' => { 'Exclude' => ['packs/my_pack/path/to/file.rb'] }
+            }
+          )
+        end
+      end
+
+      context 'pack has offenses for a cop that is implicitly globally off' do
+        before do
+          write_file('.rubocop.yml', <<~YML)
+            Style/SomeOtherCop:
+              Enabled: true
+            Packs/RootNamespaceIsPackName:
+              Enabled: true
+          YML
+          write_file('packs/my_pack/package_rubocop.yml')
+        end
+
+        let(:cop_cli_args) { '--only=Packs/RootNamespaceIsPackName' }
         let(:offenses) do
           [{ 'cop_name' => 'Packs/RootNamespaceIsPackName' }, { 'cop_name' => 'Packs/ClassMethodsAsPublicApis' }, { 'cop_name' => 'Packs/ClassMethodsAsPublicApis' }, { 'cop_name' => 'Packs/ClassMethodsAsPublicApis' }]
         end
