@@ -189,4 +189,23 @@ RSpec.describe RuboCop::Cop::Packs::ClassMethodsAsPublicApis, :config do
 
     it { expect_no_offenses source, Pathname.pwd.join('packs/tool/app/public/tool.rb').to_s }
   end
+
+  context 'when module is a sorbet abstract class' do
+    let(:source) do
+      <<~RUBY
+        module Tool
+          extend T::Sig
+          extend T::Helpers
+
+          abstract!
+
+          sig { abstract.void }
+          def my_instance_method
+          end
+        end
+      RUBY
+    end
+
+    it { expect_no_offenses source, Pathname.pwd.join('packs/tool/app/public/tool.rb').to_s }
+  end
 end
