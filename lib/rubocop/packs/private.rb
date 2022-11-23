@@ -161,6 +161,7 @@ module RuboCop
         FileUtils.mkdir_p('tmp')
         puts "Executing: bundle exec rubocop #{args.join(' ')}"
         Private.execute_rubocop(args)
+
         output = Pathname.new('tmp/rubocop-output')
         json = JSON.parse(Pathname.new('tmp/rubocop-output').read)
         output.delete
