@@ -52,8 +52,8 @@ module RuboCop
           class_is_allowed_to_have_instance_methods = acceptable_parent_classes.include?(parent_class&.const_name)
           return if uses_implicit_static_methods || class_is_allowed_to_have_instance_methods
 
-          is_interface = !module_node.nil? && module_node.descendants.any?{|d| d.is_a?(RuboCop::AST::SendNode) && d.method_name == :interface! }
-          return if is_interface
+          is_sorbet_interface_or_abstract_class = !module_node.nil? && module_node.descendants.any?{|d| d.is_a?(RuboCop::AST::SendNode) && (d.method_name == :interface! || d.method_name == :abstract!) }
+          return if is_sorbet_interface_or_abstract_class
 
           add_offense(
             node.source_range,
