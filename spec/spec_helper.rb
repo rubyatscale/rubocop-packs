@@ -22,6 +22,7 @@ RSpec.configure do |config|
   config.include ApplicationFixtureHelper
   config.around do |example|
     ParsePackwerk.bust_cache!
+    RuboCop::Packs.bust_cache!
     example.run
   end
 
