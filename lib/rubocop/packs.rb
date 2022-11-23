@@ -35,9 +35,14 @@ module RuboCop
       end
 
       paths = packs.empty? ? files : packs.map(&:name).reject { |name| name == ParsePackwerk::ROOT_PACKAGE_NAME }
+
+      cop_names = config.permitted_pack_level_cops.select do |cop_name|
+        YAML.load_file('.rubocop.yml').fetch(cop_name, {})['Enabled']
+      end
+
       offenses = Private.offenses_for(
         paths: paths,
-        cop_names: config.permitted_pack_level_cops
+        cop_names: cop_names
       )
 
       offenses.group_by(&:pack).each do |pack, offenses_for_pack|
