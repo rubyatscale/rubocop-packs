@@ -51,8 +51,8 @@ module RuboCop
           rubocop_todo = {}
         end
 
-        offenses_for_pack.group_by(&:filepath).each do |filepath, offenses|
-          offenses.map(&:cop_name).uniq.each do |cop_name|
+        offenses_for_pack.group_by(&:filepath).each do |filepath, offenses_by_filepath|
+          offenses_by_filepath.map(&:cop_name).uniq.each do |cop_name|
             rubocop_todo[cop_name] ||= { 'Exclude' => [] }
             rubocop_todo[cop_name]['Exclude'] << filepath
           end

@@ -51,7 +51,7 @@ RSpec.describe RuboCop::Packs do
 
     before do
       write_package_yml('packs/my_pack')
-      rubocop_json = { 'files' => [ { 'path' => 'packs/my_pack/path/to/file.rb', 'offenses' => offenses } ]}.to_json
+      rubocop_json = { 'files' => [{ 'path' => 'packs/my_pack/path/to/file.rb', 'offenses' => offenses }] }.to_json
       allow_any_instance_of(RuboCop::CLI).to receive(:run).with(['packs/my_pack', '--only=Packs/RootNamespaceIsPackName,Packs/TypedPublicApis,Packs/ClassMethodsAsPublicApis', '--format=json', '--out=tmp/rubocop-output']) do
         Pathname.new('tmp/rubocop-output').write(rubocop_json)
       end
