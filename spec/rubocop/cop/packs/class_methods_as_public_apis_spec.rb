@@ -11,6 +11,8 @@ RSpec.describe RuboCop::Cop::Packs::ClassMethodsAsPublicApis, :config do
       'Mutations::BaseMutation' # GraphQL Mutation
     ]
   end
+  let(:acceptable_mixins) { [] }
+
   let(:cop_config) { { 'Enabled' => true, 'AcceptableParentClasses' => acceptable_parent_classes } }
   subject(:cop) { described_class.new(config) }
 
@@ -200,6 +202,22 @@ RSpec.describe RuboCop::Cop::Packs::ClassMethodsAsPublicApis, :config do
           abstract!
 
           sig { abstract.void }
+          def my_instance_method
+          end
+        end
+      RUBY
+    end
+
+    it { expect_no_offenses source, Pathname.pwd.join('packs/tool/app/public/tool.rb').to_s }
+  end
+
+  context 'when user has configured cop to ignore certain types of classes' do
+    let(:acceptable_mixins) { 'MyPermittedMixin' }
+    let(:cop_config) { { 'Enabled' => true, 'AcceptableParentClasses' => acceptable_parent_classes, 'AcceptableMixins' => acceptable_mixins } }
+    let(:source) do
+      <<~RUBY
+        class Tool
+          include MyPermittedMixin
           def my_instance_method
           end
         end

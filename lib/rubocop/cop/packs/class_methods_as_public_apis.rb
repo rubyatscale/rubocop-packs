@@ -10,6 +10,7 @@ module RuboCop
       # Options:
       #
       # * `AcceptableParentClasses`: A list of classes that, if inherited from, non-class methods are permitted (useful when value objects are a part of your public API)
+      # * `AcceptableMixins`: A list of modules that, if included, non-class methods are permitted
       #
       # @example
       #
