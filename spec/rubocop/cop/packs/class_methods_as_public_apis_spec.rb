@@ -124,7 +124,7 @@ RSpec.describe RuboCop::Cop::Packs::ClassMethodsAsPublicApis, :config do
     it { expect_no_offenses source, 'packs/tool/app/public/tool.rb' }
   end
 
-  context 'it inherits from T::Struct and defines a helper method' do
+  context 'when class inherits from T::Struct and defines a helper method' do
     let(:source) do
       <<~RUBY
         class Tool < T::Struct
@@ -137,7 +137,7 @@ RSpec.describe RuboCop::Cop::Packs::ClassMethodsAsPublicApis, :config do
     it { expect_no_offenses source, 'packs/tool/app/public/tool.rb' }
   end
 
-  context 'it inherits from T::Struct, includes TypedStructHelper, and defines a helper method' do
+  context 'when class inherits from T::Struct, includes TypedStructHelper, and defines a helper method' do
     let(:source) do
       <<~RUBY
         class Tool < T::Struct
@@ -151,7 +151,7 @@ RSpec.describe RuboCop::Cop::Packs::ClassMethodsAsPublicApis, :config do
     it { expect_no_offenses source, 'packs/tool/app/public/tool.rb' }
   end
 
-  context 'it inherits from T::Enum and defines a helper method' do
+  context 'when class inherits from T::Enum and defines a helper method' do
     let(:source) do
       <<~RUBY
         class MyEnum < T::Enum
@@ -169,5 +169,24 @@ RSpec.describe RuboCop::Cop::Packs::ClassMethodsAsPublicApis, :config do
     end
 
     it { expect_no_offenses source, Pathname.pwd.join(write_file('packs/tool/app/public/tool.rb')).to_s }
+  end
+
+  context 'when module is a sorbet interface' do
+    let(:source) do
+      <<~RUBY
+        module Tool
+          extend T::Sig
+          extend T::Helpers
+
+          interface!
+
+          sig { abstract.void }
+          def my_instance_method
+          end
+        end
+      RUBY
+    end
+
+    it { expect_no_offenses source, Pathname.pwd.join('packs/tool/app/public/tool.rb').to_s }
   end
 end
