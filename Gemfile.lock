@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    rubocop-packs (0.0.29)
+    rubocop-packs (0.0.30)
       activesupport
       parse_packwerk
       rubocop
@@ -79,6 +79,7 @@ GEM
       sorbet-static (= 0.5.10479)
     sorbet-runtime (0.5.10479)
     sorbet-static (0.5.10479-universal-darwin-20)
+    sorbet-static (0.5.10479-universal-darwin-21)
     sorbet-static (0.5.10479-x86_64-linux)
     sorbet-static-and-runtime (0.5.10479)
       sorbet (= 0.5.10479)
@@ -113,6 +114,7 @@ GEM
 
 PLATFORMS
   arm64-darwin-20
+  arm64-darwin-21
   x86_64-linux
 
 DEPENDENCIES
