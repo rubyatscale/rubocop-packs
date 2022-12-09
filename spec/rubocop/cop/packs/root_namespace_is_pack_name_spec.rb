@@ -17,6 +17,7 @@ RSpec.describe RuboCop::Cop::Packs::RootNamespaceIsPackName, :config do
     write_package_yml('packs/apples')
     write_package_yml('packs/tools')
     write_package_yml('packs/fruits/apples')
+    write_package_yml('packs/fruit_concerns')
 
     RuboCop::Packs.configure do |config|
       config.globally_permitted_namespaces = global_namespaces
@@ -73,6 +74,19 @@ RSpec.describe RuboCop::Cop::Packs::RootNamespaceIsPackName, :config do
         end
 
         it { expect_no_offenses source, Pathname.pwd.join(write_file('packs/apples/app/services/apples/tool.rb')).to_s }
+      end
+
+      context 'package namespace contains concerns' do
+        let(:source) do
+          <<~RUBY
+            module FruitConcerns
+              class Tool
+              end
+            end
+          RUBY
+        end
+
+        it { expect_no_offenses source, Pathname.pwd.join(write_file('packs/fruit_concerns/app/services/fruit_concerns/tool.rb')).to_s }
       end
     end
 

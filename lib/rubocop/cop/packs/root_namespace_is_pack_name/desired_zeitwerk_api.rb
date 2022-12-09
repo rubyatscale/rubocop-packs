@@ -49,7 +49,7 @@ module RuboCop
             # Note this will *not work* properly in applications that have different assumptions about autoloading.
 
             path_without_package_base = relative_filename.gsub(%r{#{package_name}/app/}, '')
-            if path_without_package_base.include?('concerns')
+            if path_without_package_base.include?('/concerns/')
               autoload_folder_name = path_without_package_base.split('/').first(2).join('/')
             else
               autoload_folder_name = path_without_package_base.split('/').first
