@@ -8,7 +8,7 @@ This is a proof-of-concept for Packwerk Lite, an implementation of Packwerk that
 
 At Gusto, this was able to detect 7% of privacy and 8% of dependency violations that packwerk could detect. See appendix if you are curious how it performs in your codebase.
 
-This tool cannot ever replace packwerk because it doesn't serve those who are first beginning to break up a large app into packages and cannot (and should not) try to change their namespacing prematurely. Packwerk also has more first-class support for essential concepts like its custom-formatted TODO list (`deprecated_references.yml`) and custom error messages to support more user-friendly feedback and developer ergonomics. Packwerk also detects cycles in stated dependencies along with a number of other features.
+This tool cannot ever replace packwerk because it doesn't serve those who are first beginning to break up a large app into packages and cannot (and should not) try to change their namespacing prematurely. Packwerk also has more first-class support for essential concepts like its custom-formatted TODO list (`package_todo.yml`) and custom error messages to support more user-friendly feedback and developer ergonomics. Packwerk also detects cycles in stated dependencies along with a number of other features.
   
 So why would we want to do this...?
 - As a thought experiment and conversation starter! This was created during a Gusto Modularity Hackathon.
@@ -16,7 +16,7 @@ So why would we want to do this...?
 - Experimentally and hypothetically, as a way to provide early feedback loop for engineers who are more familiar with rubocop
 
 What is missing?
-- In order to run this, we need to read from AND write to `deprecated_references.yml` file so that they pick up and ignore the same things (right now we only read from). We'd likely also need to expose a validation to allow the client to confirm that the `**/package_rubocop_todo.yml` entries for `PackwerkLite/Privacy` and `PackwerkLite/Dependency` are empty.
+- In order to run this, we need to read from AND write to `package_todo.yml` file so that they pick up and ignore the same things (right now we only read from). We'd likely also need to expose a validation to allow the client to confirm that the `**/package_rubocop_todo.yml` entries for `PackwerkLite/Privacy` and `PackwerkLite/Dependency` are empty.
 - There were very few false positives (things this picked up that `packwerk` did not) in Gusto's codebase, but we'd want to address those too.
 
 # Appendix
