@@ -59,7 +59,7 @@ module RuboCop
           is_new_violation = [
             !constant_reference.referencing_package.dependencies.include?(constant_reference.source_package.name),
             constant_reference.referencing_package.enforces_dependencies?,
-            !Private.violation_in_deprecated_references_yml?(constant_reference, type: 'dependency')
+            !Private.violation_in_package_todo_yml?(constant_reference, type: 'dependency')
           ].all?
 
           if is_new_violation

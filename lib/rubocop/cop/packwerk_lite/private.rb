@@ -24,8 +24,8 @@ module RuboCop
         end
 
         sig { params(constant_reference: ConstantResolver::ConstantReference, type: String).returns(T::Boolean) }
-        def self.violation_in_deprecated_references_yml?(constant_reference, type: 'privacy')
-          existing_violations = ParsePackwerk::DeprecatedReferences.for(constant_reference.referencing_package).violations
+        def self.violation_in_package_todo_yml?(constant_reference, type: 'privacy')
+          existing_violations = ParsePackwerk::PackageTodo.for(constant_reference.referencing_package).violations
           existing_violations.any? do |v|
             v.class_name == "::#{constant_reference.constant_name}" && (type == 'privacy' ? v.privacy? : v.dependency?)
           end
