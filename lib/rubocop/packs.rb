@@ -119,11 +119,15 @@ module RuboCop
 
           loaded_pack_rubocop = YAML.load_file(pack_rubocop)
           loaded_pack_rubocop.each do |cop_name, key_config|
-            next unless key_config['Enabled']
-
             rubocop_config[cop_name] ||= {}
-            rubocop_config[cop_name]['Include'] ||= []
-            rubocop_config[cop_name]['Include'] << package.directory.join('**/*').to_s
+
+            if key_config['Enabled']
+              rubocop_config[cop_name]['Include'] ||= []
+              rubocop_config[cop_name]['Include'] << package.directory.join('**/*').to_s
+            else
+              rubocop_config[cop_name]['Exclude'] ||= []
+              rubocop_config[cop_name]['Exclude'] << package.directory.join('**/*').to_s
+            end
           end
         end
       end
