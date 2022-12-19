@@ -24,7 +24,7 @@ What is missing?
 If you want to see how effective it is at your org, try this:
 ## Count your violations
 ```ruby
-all_violations = ParsePackwerk.all.map{|p| ParsePackwerk::DeprecatedReferences.for(p).violations }
+all_violations = ParsePackwerk.all.flat_map(&:violations)
 privacy_count = all_violations.select(&:privacy?).flat_map(&:files).count
 dependency_count = all_violations.select(&:dependency?).flat_map(&:files).count
 ```
@@ -36,6 +36,6 @@ bundle exec rubocop --only=PackwerkLite/Privacy,PackwerkLite/Dependency --out tm
 Copy the results into a file
 ```ruby
 lines = File.read('tmp/results.txt').split("\n")
-lines.select{|l| l.include?('Privacy violation detected') }.map{|f| f.match(/^.*?.rb/)[0] }.count
-lines.select{|l| l.include?('Dependency violation detected') }.map{|f| f.match(/^.*?.rb/)[0] }.count
+lines.select{|l| l.include?('Privacy violation detected') }.count
+lines.select{|l| l.include?('Dependency violation detected') }.count
 ```
