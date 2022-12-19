@@ -386,6 +386,30 @@ RSpec.describe RuboCop::Packs do
       end
     end
 
+    context 'nested pack with child pack disabling rule but parent pack enabling rule' do
+      before do
+        write_package_yml('packs/parent_pack')
+
+        write_file('packs/parent_pack/package_rubocop.yml', <<~YML)
+          Packs/RootNamespaceIsPackName:
+            Enabled: true
+        YML
+
+        write_package_yml('packs/child_pack')
+
+        write_file('packs/child_pack/package_rubocop.yml', <<~YML)
+          Packs/RootNamespaceIsPackName:
+            Enabled: false
+        YML
+      end
+
+      it 'returns the pack\'s exclude' do
+        expect(config.keys).to eq(['Packs/RootNamespaceIsPackName'])
+        expect(config['Packs/RootNamespaceIsPackName']['Include'].sort).to include('packs/parent_pack/**/*')
+        expect(config['Packs/RootNamespaceIsPackName']['Exclude'].sort).to include('packs/child_pack/**/*')
+      end
+    end
+
     context 'one pack with include' do
       before do
         write_package_yml('packs/some_pack')
@@ -435,7 +459,7 @@ RSpec.describe RuboCop::Packs do
 
       it 'returns a config with the right packs in the include field' do
         expect(config.keys).to eq(['Packs/RootNamespaceIsPackName'])
-        expect(config['Packs/RootNamespaceIsPackName'].keys).to eq(['Include'])
+        expect(config['Packs/RootNamespaceIsPackName'].keys).to eq(%w[Include Exclude])
         expect(config['Packs/RootNamespaceIsPackName']['Include'].sort).to eq(['packs/some_other_pack/**/*', 'packs/yet_another_pack/**/*'])
       end
     end
@@ -480,7 +504,7 @@ RSpec.describe RuboCop::Packs do
         expect(config.keys).to eq(['Packs/RootNamespaceIsPackName'])
         expect(config['Packs/RootNamespaceIsPackName'].keys.sort).to eq(%w[Exclude Include])
         expect(config['Packs/RootNamespaceIsPackName']['Include'].sort).to eq(['packs/some_other_pack/**/*', 'packs/yet_another_pack/**/*'])
-        expect(config['Packs/RootNamespaceIsPackName']['Exclude'].sort).to eq(['packs/some_other_pack/my_file.rb', 'packs/yet_another_pack/my_file.rb'])
+        expect(config['Packs/RootNamespaceIsPackName']['Exclude'].sort).to eq(['packs/some_other_pack/my_file.rb', 'packs/some_pack/**/*', 'packs/yet_another_pack/my_file.rb'])
       end
     end
   end
