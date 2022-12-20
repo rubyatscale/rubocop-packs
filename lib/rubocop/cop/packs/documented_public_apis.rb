@@ -14,10 +14,19 @@ module RuboCop
       #     def bar; end
       #   end
       #
+      #   # good
       #   # packs/foo/app/public/foo.rb
       #   class Foo
       #     # This is a documentation comment.
-      #     # It can live below or below a sorbet type signature.
+      #     def bar; end
+      #   end
+      #
+      #   # good
+      #   # packs/foo/app/public/foo.rb
+      #   class Foo
+      #     # This is a documentation comment.
+      #     # It should appear above a sorbet type signature
+      #     sig { void }
       #     def bar; end
       #   end
       #
