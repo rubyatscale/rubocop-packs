@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 require 'rubocop'
-require 'parse_packwerk'
+require 'packs'
 
 require_relative 'rubocop/packs'
 require_relative 'rubocop/packs/inject'

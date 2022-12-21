@@ -9,9 +9,9 @@ module RuboCop
         const :cop_name, String
         const :filepath, String
 
-        sig { returns(ParsePackwerk::Package) }
+        sig { returns(T.nilable(::Packs::Pack)) }
         def pack
-          ParsePackwerk.package_from_path(filepath)
+          ::Packs.for_file(filepath)
         end
       end
     end
