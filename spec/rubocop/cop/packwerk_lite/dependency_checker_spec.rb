@@ -7,8 +7,8 @@ RSpec.describe RuboCop::Cop::PackwerkLite::Dependency, :config do
   context 'namespacing convention is being followed' do
     context 'unstated dependency used' do
       before do
-        write_package_yml('packs/apples')
-        write_package_yml('packs/tools')
+        write_package_yml('packs/apples', 'enforce_dependencies' => true)
+        write_package_yml('packs/tools', 'enforce_dependencies' => true)
         write_file('packs/apples/app/public/apples.rb')
         write_file('packs/tools/app/public/tool.rb')
       end
@@ -27,7 +27,7 @@ RSpec.describe RuboCop::Cop::PackwerkLite::Dependency, :config do
 
     context 'a partially qualified constant defined in same pack is use' do
       before do
-        write_package_yml('packs/tools')
+        write_package_yml('packs/tools', 'enforce_dependencies' => true)
         write_file('packs/tools/app/services/tools/private.rb')
         write_file('packs/tools/app/public/tool.rb')
       end
@@ -45,7 +45,7 @@ RSpec.describe RuboCop::Cop::PackwerkLite::Dependency, :config do
 
     context 'a fully qualified constant defined in same pack is use' do
       before do
-        write_package_yml('packs/tools')
+        write_package_yml('packs/tools', 'enforce_dependencies' => true)
         write_file('packs/tools/app/services/tools/private.rb')
         write_file('packs/tools/app/public/tool.rb')
       end
@@ -63,8 +63,8 @@ RSpec.describe RuboCop::Cop::PackwerkLite::Dependency, :config do
 
     context 'unstated dependency with multiple namespaces used' do
       before do
-        write_package_yml('packs/apples')
-        write_package_yml('packs/tools')
+        write_package_yml('packs/apples', 'enforce_dependencies' => true)
+        write_package_yml('packs/tools', 'enforce_dependencies' => true)
         write_file('packs/apples/app/services/apples/green.rb')
         write_file('packs/tools/app/public/tool.rb')
       end
@@ -83,8 +83,8 @@ RSpec.describe RuboCop::Cop::PackwerkLite::Dependency, :config do
 
     context 'stated dependency is used' do
       before do
-        write_package_yml('packs/apples')
-        write_package_yml('packs/tools', dependencies: ['packs/apples'])
+        write_package_yml('packs/apples', 'enforce_dependencies' => true)
+        write_package_yml('packs/tools', 'enforce_dependencies' => true, 'dependencies' => ['packs/apples'])
         write_file('packs/apples/app/public/apples.rb')
         write_file('packs/tools/app/public/tool.rb')
       end
@@ -104,8 +104,8 @@ RSpec.describe RuboCop::Cop::PackwerkLite::Dependency, :config do
   context 'namespacing convention is not being followed' do
     context 'unstated dependency used' do
       before do
-        write_package_yml('packs/apples')
-        write_package_yml('packs/tools')
+        write_package_yml('packs/apples', 'enforce_dependencies' => true)
+        write_package_yml('packs/tools', 'enforce_dependencies' => true)
         write_file('packs/apples/app/public/public_api.rb')
         write_file('packs/tools/app/public/tool.rb')
       end
@@ -123,7 +123,7 @@ RSpec.describe RuboCop::Cop::PackwerkLite::Dependency, :config do
 
     context 'a fully qualified constant defined in same pack is use' do
       before do
-        write_package_yml('packs/tools')
+        write_package_yml('packs/tools', 'enforce_dependencies' => true)
         write_file('packs/tools/app/services/some_other_namespace/private.rb')
         write_file('packs/tools/app/public/tool.rb')
       end
@@ -141,8 +141,8 @@ RSpec.describe RuboCop::Cop::PackwerkLite::Dependency, :config do
 
     context 'unstated dependency with multiple namespaces used' do
       before do
-        write_package_yml('packs/apples')
-        write_package_yml('packs/tools')
+        write_package_yml('packs/apples', 'enforce_dependencies' => true)
+        write_package_yml('packs/tools', 'enforce_dependencies' => true)
         write_file('packs/apples/app/services/blah/green.rb')
         write_file('packs/tools/app/public/tool.rb')
       end
@@ -160,8 +160,8 @@ RSpec.describe RuboCop::Cop::PackwerkLite::Dependency, :config do
 
     context 'stated dependency is used' do
       before do
-        write_package_yml('packs/apples')
-        write_package_yml('packs/tools', dependencies: ['packs/apples'])
+        write_package_yml('packs/apples', 'enforce_dependencies' => true)
+        write_package_yml('packs/tools', 'enforce_dependencies' => true, 'dependencies' => ['packs/apples'])
         write_file('packs/apples/app/public/blah.rb')
         write_file('packs/tools/app/public/tool.rb')
       end
