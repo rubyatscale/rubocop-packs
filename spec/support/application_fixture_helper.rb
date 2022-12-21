@@ -17,29 +17,15 @@ module ApplicationFixtureHelper
   sig do
     params(
       pack_name: String,
-      dependencies: T::Array[String],
-      enforce_dependencies: T::Boolean,
-      enforce_privacy: T::Boolean,
+      config: T::Hash[T.untyped, T.untyped]
     ).void
   end
   def write_package_yml(
     pack_name,
-    dependencies: [],
-    enforce_dependencies: true,
-    enforce_privacy: true
+    config = {}
   )
-
-    metadata = {}
-
-    package = ParsePackwerk::Package.new(
-      name: pack_name,
-      dependencies: dependencies,
-      enforce_dependencies: enforce_dependencies,
-      enforce_privacy: enforce_privacy,
-      metadata: metadata
-    )
-
-    ParsePackwerk.write_package_yml!(package)
+    path = Pathname.pwd.join(pack_name).join('package.yml')
+    write_file(path.to_s, YAML.dump(config))
   end
 
   sig { params(path: String).void }
