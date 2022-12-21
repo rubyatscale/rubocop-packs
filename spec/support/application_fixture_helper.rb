@@ -20,19 +20,16 @@ module ApplicationFixtureHelper
       dependencies: T::Array[String],
       enforce_dependencies: T::Boolean,
       enforce_privacy: T::Boolean,
-      automatic_pack_namespace: T::Boolean
     ).void
   end
   def write_package_yml(
     pack_name,
     dependencies: [],
     enforce_dependencies: true,
-    enforce_privacy: true,
-    automatic_pack_namespace: false
+    enforce_privacy: true
   )
 
     metadata = {}
-    metadata.merge!('automatic_pack_namespace' => true) if automatic_pack_namespace
 
     package = ParsePackwerk::Package.new(
       name: pack_name,
