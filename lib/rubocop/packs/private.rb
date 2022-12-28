@@ -36,10 +36,10 @@ module RuboCop
         end
       end
 
-      sig { params(package: ParsePackwerk::Package).returns(T::Array[String]) }
+      sig { params(package: ::Packs::Pack).returns(T::Array[String]) }
       def self.validate_rubocop_todo_yml(package)
         errors = []
-        rubocop_todo = package.directory.join(PACK_LEVEL_RUBOCOP_TODO_YML)
+        rubocop_todo = package.relative_path.join(PACK_LEVEL_RUBOCOP_TODO_YML)
         return errors unless rubocop_todo.exist?
 
         loaded_rubocop_todo = YAML.load_file(rubocop_todo)
@@ -57,7 +57,8 @@ module RuboCop
             ERROR_MESSAGE
           else
             loaded_rubocop_todo[key]['Exclude'].each do |filepath|
-              return [] unless ParsePackwerk.package_from_path(filepath).name != package.name
+              pack = ::Packs.for_file(filepath)
+              return [] unless pack && pack.name != package.name
 
               errors << <<~ERROR_MESSAGE
                 #{rubocop_todo} contains invalid configuration for #{key}.
@@ -71,10 +72,10 @@ module RuboCop
         errors
       end
 
-      sig { params(package: ParsePackwerk::Package).returns(T::Array[String]) }
+      sig { params(package: ::Packs::Pack).returns(T::Array[String]) }
       def self.validate_rubocop_yml(package)
         errors = []
-        rubocop_yml = package.directory.join(PACK_LEVEL_RUBOCOP_YML)
+        rubocop_yml = package.relative_path.join(PACK_LEVEL_RUBOCOP_YML)
         return errors unless rubocop_yml.exist?
 
         loaded_rubocop_yml = YAML.load_file(rubocop_yml)
@@ -122,14 +123,14 @@ module RuboCop
         excludes
       end
 
-      sig { params(package: ParsePackwerk::Package).returns(T::Array[String]) }
+      sig { params(package: ::Packs::Pack).returns(T::Array[String]) }
       def self.validate_failure_mode_strict(package)
         errors = T.let([], T::Array[String])
 
         Packs.config.permitted_pack_level_cops.each do |cop|
           excludes = exclude_for_rule(cop)
 
-          rubocop_yml = package.directory.join(PACK_LEVEL_RUBOCOP_YML)
+          rubocop_yml = package.relative_path.join(PACK_LEVEL_RUBOCOP_YML)
 
           next unless rubocop_yml.exist?
 
@@ -137,7 +138,8 @@ module RuboCop
           next unless loaded_rubocop_yml[cop] && loaded_rubocop_yml[cop]['FailureMode'] == 'strict'
 
           excludes_for_package = excludes.select do |exclude|
-            ParsePackwerk.package_from_path(exclude).name == package.name
+            pack = ::Packs.for_file(exclude)
+            pack && pack.name == package.name
           end
           next if excludes_for_package.empty?
 

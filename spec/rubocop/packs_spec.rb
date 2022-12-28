@@ -16,11 +16,11 @@ RSpec.describe RuboCop::Packs do
       end
     end
 
-    let(:rubocop_yml) { ParsePackwerk.find('packs/my_pack').directory.join('package_rubocop.yml') }
+    let(:rubocop_yml) { Packs.find('packs/my_pack').relative_path.join('package_rubocop.yml') }
 
     it 'generates a package_rubocop.yml with the right required pack level cops' do
       expect(rubocop_yml).to_not exist
-      RuboCop::Packs.set_default_rubocop_yml(packs: ParsePackwerk.all)
+      RuboCop::Packs.set_default_rubocop_yml(packs: Packs.all)
       expect(rubocop_yml).to exist
       expect(YAML.load_file(rubocop_yml)).to eq({
                                                   'Style/SomeCop' => { 'Enabled' => true },
@@ -30,7 +30,7 @@ RSpec.describe RuboCop::Packs do
 
     it 'formats the package_rubocop.yml file nicely' do
       expect(rubocop_yml).to_not exist
-      RuboCop::Packs.set_default_rubocop_yml(packs: ParsePackwerk.all)
+      RuboCop::Packs.set_default_rubocop_yml(packs: Packs.all)
       expect(rubocop_yml).to exist
       expect(rubocop_yml.read).to eq(<<~YML)
         Style/SomeCop:
@@ -78,7 +78,7 @@ RSpec.describe RuboCop::Packs do
 
         it 'creates the TODO' do
           expect(rubocop_todo_yml).to_not exist
-          RuboCop::Packs.regenerate_todo(packs: [ParsePackwerk.find('packs/my_pack')])
+          RuboCop::Packs.regenerate_todo(packs: [Packs.find('packs/my_pack')])
           expect(rubocop_todo_yml).to exist
           expect(YAML.load_file(rubocop_todo_yml)).to eq(
             {
@@ -92,7 +92,7 @@ RSpec.describe RuboCop::Packs do
       context 'pack does not use pack-based rubocop' do
         it 'does not create the TODO' do
           expect(rubocop_todo_yml).to_not exist
-          RuboCop::Packs.regenerate_todo(packs: [ParsePackwerk.find('packs/my_pack')])
+          RuboCop::Packs.regenerate_todo(packs: [Packs.find('packs/my_pack')])
           expect(rubocop_todo_yml).to_not exist
         end
       end
@@ -112,7 +112,7 @@ RSpec.describe RuboCop::Packs do
 
         it 'recreates the TODO from scratch' do
           expect(rubocop_todo_yml).to exist
-          RuboCop::Packs.regenerate_todo(packs: [ParsePackwerk.find('packs/my_pack')])
+          RuboCop::Packs.regenerate_todo(packs: [Packs.find('packs/my_pack')])
           expect(rubocop_todo_yml).to exist
           expect(YAML.load_file(rubocop_todo_yml)).to eq(
             {
@@ -132,7 +132,7 @@ RSpec.describe RuboCop::Packs do
         end
 
         it 'does not list the same TODO multiple times' do
-          RuboCop::Packs.regenerate_todo(packs: [ParsePackwerk.find('packs/my_pack')])
+          RuboCop::Packs.regenerate_todo(packs: [Packs.find('packs/my_pack')])
           expect(rubocop_todo_yml).to exist
           expect(YAML.load_file(rubocop_todo_yml)).to eq(
             {
@@ -161,7 +161,7 @@ RSpec.describe RuboCop::Packs do
         let(:cop_cli_args) { '--only=Packs/RootNamespaceIsPackName' }
 
         it 'does not list the same TODO multiple times' do
-          RuboCop::Packs.regenerate_todo(packs: [ParsePackwerk.find('packs/my_pack')])
+          RuboCop::Packs.regenerate_todo(packs: [Packs.find('packs/my_pack')])
           expect(rubocop_todo_yml).to exist
           expect(YAML.load_file(rubocop_todo_yml)).to eq(
             {
@@ -188,7 +188,7 @@ RSpec.describe RuboCop::Packs do
         end
 
         it 'does not list the same TODO multiple times' do
-          RuboCop::Packs.regenerate_todo(packs: [ParsePackwerk.find('packs/my_pack')])
+          RuboCop::Packs.regenerate_todo(packs: [Packs.find('packs/my_pack')])
           expect(rubocop_todo_yml).to exist
           expect(YAML.load_file(rubocop_todo_yml)).to eq(
             {

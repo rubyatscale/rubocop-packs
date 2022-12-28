@@ -7,9 +7,9 @@ RSpec.describe RuboCop::Cop::PackwerkLite::Privacy, :config do
   context 'namespace convention is being followed' do
     context 'a private API is used from a private folder' do
       before do
-        write_package_yml('packs/apples', 'enforce_privacy' => true)
+        write_package_yml('packs/apples', 'enforce_privacy' => true, 'enforce_dependencies' => false)
         write_file('packs/apples/app/services/apples.rb')
-        write_package_yml('packs/tools', 'enforce_privacy' => true)
+        write_package_yml('packs/tools', 'enforce_privacy' => true, 'enforce_dependencies' => false)
         write_file('packs/tools/app/services/tools.rb')
       end
 
@@ -27,9 +27,9 @@ RSpec.describe RuboCop::Cop::PackwerkLite::Privacy, :config do
 
     context 'a private API is used from the public folder' do
       before do
-        write_package_yml('packs/apples', 'enforce_privacy' => true)
+        write_package_yml('packs/apples', 'enforce_privacy' => true, 'enforce_dependencies' => false)
         write_file('packs/apples/app/public/apples.rb')
-        write_package_yml('packs/tools', 'enforce_privacy' => true)
+        write_package_yml('packs/tools', 'enforce_privacy' => true, 'enforce_dependencies' => false)
         write_file('packs/tools/app/services/tools.rb')
       end
 
@@ -47,9 +47,9 @@ RSpec.describe RuboCop::Cop::PackwerkLite::Privacy, :config do
 
     context 'a public API is used from a private folder' do
       before do
-        write_package_yml('packs/apples', 'enforce_privacy' => true)
+        write_package_yml('packs/apples', 'enforce_privacy' => true, 'enforce_dependencies' => false)
         write_file('packs/apples/app/public/apples.rb')
-        write_package_yml('packs/tools', 'enforce_privacy' => true)
+        write_package_yml('packs/tools', 'enforce_privacy' => true, 'enforce_dependencies' => false)
         write_file('packs/tools/app/public/tools.rb')
       end
 
@@ -68,9 +68,9 @@ RSpec.describe RuboCop::Cop::PackwerkLite::Privacy, :config do
   context 'namespace convention is not being followed' do
     context 'a private API is used from a private folder' do
       before do
-        write_package_yml('packs/apples', 'enforce_privacy' => true)
+        write_package_yml('packs/apples', 'enforce_privacy' => true, 'enforce_dependencies' => false)
         write_file('packs/apples/app/services/apples.rb')
-        write_package_yml('packs/tools', 'enforce_privacy' => true)
+        write_package_yml('packs/tools', 'enforce_privacy' => true, 'enforce_dependencies' => false)
         write_file('packs/tools/app/services/blah.rb')
       end
 
@@ -87,9 +87,9 @@ RSpec.describe RuboCop::Cop::PackwerkLite::Privacy, :config do
 
     context 'a private API is used from the public folder' do
       before do
-        write_package_yml('packs/apples', 'enforce_privacy' => true)
+        write_package_yml('packs/apples', 'enforce_privacy' => true, 'enforce_dependencies' => false)
         write_file('packs/apples/app/public/apples.rb')
-        write_package_yml('packs/tools', 'enforce_privacy' => true)
+        write_package_yml('packs/tools', 'enforce_privacy' => true, 'enforce_dependencies' => false)
         write_file('packs/tools/app/services/blah.rb')
       end
 
@@ -106,9 +106,9 @@ RSpec.describe RuboCop::Cop::PackwerkLite::Privacy, :config do
 
     context 'a public API is used from a private folder' do
       before do
-        write_package_yml('packs/apples', 'enforce_privacy' => true)
+        write_package_yml('packs/apples', 'enforce_privacy' => true, 'enforce_dependencies' => false)
         write_file('packs/apples/app/public/apples.rb')
-        write_package_yml('packs/tools', 'enforce_privacy' => true)
+        write_package_yml('packs/tools', 'enforce_privacy' => true, 'enforce_dependencies' => false)
         write_file('packs/tools/app/public/blah.rb')
       end
 
@@ -125,10 +125,10 @@ RSpec.describe RuboCop::Cop::PackwerkLite::Privacy, :config do
 
     context 'packs share a sub-module namespace and do not fully qualify the constant' do
       before do
-        write_package_yml('packs/apples', 'enforce_privacy' => true)
+        write_package_yml('packs/apples', 'enforce_privacy' => true, 'enforce_dependencies' => false)
         write_file('packs/apples/app/public/apples.rb')
         write_file('packs/apples/app/public/apples/tools/pruners.rb')
-        write_package_yml('packs/tools', 'enforce_privacy' => true)
+        write_package_yml('packs/tools', 'enforce_privacy' => true, 'enforce_dependencies' => false)
         write_file('packs/tools/app/services/tools/pruners.rb')
       end
 
@@ -148,10 +148,10 @@ RSpec.describe RuboCop::Cop::PackwerkLite::Privacy, :config do
 
     context 'packs share a sub-module namespace and does fully qualify the constant' do
       before do
-        write_package_yml('packs/apples', 'enforce_privacy' => true)
+        write_package_yml('packs/apples', 'enforce_privacy' => true, 'enforce_dependencies' => false)
         write_file('packs/apples/app/public/apples.rb')
         write_file('packs/apples/app/public/apples/tools/pruners.rb')
-        write_package_yml('packs/tools', 'enforce_privacy' => true)
+        write_package_yml('packs/tools', 'enforce_privacy' => true, 'enforce_dependencies' => false)
         write_file('packs/tools/app/services/tools/pruners.rb')
       end
 

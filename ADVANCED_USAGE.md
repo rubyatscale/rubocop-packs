@@ -21,7 +21,7 @@ To add a per-pack `package_rubocop.yml`, you just need to create a `packs/your_p
 ### Per-pack `package_rubocop_todo.yml`
 To create a per-pack `package_rubocop_todo.yml`, you can use the following API from `rubocop-packs`:
 ```ruby
-RuboCop::Packs.regenerate_todo(packs: ParsePackwerk.all)
+RuboCop::Packs.regenerate_todo(packs: Packs.all)
 ```
 This API will auto-generate a `packs/some_pack/package_rubocop_todo.yml`. This allows a pack to own its own exception list.
 

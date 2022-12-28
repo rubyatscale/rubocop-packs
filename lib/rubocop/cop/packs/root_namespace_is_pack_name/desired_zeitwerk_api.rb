@@ -28,7 +28,7 @@ module RuboCop
           # Likely this means that our own cop should determine the desired namespace and pass that in
           # and this can determine actual namespace and how to get to expected.
           #
-          sig { params(relative_filename: String, package_for_path: ParsePackwerk::Package).returns(T.nilable(NamespaceContext)) }
+          sig { params(relative_filename: String, package_for_path: ::Packs::Pack).returns(T.nilable(NamespaceContext)) }
           def for_file(relative_filename, package_for_path)
             package_name = package_for_path.name
 
@@ -68,7 +68,7 @@ module RuboCop
               package_name,
               T.must(app_or_lib),
               T.must(autoload_folder_name),
-              get_package_last_name(package_for_path),
+              package_for_path.last_name,
               remaining_file_path
             )
 
@@ -82,9 +82,9 @@ module RuboCop
             )
           end
 
-          sig { params(pack: ParsePackwerk::Package).returns(String) }
+          sig { params(pack: ::Packs::Pack).returns(String) }
           def get_pack_based_namespace(pack)
-            get_package_last_name(pack).camelize
+            pack.last_name.camelize
           end
 
           private
@@ -92,11 +92,6 @@ module RuboCop
           sig { returns(Pathname) }
           def root_pathname
             Pathname.pwd
-          end
-
-          sig { params(pack: ParsePackwerk::Package).returns(String) }
-          def get_package_last_name(pack)
-            T.must(pack.name.split('/').last)
           end
 
           sig { params(remaining_file_path: String, package_name: String).returns(String) }

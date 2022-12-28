@@ -26,15 +26,15 @@ module RuboCop
     # That is: the ability to preserve the location of `.rubocop_todo.yml` files and associate
     # exclusions with the closest ancestor `.rubocop_todo.yml`
     #
-    sig { params(packs: T::Array[ParsePackwerk::Package], files: T::Array[String]).void }
+    sig { params(packs: T::Array[::Packs::Pack], files: T::Array[String]).void }
     def self.regenerate_todo(packs: [], files: [])
       # Delete the old pack-level rubocop todo files so that we can regenerate the new one from scratch
       packs.each do |pack|
-        rubocop_todo_yml = pack.directory.join(PACK_LEVEL_RUBOCOP_TODO_YML)
+        rubocop_todo_yml = pack.relative_path.join(PACK_LEVEL_RUBOCOP_TODO_YML)
         rubocop_todo_yml.delete if rubocop_todo_yml.exist?
       end
 
-      paths = packs.empty? ? files : packs.map(&:name).reject { |name| name == ParsePackwerk::ROOT_PACKAGE_NAME }
+      paths = packs.empty? ? files : packs.map(&:name)
 
       cop_names = config.permitted_pack_level_cops.select do |cop_name|
         YAML.load_file('.rubocop.yml').fetch(cop_name, {})['Enabled']
@@ -46,10 +46,10 @@ module RuboCop
       )
 
       offenses.group_by(&:pack).each do |pack, offenses_for_pack|
-        next if pack.name == ParsePackwerk::ROOT_PACKAGE_NAME
-        next if !pack.directory.join(PACK_LEVEL_RUBOCOP_YML).exist?
+        next if pack.nil?
+        next if !pack.relative_path.join(PACK_LEVEL_RUBOCOP_YML).exist?
 
-        rubocop_todo_yml = pack.directory.join(PACK_LEVEL_RUBOCOP_TODO_YML)
+        rubocop_todo_yml = pack.relative_path.join(PACK_LEVEL_RUBOCOP_TODO_YML)
         if rubocop_todo_yml.exist?
           rubocop_todo = YAML.load_file(rubocop_todo_yml)
         else
@@ -74,10 +74,10 @@ module RuboCop
     # That is: the ability to preserve the location of `.rubocop_todo.yml` files and associate
     # exclusions with the closest ancestor `.rubocop_todo.yml`
     #
-    sig { params(packs: T::Array[ParsePackwerk::Package]).void }
+    sig { params(packs: T::Array[::Packs::Pack]).void }
     def self.set_default_rubocop_yml(packs:)
       packs.each do |pack|
-        rubocop_yml = Pathname.new(pack.directory.join(PACK_LEVEL_RUBOCOP_YML))
+        rubocop_yml = pack.relative_path.join(PACK_LEVEL_RUBOCOP_YML)
         rubocop_yml_hash = {}
         config.required_pack_level_cops.each do |cop|
           rubocop_yml_hash[cop] = { 'Enabled' => true }
@@ -101,10 +101,8 @@ module RuboCop
       # We do this because when the ERB is evaluated Dir.pwd is at the directory containing the YML.
       # Ideally rubocop wouldn't change the PWD before invoking this method.
       Dir.chdir(root_pathname) do
-        ParsePackwerk.all.each do |package|
-          next if package.name == ParsePackwerk::ROOT_PACKAGE_NAME
-
-          rubocop_todo = package.directory.join(PACK_LEVEL_RUBOCOP_TODO_YML)
+        ::Packs.all.each do |package|
+          rubocop_todo = package.relative_path.join(PACK_LEVEL_RUBOCOP_TODO_YML)
           if rubocop_todo.exist?
             loaded_rubocop_todo = YAML.load_file(rubocop_todo)
             loaded_rubocop_todo.each do |cop_name, key_config|
@@ -114,7 +112,7 @@ module RuboCop
             end
           end
 
-          pack_rubocop = package.directory.join(PACK_LEVEL_RUBOCOP_YML)
+          pack_rubocop = package.relative_path.join(PACK_LEVEL_RUBOCOP_YML)
           next unless pack_rubocop.exist?
 
           loaded_pack_rubocop = YAML.load_file(pack_rubocop)
@@ -123,10 +121,10 @@ module RuboCop
 
             if key_config['Enabled']
               rubocop_config[cop_name]['Include'] ||= []
-              rubocop_config[cop_name]['Include'] << package.directory.join('**/*').to_s
+              rubocop_config[cop_name]['Include'] << package.relative_path.join('**/*').to_s
             else
               rubocop_config[cop_name]['Exclude'] ||= []
-              rubocop_config[cop_name]['Exclude'] << package.directory.join('**/*').to_s
+              rubocop_config[cop_name]['Exclude'] << package.relative_path.join('**/*').to_s
             end
           end
         end
@@ -167,9 +165,7 @@ module RuboCop
     sig { returns(T::Array[String]) }
     def self.validate
       errors = T.let([], T::Array[String])
-      ParsePackwerk.all.each do |package|
-        next if package.name == ParsePackwerk::ROOT_PACKAGE_NAME
-
+      ::Packs.all.each do |package|
         errors += Private.validate_rubocop_todo_yml(package)
         errors += Private.validate_rubocop_yml(package)
         errors += Private.validate_failure_mode_strict(package)

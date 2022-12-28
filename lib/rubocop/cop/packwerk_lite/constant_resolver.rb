@@ -27,8 +27,9 @@ module RuboCop
 
           sig { returns(T::Boolean) }
           def public_api?
-            # ParsePackwerk::Package should have a method to take in a path and determine if the file is public.
+            # PackwerkExtensions should have a method to take in a path and determine if the file is public.
             # For now we put it here and only support the public folder (and not specific private constants).
+            # However if we declare that dependency we may want to extract this into `rubocop-packwerk_lite` or something liek that!
             constant_definition_location.to_s.include?('/public/')
           end
 
@@ -40,7 +41,7 @@ module RuboCop
 
             expected_containing_pack_last_name = global_namespace.underscore
 
-            # We don't use ParsePackwerk.find(...) here because we want to look for nested packs, and this pack could be a child pack in a nested pack too.
+            # We don't use Packs.find(...) here because we want to look for nested packs, and this pack could be a child pack in a nested pack too.
             # In the future, we might want `find` to be able to take a glob or a regex to look for packs with a specific name structure.
             expected_containing_pack = ParsePackwerk.all.find { |p| p.name.include?("/#{expected_containing_pack_last_name}") }
             return if expected_containing_pack.nil?

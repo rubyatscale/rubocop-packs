@@ -1,6 +1,7 @@
 # typed: strict
 # frozen_string_literal: true
 
+require 'parse_packwerk'
 require 'rubocop/cop/packwerk_lite/private'
 require 'rubocop/cop/packwerk_lite/constant_resolver'
 require 'rubocop/cop/packwerk_lite/privacy_checker'

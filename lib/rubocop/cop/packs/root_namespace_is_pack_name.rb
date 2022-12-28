@@ -38,7 +38,7 @@ module RuboCop
           return if !relative_filename.include?('app/') || relative_filepath.extname != '.rb'
 
           relative_filename = relative_filepath.to_s
-          package_for_path = ParsePackwerk.package_from_path(relative_filename)
+          package_for_path = ::Packs.for_file(relative_filename)
 
           return if package_for_path.nil?
 
