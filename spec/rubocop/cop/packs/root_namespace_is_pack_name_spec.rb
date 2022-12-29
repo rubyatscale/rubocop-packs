@@ -14,10 +14,10 @@ RSpec.describe RuboCop::Cop::Packs::RootNamespaceIsPackName, :config do
   let(:global_namespaces) { [] }
 
   before do
-    write_package_yml('packs/apples')
-    write_package_yml('packs/tools')
-    write_package_yml('packs/fruits/apples')
-    write_package_yml('packs/fruit_concerns')
+    write_pack('packs/apples')
+    write_pack('packs/tools')
+    write_pack('packs/fruits/apples')
+    write_pack('packs/fruit_concerns')
 
     RuboCop::Packs.configure do |config|
       config.globally_permitted_namespaces = global_namespaces

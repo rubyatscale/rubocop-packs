@@ -10,7 +10,7 @@ RSpec.describe RuboCop::Packs do
 
   describe 'set_default_rubocop_yml' do
     before do
-      write_package_yml('packs/my_pack')
+      write_pack('packs/my_pack')
       RuboCop::Packs.configure do |config|
         config.required_pack_level_cops = ['Style/SomeCop', 'Lint/SomeCop']
       end
@@ -61,7 +61,7 @@ RSpec.describe RuboCop::Packs do
         Packs/TypedPublicApis:
           Enabled: true
       YML
-      write_package_yml('packs/my_pack')
+      write_pack('packs/my_pack')
       rubocop_json = { 'files' => [{ 'path' => 'packs/my_pack/path/to/file.rb', 'offenses' => offenses }] }.to_json
       allow_any_instance_of(RuboCop::CLI).to receive(:run).with(['packs/my_pack', cop_cli_args, '--format=json', '--out=tmp/rubocop-output']) do
         Pathname.new('tmp/rubocop-output').write(rubocop_json)
@@ -338,7 +338,7 @@ RSpec.describe RuboCop::Packs do
 
     context 'one pack with exclude' do
       before do
-        write_package_yml('packs/some_pack')
+        write_pack('packs/some_pack')
 
         write_file('packs/some_pack/package_rubocop_todo.yml', <<~YML)
           Packs/RootNamespaceIsPackName:
@@ -362,7 +362,7 @@ RSpec.describe RuboCop::Packs do
 
     context 'two packs with exclude' do
       before do
-        write_package_yml('packs/some_pack')
+        write_pack('packs/some_pack')
 
         write_file('packs/some_pack/package_rubocop_todo.yml', <<~YML)
           Packs/RootNamespaceIsPackName:
@@ -370,7 +370,7 @@ RSpec.describe RuboCop::Packs do
               - 'packs/some_pack/app/services/bad_namespace.rb'
         YML
 
-        write_package_yml('packs/some_other_pack')
+        write_pack('packs/some_other_pack')
 
         write_file('packs/some_other_pack/package_rubocop_todo.yml', <<~YML)
           Packs/RootNamespaceIsPackName:
@@ -388,14 +388,14 @@ RSpec.describe RuboCop::Packs do
 
     context 'nested pack with child pack disabling rule but parent pack enabling rule' do
       before do
-        write_package_yml('packs/parent_pack')
+        write_pack('packs/parent_pack')
 
         write_file('packs/parent_pack/package_rubocop.yml', <<~YML)
           Packs/RootNamespaceIsPackName:
             Enabled: true
         YML
 
-        write_package_yml('packs/child_pack')
+        write_pack('packs/child_pack')
 
         write_file('packs/child_pack/package_rubocop.yml', <<~YML)
           Packs/RootNamespaceIsPackName:
@@ -412,7 +412,7 @@ RSpec.describe RuboCop::Packs do
 
     context 'one pack with include' do
       before do
-        write_package_yml('packs/some_pack')
+        write_pack('packs/some_pack')
 
         write_file('packs/some_pack/package_rubocop.yml', <<~YML)
           Packs/RootNamespaceIsPackName:
@@ -435,21 +435,21 @@ RSpec.describe RuboCop::Packs do
 
     context 'three packs with include' do
       before do
-        write_package_yml('packs/some_pack')
+        write_pack('packs/some_pack')
 
         write_file('packs/some_pack/package_rubocop.yml', <<~YML)
           Packs/RootNamespaceIsPackName:
             Enabled: false
         YML
 
-        write_package_yml('packs/some_other_pack')
+        write_pack('packs/some_other_pack')
 
         write_file('packs/some_other_pack/package_rubocop.yml', <<~YML)
           Packs/RootNamespaceIsPackName:
             Enabled: true
         YML
 
-        write_package_yml('packs/yet_another_pack')
+        write_pack('packs/yet_another_pack')
 
         write_file('packs/yet_another_pack/package_rubocop.yml', <<~YML)
           Packs/RootNamespaceIsPackName:
@@ -466,14 +466,14 @@ RSpec.describe RuboCop::Packs do
 
     context 'packs with inclusions and exclusions' do
       before do
-        write_package_yml('packs/some_pack')
+        write_pack('packs/some_pack')
 
         write_file('packs/some_pack/package_rubocop.yml', <<~YML)
           Packs/RootNamespaceIsPackName:
             Enabled: false
         YML
 
-        write_package_yml('packs/some_other_pack')
+        write_pack('packs/some_other_pack')
 
         write_file('packs/some_other_pack/package_rubocop.yml', <<~YML)
           Packs/RootNamespaceIsPackName:
@@ -486,7 +486,7 @@ RSpec.describe RuboCop::Packs do
               - packs/some_other_pack/my_file.rb
         YML
 
-        write_package_yml('packs/yet_another_pack')
+        write_pack('packs/yet_another_pack')
 
         write_file('packs/yet_another_pack/package_rubocop.yml', <<~YML)
           Packs/RootNamespaceIsPackName:
@@ -520,7 +520,7 @@ RSpec.describe RuboCop::Packs do
 
       context 'one pack with valid exclude' do
         before do
-          write_package_yml('packs/some_pack')
+          write_pack('packs/some_pack')
 
           write_file('packs/some_pack/app/services/bad_namespace.rb', '')
 
@@ -538,7 +538,7 @@ RSpec.describe RuboCop::Packs do
 
       context 'one pack with valid exclude where file does not exist' do
         before do
-          write_package_yml('packs/some_pack')
+          write_pack('packs/some_pack')
 
           write_file('packs/some_pack/package_rubocop_todo.yml', <<~YML)
             Packs/RootNamespaceIsPackName:
@@ -554,7 +554,7 @@ RSpec.describe RuboCop::Packs do
 
       context 'one pack with disallowed cop key' do
         before do
-          write_package_yml('packs/some_pack')
+          write_pack('packs/some_pack')
           write_file('packs/some_pack/package_rubocop_todo.yml', <<~YML)
             SomeOtherCop:
               Exclude:
@@ -574,7 +574,7 @@ RSpec.describe RuboCop::Packs do
 
       context 'one pack with disallowed configuration key' do
         before do
-          write_package_yml('packs/some_pack')
+          write_pack('packs/some_pack')
           write_file('packs/some_pack/package_rubocop_todo.yml', <<~YML)
             Packs/RootNamespaceIsPackName:
               SomethingElse:
@@ -593,9 +593,9 @@ RSpec.describe RuboCop::Packs do
 
       context 'one pack with filepath from the wrong pack' do
         before do
-          write_package_yml('packs/some_pack')
+          write_pack('packs/some_pack')
 
-          write_package_yml('packs/some_other_pack')
+          write_pack('packs/some_other_pack')
 
           write_file('packs/some_pack/package_rubocop_todo.yml', <<~YML)
             Packs/RootNamespaceIsPackName:
@@ -617,7 +617,7 @@ RSpec.describe RuboCop::Packs do
 
       context 'one pack with inherit_from set' do
         before do
-          write_package_yml('packs/some_pack')
+          write_pack('packs/some_pack')
 
           write_file('packs/some_pack/package_rubocop.yml', <<~YML)
             inherit_from: "something_else.yml"
@@ -645,7 +645,7 @@ RSpec.describe RuboCop::Packs do
 
       context 'one pack with valid package_rubocop.yml' do
         before do
-          write_package_yml('packs/some_pack')
+          write_pack('packs/some_pack')
           write_file('packs/some_pack/package_rubocop.yml', <<~YML)
             Packs/RootNamespaceIsPackName:
               Enabled: true
@@ -659,7 +659,7 @@ RSpec.describe RuboCop::Packs do
 
       context 'one pack with valid package_rubocop.yml with FailureMode specified' do
         before do
-          write_package_yml('packs/some_pack')
+          write_pack('packs/some_pack')
           write_file('packs/some_pack/package_rubocop.yml', <<~YML)
             Packs/RootNamespaceIsPackName:
               Enabled: true
@@ -674,7 +674,7 @@ RSpec.describe RuboCop::Packs do
 
       context 'one pack with disallowed cop key' do
         before do
-          write_package_yml('packs/some_pack')
+          write_pack('packs/some_pack')
           write_file('packs/some_pack/package_rubocop.yml', <<~YML)
             SomeOtherCop:
               Enabled: true
@@ -693,7 +693,7 @@ RSpec.describe RuboCop::Packs do
 
       context 'one pack with disallowed configuration key' do
         before do
-          write_package_yml('packs/some_pack')
+          write_pack('packs/some_pack')
           write_file('packs/some_pack/package_rubocop.yml', <<~YML)
             Packs/RootNamespaceIsPackName:
               Exclude:
@@ -718,7 +718,7 @@ RSpec.describe RuboCop::Packs do
         end
 
         before do
-          write_package_yml('packs/some_pack')
+          write_pack('packs/some_pack')
           write_file('packs/some_pack/package_rubocop.yml', <<~YML)
             Packs/RootNamespaceIsPackName:
               Enabled: true
@@ -736,7 +736,7 @@ RSpec.describe RuboCop::Packs do
       # For now, this is allowed. We might add this restriction back once we've completed the migration off of `package_protections`
       context 'one pack without a package_rubocop.yml' do
         before do
-          write_package_yml('packs/some_pack')
+          write_pack('packs/some_pack')
         end
 
         it 'returns no errors' do
@@ -749,7 +749,7 @@ RSpec.describe RuboCop::Packs do
       context 'package has specified FailureMode: strict for a cop' do
         context 'package has pack-based package_rubocop_todo.yml entries for that cop' do
           before do
-            write_package_yml('packs/some_pack')
+            write_pack('packs/some_pack')
 
             write_file('packs/some_pack/app/services/some_file.rb', '')
 
@@ -775,7 +775,7 @@ RSpec.describe RuboCop::Packs do
 
         context 'package has top-level package_rubocop_todo.yml entries for that cop' do
           before do
-            write_package_yml('packs/some_pack')
+            write_pack('packs/some_pack')
 
             write_file('packs/some_pack/app/services/some_file.rb', '')
 

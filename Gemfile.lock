@@ -27,7 +27,7 @@ GEM
     method_source (1.0.0)
     minitest (5.16.3)
     netrc (0.11.0)
-    packs (0.0.2)
+    packs (0.0.5)
       sorbet-runtime
     parallel (1.22.1)
     parse_packwerk (0.18.0)
