@@ -7,57 +7,42 @@
 # source://packs//lib/packs/pack.rb#3
 module Packs
   class << self
-    # source://packs//lib/packs.rb#17
+    # source://packs//lib/packs.rb#16
     sig { returns(T::Array[::Packs::Pack]) }
     def all; end
 
-    # source://packs//lib/packs.rb#35
+    # source://packs//lib/packs.rb#34
     sig { void }
     def bust_cache!; end
 
-    # source://packs//lib/packs/configuration.rb#27
-    sig { returns(::Packs::Configuration) }
+    # source://packs//lib/packs.rb#41
+    sig { returns(::Packs::Private::Configuration) }
     def config; end
 
     # @yield [config]
     #
-    # source://packs//lib/packs/configuration.rb#33
-    sig { params(blk: T.proc.params(arg0: ::Packs::Configuration).void).void }
+    # source://packs//lib/packs.rb#47
+    sig { params(blk: T.proc.params(arg0: ::Packs::Private::Configuration).void).void }
     def configure(&blk); end
 
-    # source://packs//lib/packs.rb#22
+    # source://packs//lib/packs.rb#21
     sig { params(name: ::String).returns(T.nilable(::Packs::Pack)) }
     def find(name); end
 
-    # source://packs//lib/packs.rb#27
+    # source://packs//lib/packs.rb#26
     sig { params(file_path: T.any(::Pathname, ::String)).returns(T.nilable(::Packs::Pack)) }
     def for_file(file_path); end
 
     private
 
-    # source://packs//lib/packs.rb#58
+    # source://packs//lib/packs.rb#73
     sig { returns(T::Array[::Pathname]) }
     def package_glob_patterns; end
 
-    # source://packs//lib/packs.rb#44
+    # source://packs//lib/packs.rb#59
     sig { returns(T::Hash[::String, ::Packs::Pack]) }
     def packs_by_name; end
   end
-end
-
-# source://packs//lib/packs/configuration.rb#4
-class Packs::Configuration
-  # source://packs//lib/packs/configuration.rb#11
-  sig { void }
-  def initialize; end
-
-  # source://packs//lib/packs/configuration.rb#16
-  sig { returns(T::Array[::Pathname]) }
-  def roots; end
-
-  # source://packs//lib/packs/configuration.rb#8
-  sig { params(roots: T::Array[::String]).void }
-  def roots=(roots); end
 end
 
 # source://packs//lib/packs.rb#10
@@ -92,14 +77,35 @@ class Packs::Pack < ::T::Struct
   end
 end
 
-# source://packs//lib/packs/private.rb#4
+# source://packs//lib/packs/private/configuration.rb#4
 module Packs::Private
   class << self
-    # source://packs//lib/packs/private.rb#8
+    # source://packs//lib/packs/private.rb#10
     sig { returns(::Pathname) }
     def root; end
   end
 end
 
-# source://packs//lib/packs.rb#11
-Packs::ROOTS = T.let(T.unsafe(nil), Array)
+# source://packs//lib/packs/private/configuration.rb#5
+class Packs::Private::Configuration < ::T::Struct
+  prop :pack_paths, T::Array[::String]
+
+  class << self
+    # source://packs//lib/packs/private/configuration.rb#17
+    sig { returns(::Packs::Private::Configuration) }
+    def fetch; end
+
+    # source://sorbet-runtime/0.5.10479/lib/types/struct.rb#13
+    def inherited(s); end
+
+    # source://packs//lib/packs/private/configuration.rb#26
+    sig { params(config_hash: T::Hash[T.untyped, T.untyped]).returns(T::Array[::String]) }
+    def pack_paths(config_hash); end
+  end
+end
+
+# source://packs//lib/packs/private/configuration.rb#7
+Packs::Private::Configuration::CONFIGURATION_PATHNAME = T.let(T.unsafe(nil), Pathname)
+
+# source://packs//lib/packs/private/configuration.rb#9
+Packs::Private::Configuration::DEFAULT_PACK_PATHS = T.let(T.unsafe(nil), Array)
