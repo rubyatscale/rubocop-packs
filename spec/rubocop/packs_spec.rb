@@ -82,8 +82,8 @@ RSpec.describe RuboCop::Packs do
           expect(rubocop_todo_yml).to exist
           expect(YAML.load_file(rubocop_todo_yml)).to eq(
             {
-              'Packs/RootNamespaceIsPackName' => { 'Exclude' => ['packs/my_pack/path/to/file.rb'] },
-              'Packs/ClassMethodsAsPublicApis' => { 'Exclude' => ['packs/my_pack/path/to/file.rb'] }
+              'Packs/RootNamespaceIsPackName' => { 'Exclude' => ['path/to/file.rb'] },
+              'Packs/ClassMethodsAsPublicApis' => { 'Exclude' => ['path/to/file.rb'] }
             }
           )
         end
@@ -103,8 +103,8 @@ RSpec.describe RuboCop::Packs do
           rubocop_todo_yml.write(
             YAML.dump(
               {
-                'Packs/RootNamespaceIsPackName' => { 'Exclude' => ['packs/my_pack/path/to/existing_file.rb'] },
-                'Packs/TypedPublicApis' => { 'Exclude' => ['packs/my_pack/path/to/file.rb'] }
+                'Packs/RootNamespaceIsPackName' => { 'Exclude' => ['path/to/existing_file.rb'] },
+                'Packs/TypedPublicApis' => { 'Exclude' => ['path/to/file.rb'] }
               }
             )
           )
@@ -116,8 +116,8 @@ RSpec.describe RuboCop::Packs do
           expect(rubocop_todo_yml).to exist
           expect(YAML.load_file(rubocop_todo_yml)).to eq(
             {
-              'Packs/RootNamespaceIsPackName' => { 'Exclude' => ['packs/my_pack/path/to/file.rb'] },
-              'Packs/ClassMethodsAsPublicApis' => { 'Exclude' => ['packs/my_pack/path/to/file.rb'] }
+              'Packs/RootNamespaceIsPackName' => { 'Exclude' => ['path/to/file.rb'] },
+              'Packs/ClassMethodsAsPublicApis' => { 'Exclude' => ['path/to/file.rb'] }
             }
           )
         end
@@ -136,8 +136,8 @@ RSpec.describe RuboCop::Packs do
           expect(rubocop_todo_yml).to exist
           expect(YAML.load_file(rubocop_todo_yml)).to eq(
             {
-              'Packs/ClassMethodsAsPublicApis' => { 'Exclude' => ['packs/my_pack/path/to/file.rb'] },
-              'Packs/RootNamespaceIsPackName' => { 'Exclude' => ['packs/my_pack/path/to/file.rb'] }
+              'Packs/ClassMethodsAsPublicApis' => { 'Exclude' => ['path/to/file.rb'] },
+              'Packs/RootNamespaceIsPackName' => { 'Exclude' => ['path/to/file.rb'] }
             }
           )
         end
@@ -165,7 +165,7 @@ RSpec.describe RuboCop::Packs do
           expect(rubocop_todo_yml).to exist
           expect(YAML.load_file(rubocop_todo_yml)).to eq(
             {
-              'Packs/RootNamespaceIsPackName' => { 'Exclude' => ['packs/my_pack/path/to/file.rb'] }
+              'Packs/RootNamespaceIsPackName' => { 'Exclude' => ['path/to/file.rb'] }
             }
           )
         end
@@ -192,8 +192,8 @@ RSpec.describe RuboCop::Packs do
           expect(rubocop_todo_yml).to exist
           expect(YAML.load_file(rubocop_todo_yml)).to eq(
             {
-              'Packs/RootNamespaceIsPackName' => { 'Exclude' => ['packs/my_pack/path/to/file.rb'] },
-              'Packs/ClassMethodsAsPublicApis' => { 'Exclude' => ['packs/my_pack/path/to/file.rb'] }
+              'Packs/RootNamespaceIsPackName' => { 'Exclude' => ['path/to/file.rb'] },
+              'Packs/ClassMethodsAsPublicApis' => { 'Exclude' => ['path/to/file.rb'] }
             }
           )
         end
@@ -210,8 +210,8 @@ RSpec.describe RuboCop::Packs do
           expect(rubocop_todo_yml).to exist
           expect(YAML.load_file(rubocop_todo_yml)).to eq(
             {
-              'Packs/RootNamespaceIsPackName' => { 'Exclude' => ['packs/my_pack/path/to/file.rb'] },
-              'Packs/ClassMethodsAsPublicApis' => { 'Exclude' => ['packs/my_pack/path/to/file.rb'] }
+              'Packs/RootNamespaceIsPackName' => { 'Exclude' => ['path/to/file.rb'] },
+              'Packs/ClassMethodsAsPublicApis' => { 'Exclude' => ['path/to/file.rb'] }
             }
           )
         end
@@ -230,8 +230,8 @@ RSpec.describe RuboCop::Packs do
           rubocop_todo_yml.write(
             YAML.dump(
               {
-                'Packs/RootNamespaceIsPackName' => { 'Exclude' => ['packs/my_pack/path/to/existing_file.rb'] },
-                'Packs/TypedPublicApis' => { 'Exclude' => ['packs/my_pack/path/to/file.rb'] }
+                'Packs/RootNamespaceIsPackName' => { 'Exclude' => ['path/to/existing_file.rb'] },
+                'Packs/TypedPublicApis' => { 'Exclude' => ['path/to/file.rb'] }
               }
             )
           )
@@ -244,9 +244,9 @@ RSpec.describe RuboCop::Packs do
           expect(rubocop_todo_yml).to exist
           expect(YAML.load_file(rubocop_todo_yml)).to eq(
             {
-              'Packs/RootNamespaceIsPackName' => { 'Exclude' => ['packs/my_pack/path/to/existing_file.rb', 'packs/my_pack/path/to/file.rb'] },
-              'Packs/TypedPublicApis' => { 'Exclude' => ['packs/my_pack/path/to/file.rb'] },
-              'Packs/ClassMethodsAsPublicApis' => { 'Exclude' => ['packs/my_pack/path/to/file.rb'] }
+              'Packs/RootNamespaceIsPackName' => { 'Exclude' => ['path/to/existing_file.rb', 'path/to/file.rb'] },
+              'Packs/TypedPublicApis' => { 'Exclude' => ['path/to/file.rb'] },
+              'Packs/ClassMethodsAsPublicApis' => { 'Exclude' => ['path/to/file.rb'] }
             }
           )
         end
@@ -278,8 +278,8 @@ RSpec.describe RuboCop::Packs do
           expect(rubocop_todo_yml).to exist
           expect(YAML.load_file(rubocop_todo_yml)).to eq(
             {
-              'Packs/RootNamespaceIsPackName' => { 'Exclude' => ['packs/my_pack/path/to/file.rb'] },
-              'Packs/ClassMethodsAsPublicApis' => { 'Exclude' => ['packs/my_pack/path/to/file.rb'] }
+              'Packs/RootNamespaceIsPackName' => { 'Exclude' => ['path/to/file.rb'] },
+              'Packs/ClassMethodsAsPublicApis' => { 'Exclude' => ['path/to/file.rb'] }
             }
           )
         end
@@ -298,8 +298,8 @@ RSpec.describe RuboCop::Packs do
           rubocop_todo_yml.write(
             YAML.dump(
               {
-                'Packs/RootNamespaceIsPackName' => { 'Exclude' => ['packs/my_pack/path/to/existing_file.rb'] },
-                'Packs/TypedPublicApis' => { 'Exclude' => ['packs/my_pack/path/to/file.rb'] }
+                'Packs/RootNamespaceIsPackName' => { 'Exclude' => ['path/to/existing_file.rb'] },
+                'Packs/TypedPublicApis' => { 'Exclude' => ['path/to/file.rb'] }
               }
             )
           )
@@ -312,9 +312,9 @@ RSpec.describe RuboCop::Packs do
           expect(rubocop_todo_yml).to exist
           expect(YAML.load_file(rubocop_todo_yml)).to eq(
             {
-              'Packs/RootNamespaceIsPackName' => { 'Exclude' => ['packs/my_pack/path/to/existing_file.rb', 'packs/my_pack/path/to/file.rb'] },
-              'Packs/TypedPublicApis' => { 'Exclude' => ['packs/my_pack/path/to/file.rb'] },
-              'Packs/ClassMethodsAsPublicApis' => { 'Exclude' => ['packs/my_pack/path/to/file.rb'] }
+              'Packs/RootNamespaceIsPackName' => { 'Exclude' => ['path/to/existing_file.rb', 'path/to/file.rb'] },
+              'Packs/TypedPublicApis' => { 'Exclude' => ['path/to/file.rb'] },
+              'Packs/ClassMethodsAsPublicApis' => { 'Exclude' => ['path/to/file.rb'] }
             }
           )
         end
@@ -437,14 +437,8 @@ RSpec.describe RuboCop::Packs do
           YML
         end
 
-        it 'has an error' do
-          error = <<~ERROR
-            packs/some_pack/.rubocop.yml contains invalid configuration for inherit_from.
-            Please only configure the following cops on a per-pack basis: ["Packs/RootNamespaceIsPackName", "Packs/TypedPublicApis", "Packs/ClassMethodsAsPublicApis"]"
-            For ignoring other cops, please instead modify the top-level .rubocop.yml file.
-          ERROR
-
-          expect(errors).to eq([error])
+        it 'returns an empty list' do
+          expect(errors).to be_empty
         end
       end
     end
