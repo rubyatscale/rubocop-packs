@@ -88,6 +88,7 @@ module RuboCop
 
         loaded_rubocop_yml.each_key do |key|
           next if key == 'inherit_from'
+
           if !Packs.config.permitted_pack_level_cops.include?(key)
             errors << <<~ERROR_MESSAGE
               #{rubocop_yml} contains invalid configuration for #{key}.

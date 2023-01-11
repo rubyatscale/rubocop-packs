@@ -58,8 +58,8 @@ module RuboCop
           if left_sibling == :private_class_method
             if node_is_sorbet_signature?(node.parent.left_sibling)
               return if documentation_comment?(node.parent.left_sibling)
-            else
-              return if documentation_comment?(node.parent)
+            elsif documentation_comment?(node.parent)
+              return
             end
           elsif node_is_sorbet_signature?(left_sibling)
             return if documentation_comment?(node.left_sibling)
