@@ -54,15 +54,26 @@ module RuboCop
           return if non_public?(node) && !require_for_non_public_methods?
 
           left_sibling = node.left_sibling
-          left_sibling_is_sig = left_sibling && (left_sibling.source.include?('sig do') || left_sibling.source.include?('sig {'))
-          # Is there a better way to check if the left sibling is a sorbet signature? Probably!
-          if left_sibling_is_sig
+
+          if left_sibling == :private_class_method
+            if node_is_sorbet_signature?(node.parent.left_sibling)
+              return if documentation_comment?(node.parent.left_sibling)
+            elsif documentation_comment?(node.parent)
+              return
+            end
+          elsif node_is_sorbet_signature?(left_sibling)
             return if documentation_comment?(node.left_sibling)
           elsif documentation_comment?(node)
             return
           end
 
           add_offense(node)
+        end
+
+        sig { params(node: T.untyped).returns(T::Boolean) }
+        def node_is_sorbet_signature?(node)
+          # Is there a better way to check if a node is a sorbet signature? Probably!
+          !!(node && (node.source.include?('sig do') || node.source.include?('sig {')))
         end
       end
     end

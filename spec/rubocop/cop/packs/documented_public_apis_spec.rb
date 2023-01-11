@@ -122,4 +122,68 @@ RSpec.describe RuboCop::Cop::Packs::DocumentedPublicApis, :config do
 
     it { expect_no_offenses source, 'packs/foo/app/public/foo.rb' }
   end
+
+  context 'using inline private class method syntax' do
+    context 'with a sig' do
+      context 'documented' do
+        let(:source) do
+          <<~RUBY
+            class Foo
+              # Here is documentation!
+              sig { void }
+              private_class_method def self.bar
+              end
+            end
+          RUBY
+        end
+
+        it { expect_no_offenses source, 'packs/foo/app/public/foo.rb' }
+      end
+
+      context 'undocumented' do
+        let(:source) do
+          <<~RUBY
+            class Foo
+              sig { void }
+              private_class_method def self.bar
+                                   ^^^^^^^^^^^^ Missing method documentation comment.
+              end
+            end
+          RUBY
+        end
+
+        it { expect_offense source, 'packs/foo/app/public/foo.rb' }
+      end
+    end
+
+    context 'with no sig' do
+      context 'documented' do
+        let(:source) do
+          <<~RUBY
+            class Foo
+              # Here is documentation!
+              private_class_method def self.bar
+              end
+            end
+          RUBY
+        end
+
+        it { expect_no_offenses source, 'packs/foo/app/public/foo.rb' }
+      end
+
+      context 'undocumented' do
+        let(:source) do
+          <<~RUBY
+            class Foo
+              private_class_method def self.bar
+                                   ^^^^^^^^^^^^ Missing method documentation comment.
+              end
+            end
+          RUBY
+        end
+
+        it { expect_offense source, 'packs/foo/app/public/foo.rb' }
+      end
+    end
+  end
 end
