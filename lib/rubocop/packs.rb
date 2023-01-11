@@ -12,8 +12,8 @@ module RuboCop
     # `.rubocop_todo.yml`. However, this introduces a number of path relativity issues (https://docs.rubocop.org/rubocop/configuration.html#path-relativity)
     # that make this approach not possible. Therefore, for pack level rubocops, we name them in a way that mirrors packwerk `package_todo.yml` files
     # for consistency and to ensure that thes are not read by rubocop except via the ERB templating mechanism.
-    PACK_LEVEL_RUBOCOP_YML = 'package_rubocop.yml'
-    PACK_LEVEL_RUBOCOP_TODO_YML = 'package_rubocop_todo.yml'
+    PACK_LEVEL_RUBOCOP_YML = '.rubocop.yml'
+    PACK_LEVEL_RUBOCOP_TODO_YML = '.rubocop_todo.yml'
 
     PROJECT_ROOT   = T.let(Pathname.new(__dir__).parent.parent.expand_path.freeze, Pathname)
     CONFIG_DEFAULT = T.let(PROJECT_ROOT.join('config', 'default.yml').freeze, Pathname)
