@@ -1,6 +1,0 @@
-# Relevant documentation:
-#  - Inheriting config from a gem:
-#    - https://docs.rubocop.org/rubocop/configuration.html#inheriting-configuration-from-a-dependency-gem
-#  - ERB in a .rubocop.yml file
-#    - https://docs.rubocop.org/rubocop/configuration.html#pre-processing
-<%= RuboCop::Packs.pack_based_rubocop_config %>
