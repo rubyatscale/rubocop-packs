@@ -6,12 +6,23 @@
 ### Per-pack `.rubocop.yml`
 While `rubocop-packs` can be used like any other `rubocop` by configuring in your top-level `.rubocop.yml` file, we also have a number of tools to support per-pack configuration.
 
-To add a per-pack `.rubocop.yml`, you just need to create a `packs/your_pack/.rubocop.yml`. With this, each pack can specify an allow-listed set of cops (see below) that can be configured on a per-package level.
+To add a per-pack `.rubocop.yml`, you just need to create a `packs/your_pack/.rubocop.yml`. With this, each pack can specify an allow-listed set of cops (see below) that can be configured on a per-package level, while extending the root level config.
 
 Example:
 ```yml
-# packs/your_pack/.rubocop.yml
 inherit_from: '../../.rubocop.yml'
+
+Packs/TypedPublicApis:
+  Enabled: true
+
+Packs/RootNamespaceIsPackName:
+  Enabled: true
+
+Packs/DocumentedPublicApis:
+  Enabled: false
+
+Sorbet/StrictSigil:
+  Enabled: false
 ```
 
 ### Per-pack `.rubocop_todo.yml`
@@ -20,13 +31,6 @@ To create a per-pack `.rubocop_todo.yml`, you can use the following API from `ru
 RuboCop::Packs.regenerate_todo(packs: Packs.all)
 ```
 This API will auto-generate a `packs/some_pack/.rubocop_todo.yml`. This allows a pack to own its own exception list.
-
-You'll also want to let `rubocop` know about these by adding this to your top-level `.rubocop.yml`:
-```yml
-inherit_from:
-  - packs/*/.rubocop_todo.yml
-  - .rubocop_todo.yml
-```
 
 ### Configuration and Validation
 To use per-pack `.rubocop.yml` and `.rubocop_todo.yml` files, you need to configure `rubocop-packs`:
