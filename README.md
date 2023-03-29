@@ -41,7 +41,7 @@ Packs/RootNamespaceIsPackName:
     - lib/example.rb
 ```
 
-## Pack-Level `package_rubocop.yml` and `package_rubocop_todo.yml` files
+## Pack-Level `.rubocop.yml` and `.rubocop_todo.yml` files
 See [ADVANCED_USAGE.md](ADVANCED_USAGE.md)
 
 ## Contributing
