@@ -7,11 +7,6 @@ module RuboCop
   module Packs
     extend T::Sig
 
-    # Pack-level rubocop and rubocop_todo YML files are named differently because they are not integrated
-    # into rubocop in the standard way. For example, we could call these the standard `.rubocop.yml` and
-    # `.rubocop_todo.yml`. However, this introduces a number of path relativity issues (https://docs.rubocop.org/rubocop/configuration.html#path-relativity)
-    # that make this approach not possible. Therefore, for pack level rubocops, we name them in a way that mirrors packwerk `package_todo.yml` files
-    # for consistency and to ensure that thes are not read by rubocop except via the ERB templating mechanism.
     PACK_LEVEL_RUBOCOP_YML = '.rubocop.yml'
     PACK_LEVEL_RUBOCOP_TODO_YML = '.rubocop_todo.yml'
 
