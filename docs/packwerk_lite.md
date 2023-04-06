@@ -16,7 +16,7 @@ So why would we want to do this...?
 - Experimentally and hypothetically, as a way to provide early feedback loop for engineers who are more familiar with rubocop
 
 What is missing?
-- In order to run this, we need to read from AND write to `package_todo.yml` file so that they pick up and ignore the same things (right now we only read from). We'd likely also need to expose a validation to allow the client to confirm that the `**/.rubocop_todo.yml` entries for `PackwerkLite/Privacy` and `PackwerkLite/Dependency` are empty.
+- In order to run this, we need to read from AND write to `package_todo.yml` file so that they pick up and ignore the same things (right now we only read from). We'd likely also need to expose a validation to allow the client to confirm that the `**/package_rubocop_todo.yml` entries for `PackwerkLite/Privacy` and `PackwerkLite/Dependency` are empty.
 - There were very few false positives (things this picked up that `packwerk` did not) in Gusto's codebase, but we'd want to address those too.
 
 # Appendix

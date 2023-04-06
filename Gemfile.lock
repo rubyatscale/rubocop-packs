@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    rubocop-packs (0.0.36)
+    rubocop-packs (0.0.37)
       activesupport
       packs
       parse_packwerk
@@ -30,7 +30,7 @@ GEM
     packs (0.0.6)
       sorbet-runtime
     parallel (1.22.1)
-    parse_packwerk (0.18.2)
+    parse_packwerk (0.19.0)
       sorbet-runtime
     parser (3.1.2.1)
       ast (~> 2.4.1)
