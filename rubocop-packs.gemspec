@@ -1,6 +1,6 @@
 Gem::Specification.new do |spec|
   spec.name          = 'rubocop-packs'
-  spec.version       = '0.0.35'
+  spec.version       = '0.0.37'
   spec.authors       = ['Gusto Engineers']
   spec.email         = ['dev@gusto.com']
   spec.summary       = 'A collection of Rubocop rules for gradually modularizing a ruby codebase'
