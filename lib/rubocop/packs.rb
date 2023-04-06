@@ -7,8 +7,13 @@ module RuboCop
   module Packs
     extend T::Sig
 
-    PACK_LEVEL_RUBOCOP_YML = '.rubocop.yml'
-    PACK_LEVEL_RUBOCOP_TODO_YML = '.rubocop_todo.yml'
+    # Pack-level rubocop and rubocop_todo YML files are named differently because they are not integrated
+    # into rubocop in the standard way. For example, we could call these the standard `.rubocop.yml` and
+    # `.rubocop_todo.yml`. However, this introduces a number of path relativity issues (https://docs.rubocop.org/rubocop/configuration.html#path-relativity)
+    # that make this approach not possible. Therefore, for pack level rubocops, we name them in a way that mirrors packwerk `package_todo.yml` files
+    # for consistency and to ensure that thes are not read by rubocop except via the ERB templating mechanism.
+    PACK_LEVEL_RUBOCOP_YML = 'package_rubocop.yml'
+    PACK_LEVEL_RUBOCOP_TODO_YML = 'package_rubocop_todo.yml'
 
     PROJECT_ROOT   = T.let(Pathname.new(__dir__).parent.parent.expand_path.freeze, Pathname)
     CONFIG_DEFAULT = T.let(PROJECT_ROOT.join('config', 'default.yml').freeze, Pathname)
@@ -53,7 +58,7 @@ module RuboCop
         offenses_for_pack.group_by(&:filepath).each do |filepath, offenses_by_filepath|
           offenses_by_filepath.map(&:cop_name).uniq.each do |cop_name|
             rubocop_todo[cop_name] ||= { 'Exclude' => [] }
-            rubocop_todo[cop_name]['Exclude'] << Pathname.new(filepath).relative_path_from(pack.relative_path).to_s
+            rubocop_todo[cop_name]['Exclude'] << filepath
           end
         end
 
@@ -85,6 +90,46 @@ module RuboCop
 
         rubocop_yml.write(formatted_yml)
       end
+    end
+
+    sig { params(root_pathname: String).returns(String) }
+    # It would be great if rubocop (upstream) could take in a glob for `inherit_from`, which
+    # would allow us to delete this method and this additional complexity.
+    def self.pack_based_rubocop_config(root_pathname: Bundler.root)
+      rubocop_config = {}
+      # We do this because when the ERB is evaluated Dir.pwd is at the directory containing the YML.
+      # Ideally rubocop wouldn't change the PWD before invoking this method.
+      Dir.chdir(root_pathname) do
+        ::Packs.all.each do |package|
+          rubocop_todo = package.relative_path.join(PACK_LEVEL_RUBOCOP_TODO_YML)
+          if rubocop_todo.exist?
+            loaded_rubocop_todo = YAML.load_file(rubocop_todo)
+            loaded_rubocop_todo.each do |cop_name, key_config|
+              rubocop_config[cop_name] ||= {}
+              rubocop_config[cop_name]['Exclude'] ||= []
+              rubocop_config[cop_name]['Exclude'] += key_config['Exclude']
+            end
+          end
+
+          pack_rubocop = package.relative_path.join(PACK_LEVEL_RUBOCOP_YML)
+          next unless pack_rubocop.exist?
+
+          loaded_pack_rubocop = YAML.load_file(pack_rubocop)
+          loaded_pack_rubocop.each do |cop_name, key_config|
+            rubocop_config[cop_name] ||= {}
+
+            if key_config['Enabled']
+              rubocop_config[cop_name]['Include'] ||= []
+              rubocop_config[cop_name]['Include'] << package.relative_path.join('**/*').to_s
+            else
+              rubocop_config[cop_name]['Exclude'] ||= []
+              rubocop_config[cop_name]['Exclude'] << package.relative_path.join('**/*').to_s
+            end
+          end
+        end
+      end
+
+      YAML.dump(rubocop_config)
     end
 
     sig { void }
