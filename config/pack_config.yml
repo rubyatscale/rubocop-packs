@@ -1,0 +1,6 @@
+# Relevant documentation:
+#  - Inheriting config from a gem:
+#    - https://docs.rubocop.org/rubocop/configuration.html#inheriting-configuration-from-a-dependency-gem
+#  - ERB in a .rubocop.yml file
+#    - https://docs.rubocop.org/rubocop/configuration.html#pre-processing
+inherit_from: ./erb_populated_data.yml
