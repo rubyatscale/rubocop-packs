@@ -9,6 +9,7 @@ In your top-level `.rubocop.yml` file, you'll want to include configuration from
 inherit_gem:
   rubocop-packs:
     - config/default.yml
+    - config/pack_config.yml
 ```
 
 This is the mechanism by which pack level rubocop files are incorporated into the top-level config.
