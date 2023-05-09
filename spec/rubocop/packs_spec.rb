@@ -592,7 +592,6 @@ RSpec.describe RuboCop::Packs do
             ERROR
             expect(errors).to eq([error])
           end
-
         end
       end
 
