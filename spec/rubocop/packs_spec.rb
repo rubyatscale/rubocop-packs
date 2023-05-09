@@ -570,6 +570,29 @@ RSpec.describe RuboCop::Packs do
           ERROR
           expect(errors).to eq([error])
         end
+
+        context 'disallowed key is shadowed by allowed key' do
+          before do
+            write_pack('packs/some_pack')
+            write_file('packs/some_pack/package_rubocop_todo.yml', <<~YML)
+              Packs/RootNamespaceIsPackName:
+                Exclude:
+                  - 'packs/some_pack/app/services/bad_namespace.rb'
+              SomeOtherCop:
+                Exclude:
+                  - 'packs/some_pack/app/services/bad_namespace.rb'
+            YML
+          end
+
+          it 'returns an error' do
+            error = <<~ERROR
+              packs/some_pack/package_rubocop_todo.yml contains invalid configuration for SomeOtherCop.
+              Please only configure the following cops on a per-pack basis: ["Packs/RootNamespaceIsPackName", "Packs/TypedPublicApis", "Packs/ClassMethodsAsPublicApis"]"
+              For ignoring other cops, please instead modify the top-level package_rubocop_todo.yml file.
+            ERROR
+            expect(errors).to eq([error])
+          end
+        end
       end
 
       context 'one pack with disallowed configuration key' do

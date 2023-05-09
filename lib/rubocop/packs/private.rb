@@ -58,7 +58,7 @@ module RuboCop
           else
             loaded_rubocop_todo[key]['Exclude'].each do |filepath|
               pack = ::Packs.for_file(filepath)
-              return [] unless pack && pack.name != package.name
+              next unless pack && pack.name != package.name
 
               errors << <<~ERROR_MESSAGE
                 #{rubocop_todo} contains invalid configuration for #{key}.
