@@ -15,9 +15,9 @@ inherit_gem:
 This is the mechanism by which pack level rubocop files are incorporated into the top-level config.
 
 ### Per-pack `package_rubocop.yml`
-While `rubocop-packs` can be used like any other `rubocop` by configuring in your top-level `.rubocop.yml` file, we also have a number of tools to support per-pack configuration.
+While `rubocop-packs` can be used like any other `rubocop` by configuring in your top-level `.rubocop.yml` file, we also have a number of tools to support per-pack configuration. Currently, per-pack configurations can effectively only _turn off_ settings that are globally enabled.
 
-To add a per-pack `package_rubocop.yml`, you just need to create a `packs/your_pack/package_rubocop.yml`. With this, each pack can specify an allow-listed set of cops (see below) that can be configured on a per-package level.
+To add a per-pack `package_rubocop.yml`, you just need to create a `packs/your_pack/package_rubocop.yml`. With this, each pack can specify an allow-listed set of cops (see below) that can be configured on a per-package level. Additionally, ensure that the configuration is globally enabled.
 
 ### Per-pack `package_rubocop_todo.yml`
 To create a per-pack `package_rubocop_todo.yml`, you can use the following API from `rubocop-packs`:
