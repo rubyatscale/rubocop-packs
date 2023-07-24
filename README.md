@@ -41,9 +41,6 @@ Packs/RootNamespaceIsPackName:
     - lib/example.rb
 ```
 
-## Pack-Level `package_rubocop.yml` and `package_rubocop_todo.yml` files
-See [ADVANCED_USAGE.md](ADVANCED_USAGE.md)
-
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/rubyatscale/rubocop-packs. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Code Of Conduct](CODE_OF_CONDUCT.MD).
