@@ -32,11 +32,13 @@ GEM
     parallel (1.22.1)
     parse_packwerk (0.19.3)
       sorbet-runtime
-    parser (3.1.2.1)
+    parser (3.2.2.3)
       ast (~> 2.4.1)
+      racc
     pry (0.14.1)
       coderay (~> 1.1)
       method_source (~> 1.0)
+    racc (1.7.1)
     rainbow (3.1.1)
     rake (13.0.6)
     rbi (0.0.16)
