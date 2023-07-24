@@ -1,6 +1,6 @@
 Gem::Specification.new do |spec|
   spec.name          = 'rubocop-packs'
-  spec.version       = '0.0.39'
+  spec.version       = '0.0.40'
   spec.authors       = ['Gusto Engineers']
   spec.email         = ['dev@gusto.com']
   spec.summary       = 'A collection of Rubocop rules for gradually modularizing a ruby codebase'
@@ -19,7 +19,7 @@ Gem::Specification.new do |spec|
   end
 
   # Specify which files should be added to the gem when it is released.
-  spec.files = Dir['README.md', 'lib/**/*', 'config/default.yml', 'config/pack_config.yml', 'config/erb_populated_data.yml']
+  spec.files = Dir['README.md', 'lib/**/*', 'config/default.yml']
   spec.require_paths = ['lib']
   spec.required_ruby_version = '>= 2.7'
 

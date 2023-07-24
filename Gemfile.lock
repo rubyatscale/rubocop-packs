@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    rubocop-packs (0.0.39)
+    rubocop-packs (0.0.40)
       activesupport
       packs
       parse_packwerk
@@ -30,13 +30,15 @@ GEM
     packs (0.0.6)
       sorbet-runtime
     parallel (1.22.1)
-    parse_packwerk (0.19.1)
+    parse_packwerk (0.19.3)
       sorbet-runtime
-    parser (3.1.2.1)
+    parser (3.2.2.3)
       ast (~> 2.4.1)
+      racc
     pry (0.14.1)
       coderay (~> 1.1)
       method_source (~> 1.0)
+    racc (1.7.1)
     rainbow (3.1.1)
     rake (13.0.6)
     rbi (0.0.16)
@@ -83,6 +85,7 @@ GEM
     sorbet-runtime (0.5.10479)
     sorbet-static (0.5.10479-universal-darwin-20)
     sorbet-static (0.5.10479-universal-darwin-21)
+    sorbet-static (0.5.10479-universal-darwin-22)
     sorbet-static (0.5.10479-x86_64-linux)
     sorbet-static-and-runtime (0.5.10479)
       sorbet (= 0.5.10479)
@@ -118,6 +121,7 @@ GEM
 PLATFORMS
   arm64-darwin-20
   arm64-darwin-21
+  arm64-darwin-22
   x86_64-linux
 
 DEPENDENCIES
