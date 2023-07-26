@@ -6,19 +6,15 @@ Packs/ClassMethodsAsPublicApis:
     - Struct
     - OpenStruct
   AcceptableMixins: []
-  FailureMode: default
 
 Packs/RootNamespaceIsPackName:
   Enabled: false
-  FailureMode: default
 
 Packs/TypedPublicApis:
   Enabled: false
-  FailureMode: default
 
 Packs/DocumentedPublicApis:
   Enabled: false
-  FailureMode: default
 
 PackwerkLite/Privacy:
   # It is recommended to use packwerk

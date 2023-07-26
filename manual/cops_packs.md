@@ -38,7 +38,6 @@ Name | Default value | Configurable values
 --- | --- | ---
 AcceptableParentClasses | `T::Enum`, `T::Struct`, `Struct`, `OpenStruct` | Array
 AcceptableMixins | `[]` | Array
-FailureMode | `default` | String
 
 ## Packs/DocumentedPublicApis
 
@@ -75,12 +74,6 @@ class Foo
 end
 ```
 
-### Configurable attributes
-
-Name | Default value | Configurable values
---- | --- | ---
-FailureMode | `default` | String
-
 ## Packs/RootNamespaceIsPackName
 
 Enabled by default | Safe | Supports autocorrection | VersionAdded | VersionChanged
@@ -105,12 +98,6 @@ class Blah::Bar; end
 class Foo::Blah::Bar; end
 ```
 
-### Configurable attributes
-
-Name | Default value | Configurable values
---- | --- | ---
-FailureMode | `default` | String
-
 ## Packs/TypedPublicApis
 
 Enabled by default | Safe | Supports autocorrection | VersionAdded | VersionChanged
@@ -132,9 +119,3 @@ module Foo; end
 # typed: strict
 module Foo; end
 ```
-
-### Configurable attributes
-
-Name | Default value | Configurable values
---- | --- | ---
-FailureMode | `default` | String
