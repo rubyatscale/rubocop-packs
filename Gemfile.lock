@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    rubocop-packs (0.0.40)
+    rubocop-packs (0.0.41)
       activesupport
       packs
       parse_packwerk
