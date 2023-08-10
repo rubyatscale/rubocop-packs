@@ -26,8 +26,7 @@ module RuboCop
     sig { returns(Private::Configuration) }
     def self.config
       Private.load_client_configuration
-      @config = T.let(@config, T.nilable(Private::Configuration))
-      @config ||= Private::Configuration.new
+      @config ||= T.let(Private::Configuration.new, T.nilable(Private::Configuration))
     end
   end
 end
