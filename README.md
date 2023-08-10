@@ -1,6 +1,6 @@
 # rubocop-packs
 
-A collection of Rubocop rules for modularizing ruby applications that conform to the `packs` standard.
+A collection of Rubocop rules for modularizing ruby applications that conform to the [`packs`](https://github.com/rubyatscale/packs) standard.
 
 ## Installation
 
