@@ -318,6 +318,19 @@ RSpec.describe RuboCop::Cop::Packs::RootNamespaceIsPackName, :config do
       end
     end
 
+    context 'file is a nested pack with spec/app path' do
+      let(:source) do
+        <<~RUBY
+          describe Forestry::Logging do
+          end
+        RUBY
+      end
+
+      it 'does not handle spec files and gracefully exits' do
+        expect_no_offenses source, Pathname.pwd.join(write_file('packs/fruits/apples/spec/app/services/forestry/logging.rb')).to_s
+      end
+    end
+
     context 'when file is in different namespace and is in lib' do
       let(:source) do
         <<~RUBY

@@ -34,8 +34,9 @@ module RuboCop
           relative_filepath = absolute_filepath.relative_path_from(Pathname.pwd)
           relative_filename = relative_filepath.to_s
 
-          # This cop only works for files ruby files in `app`
-          return if !relative_filename.include?('app/') || relative_filepath.extname != '.rb'
+          return if relative_filepath.extname != '.rb'
+          return if relative_filename.include?('spec/')
+          return if !relative_filename.include?('app/')
 
           relative_filename = relative_filepath.to_s
           package_for_path = ::Packs.for_file(relative_filename)
