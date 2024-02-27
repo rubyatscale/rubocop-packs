@@ -27,12 +27,19 @@ GEM
     bigdecimal (3.1.6)
     concurrent-ruby (1.2.3)
     connection_pool (2.4.1)
+    debug (1.9.1)
+      irb (~> 1.10)
+      reline (>= 0.3.8)
     diff-lcs (1.5.1)
     drb (2.2.0)
       ruby2_keywords
     erubi (1.12.0)
     i18n (1.14.1)
       concurrent-ruby (~> 1.0)
+    io-console (0.7.2)
+    irb (1.11.2)
+      rdoc
+      reline (>= 0.4.2)
     json (2.7.1)
     language_server-protocol (3.17.0.3)
     minitest (5.22.2)
@@ -48,13 +55,19 @@ GEM
       racc
     prettier_print (1.2.1)
     prism (0.24.0)
+    psych (5.1.2)
+      stringio
     racc (1.7.3)
     rainbow (3.1.1)
     rake (13.1.0)
     rbi (0.1.9)
       prism (>= 0.18.0, < 0.25)
       sorbet-runtime (>= 0.5.9204)
+    rdoc (6.6.2)
+      psych (>= 4.0.0)
     regexp_parser (2.9.0)
+    reline (0.4.3)
+      io-console (~> 0.5)
     rexml (3.2.6)
     rspec (3.13.0)
       rspec-core (~> 3.13.0)
@@ -103,6 +116,7 @@ GEM
       sorbet-static-and-runtime (>= 0.5.10187)
       syntax_tree (>= 6.1.1)
       thor (>= 0.19.2)
+    stringio (3.1.0)
     syntax_tree (6.2.0)
       prettier_print (>= 1.2.0)
     tapioca (0.12.0)
@@ -131,6 +145,7 @@ PLATFORMS
 
 DEPENDENCIES
   bundler (~> 2.2.16)
+  debug
   parser
   rake
   rspec (~> 3.0)

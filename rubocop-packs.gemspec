@@ -32,6 +32,7 @@ Gem::Specification.new do |spec|
 
   # rubocop:disable Gemspec/DevelopmentDependencies
   spec.add_development_dependency 'bundler', '~> 2.2.16'
+  spec.add_development_dependency 'debug'
   spec.add_development_dependency 'parser'
   spec.add_development_dependency 'rake'
   spec.add_development_dependency 'rspec', '~> 3.0'
