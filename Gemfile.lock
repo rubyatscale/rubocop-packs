@@ -3,6 +3,7 @@ PATH
   specs:
     rubocop-packs (0.0.44)
       activesupport
+      bigdecimal
       packs-specification
       parse_packwerk
       rubocop (~> 1.0)
@@ -18,6 +19,7 @@ GEM
       minitest (>= 5.1)
       tzinfo (~> 2.0)
     ast (2.4.2)
+    bigdecimal (3.1.6)
     coderay (1.1.3)
     concurrent-ruby (1.1.10)
     diff-lcs (1.5.0)
