@@ -39,7 +39,7 @@ module RuboCop
         sig { params(node: T.untyped).void }
         def on_def(node)
           # This cop only applies for ruby files in `app/public`
-          return if !processed_source.file_path.include?('app/public')
+          return if !processed_source.file_path.include?('app/public/')
 
           # Looked at https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Lint/MissingSuper source code as inspiration for htis part.
           class_node = node.each_ancestor(:class).first
