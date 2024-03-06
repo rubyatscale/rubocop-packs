@@ -9,7 +9,7 @@ module RuboCop
     module Private
       extend T::Sig
 
-      sig { void }
+      sig { returns(Integer) }
       def self.bust_cache!
         @loaded_client_configuration = nil
       end
