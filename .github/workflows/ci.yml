@@ -83,5 +83,5 @@ jobs:
         with:
           payload: |
             {
-              "text": "${{ github.repository }}/${{ github.ref }}: ${{ job.status }}\n${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+              "text": "${{ github.repository }}/${{ github.ref }}: FAILED\n${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
             }
