@@ -1,6 +1,10 @@
 name: CI
 
-on: [push, pull_request]
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: "0 0 * * *"
 
 jobs:
   rspec:
@@ -11,7 +15,7 @@ jobs:
           - 2.7
           # See comment comes from https://github.com/ruby/setup-ruby#matrix-of-ruby-versions
           # Due to https://github.com/actions/runner/issues/849, we have to use quotes for '3.0'
-          - '3.0'
+          - "3.0"
           - 3.1
           - head
     env:
@@ -65,3 +69,17 @@ jobs:
         run: |
           bundle exec rake documentation_syntax_check
           bundle exec rake generate_cops_documentation
+  notify_on_failure:
+    runs-on: ubuntu-latest
+    needs: [rpsec, static_type_check, rubocop, verify_documentation]
+    if: ${{ failure() && github.ref == "refs/heads/main" }}
+    env:
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+    steps:
+      - uses: slackapi/slack-github-action@v1.25.0
+        with:
+          payload: |
+            {
+              "text": "${{ github.repository }}/${{ github.ref }}: ${{ job.status }}\n${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}",
+            }
