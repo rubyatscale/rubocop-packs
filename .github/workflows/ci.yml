@@ -2,6 +2,8 @@ name: CI
 
 on:
   push:
+    branches:
+      - main
   pull_request:
   schedule:
     - cron: "0 0 * * *"
@@ -71,7 +73,7 @@ jobs:
           bundle exec rake generate_cops_documentation
   notify_on_failure:
     runs-on: ubuntu-latest
-    needs: [rpsec, static_type_check, rubocop, verify_documentation]
+    needs: [rspec, static_type_check, rubocop, verify_documentation]
     if: ${{ failure() }}
     env:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
