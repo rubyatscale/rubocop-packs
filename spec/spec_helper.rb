@@ -5,7 +5,6 @@ require 'bundler/setup'
 require 'rubocop-packs'
 require 'rubocop/rspec/support'
 require 'packs/rspec/support'
-require 'pry'
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
