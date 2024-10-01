@@ -34,8 +34,8 @@ module RuboCop
         #
         extend T::Sig
 
-        sig { params(processed_source: T.untyped).void }
-        def investigate(processed_source)
+        sig { void }
+        def on_new_investigation
           return unless processed_source.path.include?('app/public')
 
           super
