@@ -1,14 +1,14 @@
 PATH
   remote: .
   specs:
-    rubocop-packs (0.0.44)
+    rubocop-packs (0.0.45)
       activesupport
       base64
       bigdecimal
       packs-specification
       parse_packwerk
       rubocop (~> 1.0)
-      rubocop-sorbet
+      rubocop-sorbet (>= 0.8.4)
       sorbet-runtime
 
 GEM
@@ -21,7 +21,7 @@ GEM
       tzinfo (~> 2.0)
     ast (2.4.2)
     base64 (0.2.0)
-    bigdecimal (3.1.6)
+    bigdecimal (3.1.8)
     concurrent-ruby (1.1.10)
     diff-lcs (1.5.1)
     erubi (1.13.0)
@@ -33,7 +33,8 @@ GEM
     packs-specification (0.0.10)
       sorbet-runtime
     parallel (1.25.1)
-    parse_packwerk (0.20.0)
+    parse_packwerk (0.26.0)
+      bigdecimal
       sorbet-runtime
     parser (3.3.4.0)
       ast (~> 2.4.1)
@@ -76,8 +77,8 @@ GEM
       activesupport
       bundler
       rubocop (>= 1.22.0)
-    rubocop-sorbet (0.7.3)
-      rubocop (>= 0.90.0)
+    rubocop-sorbet (0.8.5)
+      rubocop (>= 1)
     ruby-progressbar (1.11.0)
     sorbet (0.5.11492)
       sorbet-static (= 0.5.11492)

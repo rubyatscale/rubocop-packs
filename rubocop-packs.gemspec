@@ -1,6 +1,6 @@
 Gem::Specification.new do |spec|
   spec.name          = 'rubocop-packs'
-  spec.version       = '0.0.44'
+  spec.version       = '0.0.45'
   spec.authors       = ['Gusto Engineers']
   spec.email         = ['dev@gusto.com']
   spec.summary       = 'A collection of Rubocop rules for gradually modularizing a ruby codebase'
@@ -29,7 +29,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'packs-specification'
   spec.add_dependency 'parse_packwerk'
   spec.add_dependency 'rubocop', '~> 1.0'
-  spec.add_dependency 'rubocop-sorbet'
+  spec.add_dependency 'rubocop-sorbet', '>= 0.8.4'
   spec.add_dependency 'sorbet-runtime'
 
   spec.add_development_dependency 'bundler', '~> 2.2.16'
