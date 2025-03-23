@@ -17,8 +17,6 @@ RSpec.configure do |config|
     c.syntax = :expect
   end
 
-  config.include RuboCop::RSpec::ExpectOffense
-
   config.around do |example|
     ParsePackwerk.bust_cache!
     RuboCop::Packs.bust_cache!

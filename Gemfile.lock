@@ -5,10 +5,11 @@ PATH
       activesupport
       base64
       bigdecimal
+      lint_roller (~> 1.1)
       packs-specification
       parse_packwerk
-      rubocop (~> 1.0)
-      rubocop-sorbet (>= 0.8.4)
+      rubocop (~> 1.72)
+      rubocop-sorbet (>= 0.9.0)
       sorbet-runtime
 
 GEM
@@ -19,7 +20,7 @@ GEM
       i18n (>= 1.6, < 2)
       minitest (>= 5.1)
       tzinfo (~> 2.0)
-    ast (2.4.2)
+    ast (2.4.3)
     base64 (0.2.0)
     bigdecimal (3.1.8)
     concurrent-ruby (1.1.10)
@@ -27,27 +28,28 @@ GEM
     erubi (1.13.0)
     i18n (1.12.0)
       concurrent-ruby (~> 1.0)
-    json (2.6.2)
+    json (2.10.2)
+    language_server-protocol (3.17.0.4)
+    lint_roller (1.1.0)
     minitest (5.16.3)
     netrc (0.11.0)
     packs-specification (0.0.10)
       sorbet-runtime
-    parallel (1.25.1)
+    parallel (1.26.3)
     parse_packwerk (0.26.0)
       bigdecimal
       sorbet-runtime
-    parser (3.3.4.0)
+    parser (3.3.7.2)
       ast (~> 2.4.1)
       racc
     prism (0.30.0)
-    racc (1.8.0)
+    racc (1.8.1)
     rainbow (3.1.1)
     rake (13.0.6)
     rbi (0.1.14)
       prism (>= 0.18.0, < 1.0.0)
       sorbet-runtime (>= 0.5.9204)
-    regexp_parser (2.6.0)
-    rexml (3.2.5)
+    regexp_parser (2.10.0)
     rspec (3.11.0)
       rspec-core (~> 3.11.0)
       rspec-expectations (~> 3.11.0)
@@ -61,25 +63,27 @@ GEM
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.11.0)
     rspec-support (3.11.1)
-    rubocop (1.36.0)
+    rubocop (1.74.0)
       json (~> 2.3)
+      language_server-protocol (~> 3.17.0.2)
+      lint_roller (~> 1.1.0)
       parallel (~> 1.10)
-      parser (>= 3.1.2.1)
+      parser (>= 3.3.0.2)
       rainbow (>= 2.2.2, < 4.0)
-      regexp_parser (>= 1.8, < 3.0)
-      rexml (>= 3.2.5, < 4.0)
-      rubocop-ast (>= 1.20.1, < 2.0)
+      regexp_parser (>= 2.9.3, < 3.0)
+      rubocop-ast (>= 1.38.0, < 2.0)
       ruby-progressbar (~> 1.7)
-      unicode-display_width (>= 1.4.0, < 3.0)
-    rubocop-ast (1.21.0)
-      parser (>= 3.1.1.0)
+      unicode-display_width (>= 2.4.0, < 4.0)
+    rubocop-ast (1.41.0)
+      parser (>= 3.3.7.2)
     rubocop-extension-generator (0.5.1)
       activesupport
       bundler
       rubocop (>= 1.22.0)
-    rubocop-sorbet (0.8.5)
+    rubocop-sorbet (0.9.0)
+      lint_roller (~> 1.1)
       rubocop (>= 1)
-    ruby-progressbar (1.11.0)
+    ruby-progressbar (1.13.0)
     sorbet (0.5.11492)
       sorbet-static (= 0.5.11492)
     sorbet-runtime (0.5.11492)
@@ -105,7 +109,9 @@ GEM
     thor (1.3.1)
     tzinfo (2.0.5)
       concurrent-ruby (~> 1.0)
-    unicode-display_width (2.3.0)
+    unicode-display_width (3.1.4)
+      unicode-emoji (~> 4.0, >= 4.0.4)
+    unicode-emoji (4.0.4)
     yard (0.9.36)
     yard-sorbet (0.9.0)
       sorbet-runtime
@@ -126,4 +132,4 @@ DEPENDENCIES
   tapioca
 
 BUNDLED WITH
-   2.2.33
+   2.2.34

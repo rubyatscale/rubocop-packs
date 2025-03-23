@@ -24,11 +24,14 @@ You need to tell RuboCop to load the Packs extension. There are three ways to do
 Put this into your `.rubocop.yml`:
 
 ```yaml
-require:
+plugins:
   - rubocop-packs
 ```
 
 Now you can run `rubocop` and it will automatically load the RuboCop Packs cops together with the standard cops.
+
+> [!NOTE]
+> The plugin system is supported in RuboCop 1.72+. In earlier versions, use `require` instead of `plugins`.
 
 ## The Cops
 All cops are located under [`lib/rubocop/cop/packs`](lib/rubocop/cop/packs), and contain examples/documentation.
