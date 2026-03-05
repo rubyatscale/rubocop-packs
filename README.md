@@ -9,7 +9,7 @@ Just install the `rubocop-packs` gem
 ```sh
 gem install rubocop-packs
 ```
-or, if you use `Bundler`, add this line your application's `Gemfile`:
+or, if you use `Bundler`, add this line to your application's `Gemfile`:
 
 ```ruby
 gem 'rubocop-packs', require: false
@@ -31,6 +31,7 @@ require:
 Now you can run `rubocop` and it will automatically load the RuboCop Packs cops together with the standard cops.
 
 ## The Cops
+
 All cops are located under [`lib/rubocop/cop/packs`](lib/rubocop/cop/packs), and contain examples/documentation.
 
 In your `.rubocop.yml`, you may treat the Packs cops just like any other cop. For example:
