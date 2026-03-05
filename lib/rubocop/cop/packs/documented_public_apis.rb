@@ -52,6 +52,22 @@ module RuboCop
           # This cop only applies for ruby files in `app/public`
           return if !processed_source.file_path.include?('app/public')
 
+          # We intentionally do NOT call `return if non_public?(node) && !require_for_non_public_methods?`
+          # here, even though the parent class (Style::DocumentationMethod) does.
+          #
+          # That guard exists for global use: skip Ruby-private/protected methods unless the cop is
+          # configured to require documentation for non-public methods. It makes sense when the cop
+          # runs across an entire codebase where you may not want to document every private method.
+          #
+          # Here, however, we are already restricted to `app/public` files. In that context a method
+          # like `private_class_method def self.bar` is Ruby-private but pack-public — it is part of
+          # the pack's public API surface and should be documented regardless.
+          #
+          # This distinction became load-bearing in rubocop-ast 1.49.0, which extended
+          # `non_public_modifier?` to also match `:private_class_method` (previously only `:private`
+          # and `:protected` matched). After that change, `non_public?(node)` returned true for
+          # `private_class_method def self.bar`, causing the guard to silently suppress offenses.
+
           left_sibling = node.left_sibling
 
           if left_sibling == :private_class_method
