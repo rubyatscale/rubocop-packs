@@ -66,9 +66,7 @@ module RuboCop
           if is_new_violation
             add_offense(
               node.source_range,
-              message: format(
-                'Privacy violation detected. See https://github.com/Shopify/packwerk/blob/main/RESOLVING_VIOLATIONS.md for help'
-              )
+              message: 'Privacy violation detected. See https://github.com/Shopify/packwerk/blob/main/RESOLVING_VIOLATIONS.md for help'
             )
           end
         end

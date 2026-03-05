@@ -51,7 +51,6 @@ module RuboCop
         def check(node)
           # This cop only applies for ruby files in `app/public`
           return if !processed_source.file_path.include?('app/public')
-          return if non_public?(node) && !require_for_non_public_methods?
 
           left_sibling = node.left_sibling
 
