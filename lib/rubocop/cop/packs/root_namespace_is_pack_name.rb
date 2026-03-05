@@ -47,11 +47,11 @@ module RuboCop
           return if namespace_context.nil?
 
           allowed_global_namespaces = Set.new(
-[
-  namespace_context.expected_namespace,
-  *RuboCop::Packs.config.globally_permitted_namespaces,
-]
-)
+            [
+              namespace_context.expected_namespace,
+              *RuboCop::Packs.config.globally_permitted_namespaces,
+            ]
+          )
 
           package_name = package_for_path.name
           actual_namespace = namespace_context.current_namespace

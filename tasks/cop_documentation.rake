@@ -236,8 +236,8 @@ module CopDocumentation
 
     unless original.empty?
       content = original.sub(
-                    /<!-- START_COP_LIST -->.+<!-- END_COP_LIST -->/m, content
-                  )
+        /<!-- START_COP_LIST -->.+<!-- END_COP_LIST -->/m, content
+      )
     end
     File.write(path, content)
   end
@@ -258,9 +258,9 @@ module CopDocumentation
         sh('GIT_PAGER=cat git diff manual')
 
         warn(
-'The manual directory is out of sync. ' \
-'Run `VERIFYING_DOCUMENTATION=true rake generate_cops_documentation` and commit the results.'
-)
+          'The manual directory is out of sync. ' \
+          'Run `VERIFYING_DOCUMENTATION=true rake generate_cops_documentation` and commit the results.'
+        )
         exit!
       end
     end
