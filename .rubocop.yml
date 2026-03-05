@@ -5,6 +5,10 @@ inherit_mode:
     - Exclude
     - Include
 
+inherit_gem:
+  rubocop-gusto:
+    - config/default.yml
+
 # The behavior of RuboCop can be controlled via the .rubocop.yml
 # configuration file. It makes it possible to enable/disable
 # certain cops (checks) and to alter their behavior if they accept
