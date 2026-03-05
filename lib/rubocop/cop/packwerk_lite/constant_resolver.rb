@@ -28,8 +28,8 @@ module RuboCop
           sig { returns(T::Boolean) }
           def public_api?
             # PackwerkExtensions should have a method to take in a path and determine if the file is public.
-            # For now we put it here and only support the public folder (and not specific private constants).
-            # However if we declare that dependency we may want to extract this into `rubocop-packwerk_lite` or something liek that!
+            # For now, we put it here and only support the public folder (and not specific private constants).
+            # However, if we declare that dependency we may want to extract this into `rubocop-packwerk_lite` or something like that!
             constant_definition_location.to_s.include?('/public/')
           end
 
@@ -53,7 +53,7 @@ module RuboCop
               found_files = expected_containing_pack.directory.glob("app/*/#{expected_containing_pack_last_name}/#{expected_location_in_pack}.rb")
             end
 
-            # Because of how Zietwerk works, we know two things:
+            # Because of how Zeitwerk works, we know two things:
             # 1) Since namespaces map one to one with files, Zeitwerk does not permit multiple files to define the same fully-qualified class/module.
             # (Note it does permit multiple files to open up portions of other namespaces)
             # 2) If a file *could* define a fully qualified constant, then it *must* define that constant!
