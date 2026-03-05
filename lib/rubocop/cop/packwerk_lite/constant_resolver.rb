@@ -29,7 +29,7 @@ module RuboCop
           def public_api?
             # PackwerkExtensions should have a method to take in a path and determine if the file is public.
             # For now we put it here and only support the public folder (and not specific private constants).
-            # However if we declare that dependency we may want to extract this into `rubocop-packwerk_lite` or something liek that!
+            # However if we declare that dependency we may want to extract this into `rubocop-packwerk_lite` or something like that!
             constant_definition_location.to_s.include?('/public/')
           end
 

@@ -52,7 +52,7 @@ module RuboCop
 
           constant_reference = ConstantResolver::ConstantReference.resolve(node, processed_source)
 
-          # If we can't determine a constant reference, we can just early return. This could be beacuse the constant is defined
+          # If we can't determine a constant reference, we can just early return. This could be because the constant is defined
           # in a gem OR because it's not abiding by the namespace convention we've established.
           return if constant_reference.nil?
           return if constant_reference.referencing_package.name == constant_reference.source_package.name
