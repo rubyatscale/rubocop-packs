@@ -50,22 +50,24 @@ task generate_cops_documentation: :yard_for_generate_documentation do
   define_method(:properties) do |config, cop|
     header = [
       'Enabled by default', 'Safe', 'Supports autocorrection', 'VersionAdded',
-      'VersionChanged'
+      'VersionChanged',
     ]
     config = config.for_cop(cop)
     safe_auto_correct = config.fetch('SafeAutoCorrect', true)
     autocorrect = if cop.support_autocorrect?
-                    "Yes #{'(Unsafe)' unless safe_auto_correct}"
-                  else
-                    'No'
-                  end
-    content = [[
-      config.fetch('Enabled') ? 'Enabled' : 'Disabled',
-      config.fetch('Safe', true) ? 'Yes' : 'No',
-      autocorrect,
-      config.fetch('VersionAdded', '-'),
-      config.fetch('VersionChanged', '-')
-    ]]
+      "Yes #{'(Unsafe)' unless safe_auto_correct}"
+    else
+      'No'
+    end
+    content = [
+      [
+        config.fetch('Enabled') ? 'Enabled' : 'Disabled',
+        config.fetch('Safe', true) ? 'Yes' : 'No',
+        autocorrect,
+        config.fetch('VersionAdded', '-'),
+        config.fetch('VersionChanged', '-'),
+      ],
+    ]
     "#{to_table(header, content)}\n"
   end
 
@@ -113,7 +115,7 @@ task generate_cops_documentation: :yard_for_generate_documentation do
 
   define_method(:configurable_values) do |pars, name|
     case name
-    when /^Enforced/
+    when /\AEnforced/
       supported_style_name = RuboCop::Cop::Util.to_supported_styles(name)
       format_table_value(pars[supported_style_name])
     when 'IndentationWidth'
@@ -142,7 +144,7 @@ task generate_cops_documentation: :yard_for_generate_documentation do
   define_method(:to_table) do |header, content|
     table = [
       header.join(' | '),
-      Array.new(header.size, '---').join(' | ')
+      Array.new(header.size, '---').join(' | '),
     ]
     table.concat(content.map { |c| c.join(' | ') })
     "#{table.join("\n")}\n"
@@ -178,7 +180,7 @@ task generate_cops_documentation: :yard_for_generate_documentation do
 
   define_method(:print_cops_of_department) do |cops, department, config|
     selected_cops = cops_of_department(cops, department).select do |cop|
-      cop.to_s.start_with?('RuboCop::Cop::Packs') || cop.to_s.start_with?('RuboCop::Cop::PackwerkLite')
+      cop.to_s.start_with?('RuboCop::Cop::Packs', 'RuboCop::Cop::PackwerkLite')
     end
     return if selected_cops.empty?
 
@@ -195,8 +197,10 @@ task generate_cops_documentation: :yard_for_generate_documentation do
 
   define_method(:print_cop_with_doc) do |cop, config|
     t = config.for_cop(cop)
-    non_display_keys = %w[Description Enabled StyleGuide Reference Safe SafeAutoCorrect VersionAdded
-                          VersionChanged]
+    non_display_keys = %w(
+      Description Enabled StyleGuide Reference Safe SafeAutoCorrect VersionAdded
+      VersionChanged
+    )
     pars = t.reject { |k| non_display_keys.include?(k) }
     description = 'No documentation'
     examples_object = []
@@ -248,8 +252,7 @@ task generate_cops_documentation: :yard_for_generate_documentation do
       .departments
       .map(&:to_s)
       .sort
-      .map { |department| table_of_content_for_department(cops, department) }
-      .compact
+      .filter_map { |department| table_of_content_for_department(cops, department) }
       .join("\n")
   end
 
@@ -260,8 +263,10 @@ task generate_cops_documentation: :yard_for_generate_documentation do
       # Output diff before raising error
       sh('GIT_PAGER=cat git diff manual')
 
-      warn('The manual directory is out of sync. ' \
-           'Run `VERIFYING_DOCUMENTATION=true rake generate_cops_documentation` and commit the results.')
+      warn(
+'The manual directory is out of sync. ' \
+'Run `VERIFYING_DOCUMENTATION=true rake generate_cops_documentation` and commit the results.'
+)
       exit!
     end
   end

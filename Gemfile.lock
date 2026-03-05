@@ -109,6 +109,24 @@ GEM
       activesupport
       bundler
       rubocop (>= 1.72.2)
+    rubocop-gusto (10.6.0)
+      lint_roller
+      rubocop (>= 1.76)
+      rubocop-performance
+      rubocop-rake
+      rubocop-rspec
+      rubocop-sorbet
+      thor
+    rubocop-performance (1.26.1)
+      lint_roller (~> 1.1)
+      rubocop (>= 1.75.0, < 2.0)
+      rubocop-ast (>= 1.47.1, < 2.0)
+    rubocop-rake (0.7.1)
+      lint_roller (~> 1.1)
+      rubocop (>= 1.72.1)
+    rubocop-rspec (3.9.0)
+      lint_roller (~> 1.1)
+      rubocop (~> 1.81)
     rubocop-sorbet (0.12.0)
       lint_roller
       rubocop (>= 1.75.2)
@@ -164,6 +182,7 @@ DEPENDENCIES
   rake
   rspec (~> 3.0)
   rubocop-extension-generator
+  rubocop-gusto
   rubocop-packs!
   sorbet
   tapioca

@@ -3,11 +3,12 @@
 
 RSpec.describe RuboCop::Cop::Packs::RootNamespaceIsPackName, :config do
   subject(:cop) { described_class.new(config) }
+
   let(:pack_name) { 'packs/apples' }
 
   let(:cop_config) do
     {
-      'Enabled' => true
+      'Enabled' => true,
     }
   end
 
@@ -91,7 +92,7 @@ RSpec.describe RuboCop::Cop::Packs::RootNamespaceIsPackName, :config do
     end
 
     context 'several globally permitted namespaces are provided' do
-      let(:global_namespaces) { %w[AppleTrees ApplePies Ciders] }
+      let(:global_namespaces) { %w(AppleTrees ApplePies Ciders) }
 
       context 'when file establishes different namespace' do
         let(:source) do
@@ -252,7 +253,7 @@ RSpec.describe RuboCop::Cop::Packs::RootNamespaceIsPackName, :config do
     end
 
     context 'several globally permitted namespaces are configured' do
-      let(:global_namespaces) { %w[AppleTrees ApplePies Ciders] }
+      let(:global_namespaces) { %w(AppleTrees ApplePies Ciders) }
 
       context 'when file establishes different namespace' do
         let(:source) do

@@ -46,10 +46,12 @@ module RuboCop
           namespace_context = desired_zeitwerk_api.for_file(relative_filename, package_for_path)
           return if namespace_context.nil?
 
-          allowed_global_namespaces = Set.new([
-                                                namespace_context.expected_namespace,
-                                                *RuboCop::Packs.config.globally_permitted_namespaces
-                                              ])
+          allowed_global_namespaces = Set.new(
+[
+  namespace_context.expected_namespace,
+  *RuboCop::Packs.config.globally_permitted_namespaces,
+]
+)
 
           package_name = package_for_path.name
           actual_namespace = namespace_context.current_namespace
@@ -63,7 +65,7 @@ module RuboCop
             add_offense(
               source_range(processed_source.buffer, 1, 0),
               message: format(
-                'Based on the filepath, this file defines `%<current_fully_qualified_constant>s`, but it should be namespaced as `%<expected_namespace>s::%<current_fully_qualified_constant>s` with path `%<expected_path>s`.',
+                'Based on the filepath, this file defines `%{current_fully_qualified_constant}`, but it should be namespaced as `%{expected_namespace}::%{current_fully_qualified_constant}` with path `%{expected_path}`.',
                 package_name: package_name,
                 expected_namespace: expected_namespace,
                 expected_path: relative_desired_path,

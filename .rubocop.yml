@@ -16,7 +16,8 @@ AllCops:
   Exclude:
     - vendor/bundle/**/**
 
-require: rubocop-sorbet
+plugins:
+  - rubocop-gusto
 
 Sorbet/StrictSigil:
   Enabled: true

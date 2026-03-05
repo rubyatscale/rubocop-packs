@@ -6,10 +6,10 @@ RSpec.describe RuboCop::Cop::Packs::DocumentedPublicApis, :config do
   let(:config) do
     RuboCop::Config.new(
       'Style/CommentAnnotation' => {
-        'Keywords' => %w[TODO FIXME OPTIMIZE HACK REVIEW]
+        'Keywords' => %w(TODO FIXME OPTIMIZE HACK REVIEW),
       },
       'Style/DocumentationMethod' => {
-        'RequireForNonPublicMethods' => true
+        'RequireForNonPublicMethods' => true,
       }
     )
   end

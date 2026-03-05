@@ -48,14 +48,14 @@ module RuboCop
             # Therefore, for our implementation, we substitute out the non-namespace producing portions of the filename to count the number of namespaces.
             # Note this will *not work* properly in applications that have different assumptions about autoloading.
 
-            path_without_package_base = relative_filename.gsub(%r{#{package_name}/app/}, '')
+            path_without_package_base = relative_filename.gsub(%r(#{package_name}/app/), '')
             if path_without_package_base.include?('/concerns/')
               autoload_folder_name = path_without_package_base.split('/').first(2).join('/')
             else
               autoload_folder_name = path_without_package_base.split('/').first
             end
 
-            remaining_file_path = path_without_package_base.gsub(%r{\A#{autoload_folder_name}/}, '')
+            remaining_file_path = path_without_package_base.gsub(%r(\A#{autoload_folder_name}/), '')
             actual_namespace = get_actual_namespace(remaining_file_path, package_name)
 
             if relative_filename.include?('app/')
