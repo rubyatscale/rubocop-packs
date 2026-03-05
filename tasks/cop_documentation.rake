@@ -8,6 +8,8 @@ require 'parser'
 require 'parser/ruby25'
 
 module CopDocumentation
+  extend Rake::DSL
+
   def self.cops_of_department(cops, department)
     cops.with_department(department).sort!
   end
@@ -249,11 +251,11 @@ module CopDocumentation
       .join("\n")
   end
 
-  def self.assert_manual_synchronized(context)
-    context.sh('git diff --quiet manual') do |outcome, _|
+  def self.assert_manual_synchronized
+    sh('git diff --quiet manual') do |outcome, _|
       unless outcome
         # Output diff before raising error
-        context.sh('GIT_PAGER=cat git diff manual')
+        sh('GIT_PAGER=cat git diff manual')
 
         warn(
 'The manual directory is out of sync. ' \
@@ -264,7 +266,7 @@ module CopDocumentation
     end
   end
 
-  def self.main(context)
+  def self.main
     cops   = RuboCop::Cop::Cop.registry
     config = RuboCop::ConfigLoader.load_file('config/default.yml')
 
@@ -275,7 +277,7 @@ module CopDocumentation
 
     print_table_of_contents(cops)
 
-    assert_manual_synchronized(context) if ENV['CI'] == 'true'
+    assert_manual_synchronized if ENV['CI'] == 'true'
   ensure
     RuboCop::ConfigLoader.default_configuration = nil
   end
@@ -288,7 +290,7 @@ end
 
 desc('Generate docs of all cops departments')
 task generate_cops_documentation: :yard_for_generate_documentation do
-  CopDocumentation.main(self)
+  CopDocumentation.main
 end
 
 desc('Syntax check for the documentation comments')
