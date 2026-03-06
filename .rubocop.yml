@@ -14,7 +14,7 @@ AllCops:
   Exclude:
     - vendor/bundle/**/**
 
-require: rubocop-sorbet
+plugins: rubocop-sorbet
 
 Sorbet/StrictSigil:
   Enabled: true
