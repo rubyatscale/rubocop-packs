@@ -46,7 +46,7 @@ module RuboCop
             expected_containing_pack = ParsePackwerk.all.find { |p| p.name.include?("/#{expected_containing_pack_last_name}") }
             return if expected_containing_pack.nil?
 
-            if namespaces.count == 1
+            if namespaces.one?
               found_files = expected_containing_pack.directory.glob("app/*/#{expected_containing_pack_last_name}.rb")
             else
               expected_location_in_pack = namespaces[1..].map(&:underscore).join('/')
