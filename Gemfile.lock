@@ -5,10 +5,11 @@ PATH
       activesupport
       base64
       bigdecimal
+      lint_roller (~> 1.1)
       packs-specification
       parse_packwerk
-      rubocop (~> 1.0)
-      rubocop-sorbet (>= 0.8.4)
+      rubocop (~> 1.72)
+      rubocop-sorbet (>= 0.9.0)
       sorbet-runtime
 
 GEM

@@ -7,11 +7,6 @@ module RuboCop
   module Packs
     extend T::Sig
 
-    PROJECT_ROOT   = T.let(Pathname.new(__dir__).parent.parent.expand_path.freeze, Pathname)
-    CONFIG_DEFAULT = T.let(PROJECT_ROOT.join('config', 'default.yml').freeze, Pathname)
-
-    private_constant(:CONFIG_DEFAULT, :PROJECT_ROOT)
-
     sig { void }
     def self.bust_cache!
       config.bust_cache!

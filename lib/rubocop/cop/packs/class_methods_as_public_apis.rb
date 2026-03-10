@@ -41,7 +41,7 @@ module RuboCop
           # This cop only applies for ruby files in `app/public`
           return if !processed_source.file_path.include?('app/public/')
 
-          # Looked at https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Lint/MissingSuper source code as inspiration for htis part.
+          # Looked at https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Lint/MissingSuper source code as inspiration for this part.
           class_node = node.each_ancestor(:class).first
           module_node = node.each_ancestor(:module).first
           parent_class = class_node&.parent_class || module_node&.parent

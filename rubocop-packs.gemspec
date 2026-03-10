@@ -1,6 +1,8 @@
+require_relative 'lib/rubocop/packs/version'
+
 Gem::Specification.new do |spec|
   spec.name          = 'rubocop-packs'
-  spec.version       = '0.0.45'
+  spec.version       = RuboCop::Packs::VERSION
   spec.authors       = ['Gusto Engineers']
   spec.email         = ['dev@gusto.com']
   spec.summary       = 'A collection of Rubocop rules for gradually modularizing a ruby codebase'
@@ -13,6 +15,7 @@ Gem::Specification.new do |spec|
     spec.metadata['source_code_uri'] = 'https://github.com/rubyatscale/rubocop-packs'
     spec.metadata['changelog_uri'] = 'https://github.com/rubyatscale/rubocop-packs/releases'
     spec.metadata['allowed_push_host'] = 'https://rubygems.org'
+    spec.metadata['default_lint_roller_plugin'] = 'RuboCop::Packs::Plugin'
   else
     raise 'RubyGems 2.0 or newer is required to protect against ' \
           'public gem pushes.'
@@ -26,10 +29,11 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'activesupport'
   spec.add_dependency 'base64'
   spec.add_dependency 'bigdecimal'
+  spec.add_dependency 'lint_roller', '~> 1.1'
   spec.add_dependency 'packs-specification'
   spec.add_dependency 'parse_packwerk'
-  spec.add_dependency 'rubocop', '~> 1.0'
-  spec.add_dependency 'rubocop-sorbet', '>= 0.8.4'
+  spec.add_dependency 'rubocop', '~> 1.72'
+  spec.add_dependency 'rubocop-sorbet', '>= 0.9.0'
   spec.add_dependency 'sorbet-runtime'
 
   spec.add_development_dependency 'bundler'
