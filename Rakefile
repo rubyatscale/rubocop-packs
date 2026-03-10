@@ -11,7 +11,7 @@ if ENV['VERIFYING_DOCUMENTATION']
   Dir['tasks/**/*.rake'].each { |t| load t }
 end
 
-task(default: %i[documentation_syntax_check generate_cops_documentation spec])
+task(default: %i(documentation_syntax_check generate_cops_documentation spec))
 
 RSpec::Core::RakeTask.new(:spec) do |spec|
   spec.pattern = FileList['spec/**/*_spec.rb']

@@ -52,15 +52,13 @@ module RuboCop
           class_is_allowed_to_have_instance_methods = acceptable_parent_classes.include?(parent_class&.const_name)
           return if uses_implicit_static_methods || class_is_allowed_to_have_instance_methods
 
-          is_sorbet_interface_or_abstract_class = !module_node.nil? && module_node.descendants.any? { |d| d.is_a?(RuboCop::AST::SendNode) && (d.method_name == :interface! || d.method_name == :abstract!) }
+          is_sorbet_interface_or_abstract_class = !module_node.nil? && module_node.descendants.any? { |d| d.is_a?(RuboCop::AST::SendNode) && %i(interface! abstract!).include?(d.method_name) }
           return if is_sorbet_interface_or_abstract_class
           return if node_includes_acceptable_mixin?(class_node || module_node)
 
           add_offense(
             node.source_range,
-            message: format(
-              "Public API method must be a class method (e.g. `self.#{node.method_name}(...)`)"
-            )
+            message: "Public API method must be a class method (e.g. `self.#{node.method_name}(...)`)"
           )
         end
 
@@ -74,7 +72,7 @@ module RuboCop
           node.descendants.any? do |d|
             d.is_a?(RuboCop::AST::SendNode) &&
               d.method_name == :include &&
-              d.arguments.count == 1 &&
+              d.arguments.one? &&
               d.arguments.first.is_a?(RuboCop::AST::ConstNode) &&
               acceptable_mixins.include?(d.arguments.first.const_name)
           end

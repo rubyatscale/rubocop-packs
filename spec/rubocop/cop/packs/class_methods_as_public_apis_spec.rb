@@ -2,19 +2,20 @@
 # frozen_string_literal: true
 
 RSpec.describe RuboCop::Cop::Packs::ClassMethodsAsPublicApis, :config do
+  subject(:cop) { described_class.new(config) }
+
   let(:acceptable_parent_classes) do
     [
       'T::Struct',
       'T::Enum',
       'Objects::BaseInputObject', # GraphQL Input Object
       'Objects::BaseObject', # GraphQL Base Object
-      'Mutations::BaseMutation' # GraphQL Mutation
+      'Mutations::BaseMutation', # GraphQL Mutation
     ]
   end
   let(:acceptable_mixins) { [] }
 
   let(:cop_config) { { 'Enabled' => true, 'AcceptableParentClasses' => acceptable_parent_classes } }
-  subject(:cop) { described_class.new(config) }
 
   before do
     write_file('packs/tool/app/public/tool.rb')

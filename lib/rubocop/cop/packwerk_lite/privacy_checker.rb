@@ -60,15 +60,13 @@ module RuboCop
           is_new_violation = [
             !constant_reference.public_api?,
             constant_reference.source_package.enforces_privacy?,
-            !Private.violation_in_package_todo_yml?(constant_reference)
+            !Private.violation_in_package_todo_yml?(constant_reference),
           ].all?
 
           if is_new_violation
             add_offense(
               node.source_range,
-              message: format(
-                'Privacy violation detected. See https://github.com/Shopify/packwerk/blob/main/RESOLVING_VIOLATIONS.md for help'
-              )
+              message: 'Privacy violation detected. See https://github.com/Shopify/packwerk/blob/main/RESOLVING_VIOLATIONS.md for help'
             )
           end
         end

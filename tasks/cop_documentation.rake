@@ -7,36 +7,32 @@ require 'rubocop-packs'
 require 'parser'
 require 'parser/ruby25'
 
-YARD::Rake::YardocTask.new(:yard_for_generate_documentation) do |task|
-  task.files = ['lib/rubocop/cop/**/*.rb']
-  task.options = ['--no-output']
-end
+module CopDocumentation
+  extend Rake::DSL
 
-desc('Generate docs of all cops departments')
-task generate_cops_documentation: :yard_for_generate_documentation do
-  def cops_of_department(cops, department)
+  def self.cops_of_department(cops, department)
     cops.with_department(department).sort!
   end
 
-  def cops_body(config, cop, description, examples_objects, pars)
+  def self.cops_body(config, cop, description, examples_objects, pars)
     content = h2(cop.cop_name)
     content << required_ruby_version(cop)
     content << properties(config, cop)
     content << "#{description}\n"
-    content << examples(examples_objects) if examples_objects.count.positive?
+    content << examples(examples_objects) if examples_objects.any?
     content << configurations(pars)
     content << references(config, cop)
     content
   end
 
-  def examples(examples_object)
+  def self.examples(examples_object)
     examples_object.each_with_object(h3('Examples').dup) do |example, content|
       content << h4(example.name) unless example.name == ''
       content << code_example(example)
     end
   end
 
-  def required_ruby_version(cop)
+  def self.required_ruby_version(cop)
     return '' unless cop.respond_to?(:required_minimum_ruby_version)
 
     <<~NOTE
@@ -47,49 +43,51 @@ task generate_cops_documentation: :yard_for_generate_documentation do
     NOTE
   end
 
-  def properties(config, cop)
+  def self.properties(config, cop)
     header = [
       'Enabled by default', 'Safe', 'Supports autocorrection', 'VersionAdded',
-      'VersionChanged'
+      'VersionChanged',
     ]
     config = config.for_cop(cop)
     safe_auto_correct = config.fetch('SafeAutoCorrect', true)
     autocorrect = if cop.support_autocorrect?
-                    "Yes #{'(Unsafe)' unless safe_auto_correct}"
-                  else
-                    'No'
-                  end
-    content = [[
-      config.fetch('Enabled') ? 'Enabled' : 'Disabled',
-      config.fetch('Safe', true) ? 'Yes' : 'No',
-      autocorrect,
-      config.fetch('VersionAdded', '-'),
-      config.fetch('VersionChanged', '-')
-    ]]
+      "Yes #{'(Unsafe)' unless safe_auto_correct}"
+    else
+      'No'
+    end
+    content = [
+      [
+        config.fetch('Enabled') ? 'Enabled' : 'Disabled',
+        config.fetch('Safe', true) ? 'Yes' : 'No',
+        autocorrect,
+        config.fetch('VersionAdded', '-'),
+        config.fetch('VersionChanged', '-'),
+      ],
+    ]
     "#{to_table(header, content)}\n"
   end
 
-  def h2(title)
+  def self.h2(title)
     content = +"\n"
     content << "## #{title}\n"
     content << "\n"
     content
   end
 
-  def h3(title)
+  def self.h3(title)
     content = +"\n"
     content << "### #{title}\n"
     content << "\n"
     content
   end
 
-  def h4(title)
-    content = +"#### #{title}\n"
+  def self.h4(title)
+    content = "#### #{title}\n"
     content << "\n"
     content
   end
 
-  def code_example(ruby_code)
+  def self.code_example(ruby_code)
     content = +"```ruby\n"
     content << ruby_code.text
       .gsub('@good', '# good').gsub('@bad', '# bad').strip
@@ -97,7 +95,7 @@ task generate_cops_documentation: :yard_for_generate_documentation do
     content
   end
 
-  def configurations(pars)
+  def self.configurations(pars)
     return '' if pars.empty?
 
     header = ['Name', 'Default value', 'Configurable values']
@@ -111,9 +109,9 @@ task generate_cops_documentation: :yard_for_generate_documentation do
     h3('Configurable attributes') + to_table(header, content)
   end
 
-  def configurable_values(pars, name)
+  def self.configurable_values(pars, name)
     case name
-    when /^Enforced/
+    when /\AEnforced/
       supported_style_name = RuboCop::Cop::Util.to_supported_styles(name)
       format_table_value(pars[supported_style_name])
     when 'IndentationWidth'
@@ -137,18 +135,17 @@ task generate_cops_documentation: :yard_for_generate_documentation do
       end
     end
   end
-  # rubocop:enable
 
-  def to_table(header, content)
+  def self.to_table(header, content)
     table = [
       header.join(' | '),
-      Array.new(header.size, '---').join(' | ')
+      Array.new(header.size, '---').join(' | '),
     ]
     table.concat(content.map { |c| c.join(' | ') })
     "#{table.join("\n")}\n"
   end
 
-  def format_table_value(val)
+  def self.format_table_value(val)
     value =
       case val
       when Array
@@ -163,7 +160,7 @@ task generate_cops_documentation: :yard_for_generate_documentation do
     value.gsub("#{Dir.pwd}/", '').rstrip
   end
 
-  def references(config, cop)
+  def self.references(config, cop)
     cop_config = config.for_cop(cop)
     urls = RuboCop::Cop::MessageAnnotator.new(
       config, cop.name, cop_config, {}
@@ -176,13 +173,13 @@ task generate_cops_documentation: :yard_for_generate_documentation do
     content
   end
 
-  def print_cops_of_department(cops, department, config)
+  def self.print_cops_of_department(cops, department, config)
     selected_cops = cops_of_department(cops, department).select do |cop|
-      cop.to_s.start_with?('RuboCop::Cop::Packs') || cop.to_s.start_with?('RuboCop::Cop::PackwerkLite')
+      cop.to_s.start_with?('RuboCop::Cop::Packs', 'RuboCop::Cop::PackwerkLite')
     end
     return if selected_cops.empty?
 
-    content = +"# #{department}\n"
+    content = "# #{department}\n"
     selected_cops.each do |cop|
       content << print_cop_with_doc(cop, config)
     end
@@ -193,10 +190,12 @@ task generate_cops_documentation: :yard_for_generate_documentation do
     end
   end
 
-  def print_cop_with_doc(cop, config)
+  def self.print_cop_with_doc(cop, config)
     t = config.for_cop(cop)
-    non_display_keys = %w[Description Enabled StyleGuide Reference Safe SafeAutoCorrect VersionAdded
-                          VersionChanged]
+    non_display_keys = %w(
+      Description Enabled StyleGuide Reference Safe SafeAutoCorrect VersionAdded
+      VersionChanged
+    )
     pars = t.reject { |k| non_display_keys.include?(k) }
     description = 'No documentation'
     examples_object = []
@@ -209,7 +208,7 @@ task generate_cops_documentation: :yard_for_generate_documentation do
     cops_body(config, cop, description, examples_object, pars)
   end
 
-  def table_of_content_for_department(cops, department)
+  def self.table_of_content_for_department(cops, department)
     selected_cops = cops_of_department(cops, department.to_sym).select do |cop|
       cop.to_s.start_with?('RuboCop::Cop::Packs')
     end
@@ -217,7 +216,7 @@ task generate_cops_documentation: :yard_for_generate_documentation do
 
     type_title = department[0].upcase + department[1..]
     filename = "cops_#{department.downcase}.md"
-    content = +"#### Department [#{type_title}](#{filename})\n\n"
+    content = "#### Department [#{type_title}](#{filename})\n\n"
     selected_cops.each do |cop|
       anchor = cop.cop_name.sub('/', '').downcase
       content << "* [#{cop.cop_name}](#{filename}##{anchor})\n"
@@ -226,7 +225,7 @@ task generate_cops_documentation: :yard_for_generate_documentation do
     content
   end
 
-  def print_table_of_contents(cops)
+  def self.print_table_of_contents(cops)
     path = "#{Dir.pwd}/manual/cops.md"
     original = File.read(path)
     content = +"<!-- START_COP_LIST -->\n"
@@ -235,41 +234,39 @@ task generate_cops_documentation: :yard_for_generate_documentation do
 
     content << "\n<!-- END_COP_LIST -->"
 
-    content = if original.empty?
-                content
-              else
-                original.sub(
-                  /<!-- START_COP_LIST -->.+<!-- END_COP_LIST -->/m, content
-                )
-              end
+    unless original.empty?
+      content = original.sub(
+        /<!-- START_COP_LIST -->.+<!-- END_COP_LIST -->/m, content
+      )
+    end
     File.write(path, content)
   end
 
-  def table_contents(cops)
+  def self.table_contents(cops)
     cops
       .departments
       .map(&:to_s)
       .sort
-      .map { |department| table_of_content_for_department(cops, department) }
-      .compact
+      .filter_map { |department| table_of_content_for_department(cops, department) }
       .join("\n")
   end
 
-  def assert_manual_synchronized
-    # Do not print diff and yield whether exit code was zero
+  def self.assert_manual_synchronized
     sh('git diff --quiet manual') do |outcome, _|
-      return if outcome
+      unless outcome
+        # Output diff before raising error
+        sh('GIT_PAGER=cat git diff manual')
 
-      # Output diff before raising error
-      sh('GIT_PAGER=cat git diff manual')
-
-      warn('The manual directory is out of sync. ' \
-           'Run `VERIFYING_DOCUMENTATION=true rake generate_cops_documentation` and commit the results.')
-      exit!
+        warn(
+          'The manual directory is out of sync. ' \
+          'Run `VERIFYING_DOCUMENTATION=true rake generate_cops_documentation` and commit the results.'
+        )
+        exit!
+      end
     end
   end
 
-  def main
+  def self.main
     cops   = RuboCop::Cop::Cop.registry
     config = RuboCop::ConfigLoader.load_file('config/default.yml')
 
@@ -284,8 +281,16 @@ task generate_cops_documentation: :yard_for_generate_documentation do
   ensure
     RuboCop::ConfigLoader.default_configuration = nil
   end
+end
 
-  main
+YARD::Rake::YardocTask.new(:yard_for_generate_documentation) do |task|
+  task.files = ['lib/rubocop/cop/**/*.rb']
+  task.options = ['--no-output']
+end
+
+desc('Generate docs of all cops departments')
+task generate_cops_documentation: :yard_for_generate_documentation do
+  CopDocumentation.main
 end
 
 desc('Syntax check for the documentation comments')

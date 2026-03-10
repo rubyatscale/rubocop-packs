@@ -1,10 +1,6 @@
 # typed: false
 
 RSpec.describe RuboCop::Cop::Packs::TypedPublicApis, :config do
-  let(:config) do
-    RuboCop::Config.new
-  end
-
   context 'a private class is typed false' do
     let(:source) do
       <<~RUBY

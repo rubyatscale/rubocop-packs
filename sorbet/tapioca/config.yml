@@ -1,0 +1,7 @@
+gem:
+  # Exclude gems that already have RBI shims shipped with Sorbet:
+  # https://github.com/sorbet/sorbet/tree/master/rbi/gems
+  exclude:
+    - bundler
+    - didyoumean
+    - msgpack
