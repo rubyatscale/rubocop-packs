@@ -4,6 +4,35 @@
 RSpec.describe RuboCop::Cop::PackwerkLite::Privacy, :config do
   subject(:cop) { described_class.new(config) }
 
+  context 'when the violation is already recorded in package_todo.yml' do
+    before do
+      write_pack('packs/apples', 'enforce_privacy' => true, 'enforce_dependencies' => false)
+      write_file('packs/apples/app/services/apples.rb')
+      write_pack('packs/tools', 'enforce_privacy' => true, 'enforce_dependencies' => false)
+      write_file('packs/tools/app/services/tools.rb')
+      write_file('packs/apples/package_todo.yml', <<~YML)
+        packs/tools:
+          "::Tools":
+            violations:
+            - privacy
+            files:
+            - packs/apples/app/services/apples.rb
+      YML
+    end
+
+    let(:source) do
+      <<~RUBY
+        class Apples
+          Tools
+        end
+      RUBY
+    end
+
+    it 'does not re-report the existing violation' do
+      expect_no_offenses source, File.expand_path('packs/apples/app/services/apples.rb')
+    end
+  end
+
   context 'namespace convention is being followed' do
     context 'a private API is used from a private folder' do
       before do

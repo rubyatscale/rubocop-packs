@@ -31,11 +31,6 @@ module RuboCop
       class ClassMethodsAsPublicApis < Base
         extend T::Sig
 
-        sig { returns(T::Boolean) }
-        def support_autocorrect?
-          false
-        end
-
         sig { params(node: T.untyped).void }
         def on_def(node)
           # This cop only applies for ruby files in `app/public`
