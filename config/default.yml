@@ -1,5 +1,7 @@
 Packs/ClassMethodsAsPublicApis:
+  Description: 'Requires public API methods (in `app/public`) to be defined as class methods, which are more easily statically analyzable and typically hold less state.'
   Enabled: false
+  VersionAdded: '0.0.2'
   AcceptableParentClasses:
     - T::Enum
     - T::Struct
@@ -8,18 +10,28 @@ Packs/ClassMethodsAsPublicApis:
   AcceptableMixins: []
 
 Packs/RootNamespaceIsPackName:
+  Description: 'Requires that each file is namespaced under its pack name, so that each pack exposes exactly one root namespace.'
   Enabled: false
+  VersionAdded: '0.0.2'
 
 Packs/TypedPublicApis:
+  Description: "Requires that each pack's public API (in `app/public`) is `typed: strict`."
   Enabled: false
+  VersionAdded: '0.0.2'
 
 Packs/DocumentedPublicApis:
+  Description: 'Requires that each public API method (in `app/public`) has a documentation comment.'
   Enabled: false
+  VersionAdded: '0.0.2'
 
 PackwerkLite/Privacy:
+  Description: 'Detects references to the private implementation of another pack instead of its public API.'
   # It is recommended to use packwerk
   Enabled: false
+  VersionAdded: '0.0.12'
 
 PackwerkLite/Dependency:
+  Description: 'Detects references to a pack that is not listed as an explicit dependency.'
   # It is recommended to use packwerk
   Enabled: false
+  VersionAdded: '0.0.12'

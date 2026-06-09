@@ -4,6 +4,54 @@
 RSpec.describe RuboCop::Cop::PackwerkLite::Dependency, :config do
   subject(:cop) { described_class.new(config) }
 
+  context 'when the referenced constant is the temporarily-ignored PncApi' do
+    before do
+      write_pack('packs/pnc_api', 'enforce_dependencies' => true, 'enforce_privacy' => false)
+      write_pack('packs/tools', 'enforce_dependencies' => true, 'enforce_privacy' => false)
+      write_file('packs/pnc_api/app/public/pnc_api.rb')
+      write_file('packs/tools/app/public/tool.rb')
+    end
+
+    let(:source) do
+      <<~SOURCE
+        class Tools
+          PncApi
+        end
+      SOURCE
+    end
+
+    it { expect_no_offenses source, File.expand_path('packs/tools/app/public/tool.rb') }
+  end
+
+  context 'when the dependency violation is already recorded in package_todo.yml' do
+    before do
+      write_pack('packs/apples', 'enforce_dependencies' => true, 'enforce_privacy' => false)
+      write_pack('packs/tools', 'enforce_dependencies' => true, 'enforce_privacy' => false)
+      write_file('packs/apples/app/public/apples.rb')
+      write_file('packs/tools/app/public/tool.rb')
+      write_file('packs/tools/package_todo.yml', <<~YML)
+        packs/apples:
+          "::Apples":
+            violations:
+            - dependency
+            files:
+            - packs/tools/app/public/tool.rb
+      YML
+    end
+
+    let(:source) do
+      <<~SOURCE
+        class Tools
+          Apples
+        end
+      SOURCE
+    end
+
+    it 'does not re-report the existing violation' do
+      expect_no_offenses source, File.expand_path('packs/tools/app/public/tool.rb')
+    end
+  end
+
   context 'namespacing convention is being followed' do
     context 'unstated dependency used' do
       before do

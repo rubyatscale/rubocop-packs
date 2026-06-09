@@ -25,6 +25,32 @@ RSpec.describe RuboCop::Cop::Packs::RootNamespaceIsPackName, :config do
     end
   end
 
+  context 'when the file is not a ruby file' do
+    let(:source) do
+      <<~RUBY
+        class Tool
+        end
+      RUBY
+    end
+
+    it 'gracefully exits' do
+      expect_no_offenses source, Pathname.pwd.join(write_file('packs/apples/app/services/tool.rake')).to_s
+    end
+  end
+
+  context 'when the file does not belong to a pack' do
+    let(:source) do
+      <<~RUBY
+        class Tool
+        end
+      RUBY
+    end
+
+    it 'gracefully exits' do
+      expect_no_offenses source, Pathname.pwd.join(write_file('app/services/tool.rb')).to_s
+    end
+  end
+
   context 'unnested pack' do
     context 'globally permitted namespaces not configured' do
       context 'when file establishes different namespace' do

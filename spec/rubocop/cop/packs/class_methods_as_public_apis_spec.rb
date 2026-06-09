@@ -21,6 +21,63 @@ RSpec.describe RuboCop::Cop::Packs::ClassMethodsAsPublicApis, :config do
     write_file('packs/tool/app/public/tool.rb')
   end
 
+  context 'when an instance method is defined at the top level with no class or module' do
+    let(:source) do
+      <<~RUBY
+        def my_instance_method
+        ^^^^^^^^^^^^^^^^^^^^^^ Public API method must be a class method (e.g. `self.my_instance_method(...)`)
+        end
+      RUBY
+    end
+
+    it { expect_offense source, Pathname.pwd.join('packs/tool/app/public/tool.rb').to_s }
+  end
+
+  context 'when a class includes a dynamic (non-constant) mixin' do
+    let(:source) do
+      <<~RUBY
+        class Tool
+          include some_dynamic_mixin
+          def my_instance_method
+          ^^^^^^^^^^^^^^^^^^^^^^ Public API method must be a class method (e.g. `self.my_instance_method(...)`)
+          end
+        end
+      RUBY
+    end
+
+    it { expect_offense source, Pathname.pwd.join('packs/tool/app/public/tool.rb').to_s }
+  end
+
+  context 'when a class includes a non-acceptable mixin' do
+    let(:source) do
+      <<~RUBY
+        class Tool
+          include SomeOtherMixin
+          def my_instance_method
+          ^^^^^^^^^^^^^^^^^^^^^^ Public API method must be a class method (e.g. `self.my_instance_method(...)`)
+          end
+        end
+      RUBY
+    end
+
+    it { expect_offense source, Pathname.pwd.join('packs/tool/app/public/tool.rb').to_s }
+  end
+
+  context 'when a class includes more than one constant in a single include' do
+    let(:source) do
+      <<~RUBY
+        class Tool
+          include First, Second
+          def my_instance_method
+          ^^^^^^^^^^^^^^^^^^^^^^ Public API method must be a class method (e.g. `self.my_instance_method(...)`)
+          end
+        end
+      RUBY
+    end
+
+    it { expect_offense source, Pathname.pwd.join('packs/tool/app/public/tool.rb').to_s }
+  end
+
   context 'when class defines an instance method, does not inherit from anything' do
     let(:source) do
       <<~RUBY

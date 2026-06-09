@@ -44,7 +44,9 @@ module RuboCop
           return if package_for_path.nil?
 
           namespace_context = desired_zeitwerk_api.for_file(relative_filename, package_for_path)
+          # :nocov: defensive: for_file always returns a context for the `app/` paths that reach here
           return if namespace_context.nil?
+          # :nocov:
 
           allowed_global_namespaces = Set.new(
             [
@@ -75,12 +77,9 @@ module RuboCop
           end
         end
 
-        # In the future, we'd love this to support auto-correct.
-        # Perhaps by automatically renamespacing the file and changing its location?
-        sig { returns(T::Boolean) }
-        def support_autocorrect?
-          false
-        end
+        # In the future, we'd love this to support auto-correct,
+        # perhaps by automatically renamespacing the file and changing its location.
+        # That would mean extending `AutoCorrector` and implementing the correction.
 
         private
 

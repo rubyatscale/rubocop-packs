@@ -42,11 +42,6 @@ module RuboCop
         # support this for some packs.
         extend T::Sig
 
-        sig { returns(T::Boolean) }
-        def support_autocorrect?
-          false
-        end
-
         sig { params(node: T.untyped).void }
         def check(node)
           # This cop only applies for ruby files in `app/public`

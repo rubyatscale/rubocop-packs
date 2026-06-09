@@ -60,7 +60,9 @@ module RuboCop
             #
             # Therefore when we've found possible files, we can sanity check there is only one,
             # and then assume the found pack defines the constant!
+            # :nocov: defensive invariant: Zeitwerk guarantees a constant maps to at most one file
             raise if found_files.count > 1
+            # :nocov:
 
             expected_pack_contains_constant = found_files.any?
 

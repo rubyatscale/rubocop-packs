@@ -40,11 +40,6 @@ module RuboCop
       class Privacy < Base
         extend T::Sig
 
-        sig { returns(T::Boolean) }
-        def support_autocorrect?
-          false
-        end
-
         sig { params(node: RuboCop::AST::ConstNode).void }
         def on_const(node)
           # See https://github.com/rubocop/rubocop/blob/master/lib/rubocop/cop/lint/constant_resolution.rb source code as an example
