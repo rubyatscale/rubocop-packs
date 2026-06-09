@@ -4,7 +4,7 @@
 
 Enabled by default | Safe | Supports autocorrection | VersionAdded | VersionChanged
 --- | --- | --- | --- | ---
-Disabled | Yes | No | - | -
+Disabled | Yes | No | 0.0.12 | -
 
 This cop helps ensure that packs are depending on packs explicitly.
 
@@ -45,9 +45,9 @@ end
 
 Enabled by default | Safe | Supports autocorrection | VersionAdded | VersionChanged
 --- | --- | --- | --- | ---
-Disabled | Yes | No | - | -
+Disabled | Yes | No | 0.0.12 | -
 
-This cop helps ensure that packs are using public API of other systems
+This cop helps ensure that packs are using the public API of other systems
 The following examples assume this basic setup.
 
 ### Examples

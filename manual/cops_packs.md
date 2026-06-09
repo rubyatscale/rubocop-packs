@@ -4,7 +4,7 @@
 
 Enabled by default | Safe | Supports autocorrection | VersionAdded | VersionChanged
 --- | --- | --- | --- | ---
-Disabled | Yes | No | - | -
+Disabled | Yes | No | 0.0.2 | -
 
 This cop states that public API should live on class methods, which are more easily statically analyzable,
 searchable, and typically hold less state.
@@ -43,7 +43,7 @@ AcceptableMixins | `[]` | Array
 
 Enabled by default | Safe | Supports autocorrection | VersionAdded | VersionChanged
 --- | --- | --- | --- | ---
-Disabled | Yes | No | - | -
+Disabled | Yes | No | 0.0.2 | -
 
 This cop helps ensure that each pack has a documented public API
 The following examples assume this basic setup.
@@ -78,7 +78,7 @@ end
 
 Enabled by default | Safe | Supports autocorrection | VersionAdded | VersionChanged
 --- | --- | --- | --- | ---
-Disabled | Yes | No | - | -
+Disabled | Yes | No | 0.0.2 | -
 
 This cop helps ensure that each pack exposes one namespace.
 Note that this cop doesn't necessarily expect you to be using packs-rails (https://github.com/rubyatscale/packs-rails),
@@ -102,7 +102,7 @@ class Foo::Blah::Bar; end
 
 Enabled by default | Safe | Supports autocorrection | VersionAdded | VersionChanged
 --- | --- | --- | --- | ---
-Disabled | Yes | Yes  | - | -
+Disabled | Yes | Yes  | 0.0.2 | -
 
 This cop helps ensure that each pack's public API is strictly typed, enforcing strong boundaries.
 
