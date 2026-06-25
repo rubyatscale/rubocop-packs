@@ -24,7 +24,7 @@ Gem::Specification.new do |spec|
   # Specify which files should be added to the gem when it is released.
   spec.files = Dir['README.md', 'lib/**/*', 'config/default.yml']
   spec.require_paths = ['lib']
-  spec.required_ruby_version = '>= 3.2'
+  spec.required_ruby_version = '>= 3.3'
 
   spec.add_dependency 'activesupport'
   spec.add_dependency 'base64'
