@@ -71,8 +71,8 @@ module RuboCop
             found_file = found_files.first
 
             ConstantReference.new(
-              constant_name: constant_name,
-              global_namespace: global_namespace,
+              constant_name:,
+              global_namespace:,
               source_package: expected_containing_pack,
               constant_definition_location: T.must(found_file),
               referencing_file: Pathname.new(processed_source.path).relative_path_from(Pathname.pwd)

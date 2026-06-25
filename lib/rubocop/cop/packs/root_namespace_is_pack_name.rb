@@ -68,10 +68,10 @@ module RuboCop
               source_range(processed_source.buffer, 1, 0),
               message: format(
                 'Based on the filepath, this file defines `%{current_fully_qualified_constant}`, but it should be namespaced as `%{expected_namespace}::%{current_fully_qualified_constant}` with path `%{expected_path}`.',
-                package_name: package_name,
-                expected_namespace: expected_namespace,
+                package_name:,
+                expected_namespace:,
                 expected_path: relative_desired_path,
-                current_fully_qualified_constant: current_fully_qualified_constant
+                current_fully_qualified_constant:
               )
             )
           end
