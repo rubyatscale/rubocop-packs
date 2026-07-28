@@ -49,7 +49,10 @@ module RuboCop
 
           left_sibling = node.left_sibling
 
-          if left_sibling == :private_class_method
+          # A `Symbol` sibling means the definition was passed to a modifier, as in
+          # `private def foo` or `private_class_method def self.foo`, so both the sig and the
+          # documentation comment sit above the enclosing send rather than above the definition.
+          if left_sibling.is_a?(Symbol)
             if node_is_sorbet_signature?(node.parent.left_sibling)
               return if documentation_comment?(node.parent.left_sibling)
             elsif documentation_comment?(node.parent)
