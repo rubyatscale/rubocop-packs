@@ -186,4 +186,142 @@ RSpec.describe RuboCop::Cop::Packs::DocumentedPublicApis, :config do
       end
     end
   end
+
+  context 'using inline private instance method syntax' do
+    context 'with a sig' do
+      context 'documented' do
+        let(:source) do
+          <<~RUBY
+            class Foo
+              # Here is documentation!
+              sig { void }
+              private def bar
+              end
+            end
+          RUBY
+        end
+
+        it { expect_no_offenses source, 'packs/foo/app/public/foo.rb' }
+      end
+
+      context 'undocumented' do
+        let(:source) do
+          <<~RUBY
+            class Foo
+              sig { void }
+              private def bar
+                      ^^^^^^^ Missing method documentation comment.
+              end
+            end
+          RUBY
+        end
+
+        it { expect_offense source, 'packs/foo/app/public/foo.rb' }
+      end
+    end
+
+    context 'with no sig' do
+      context 'documented' do
+        let(:source) do
+          <<~RUBY
+            class Foo
+              # Here is documentation!
+              private def bar
+              end
+            end
+          RUBY
+        end
+
+        it { expect_no_offenses source, 'packs/foo/app/public/foo.rb' }
+      end
+
+      context 'undocumented' do
+        let(:source) do
+          <<~RUBY
+            class Foo
+              private def bar
+                      ^^^^^^^ Missing method documentation comment.
+              end
+            end
+          RUBY
+        end
+
+        it { expect_offense source, 'packs/foo/app/public/foo.rb' }
+      end
+    end
+  end
+
+  context 'when a method is defined inside a block' do
+    context 'when the block takes no parameters and the method is undocumented' do
+      let(:source) do
+        <<~RUBY
+          Foo = Struct.new(:a) do
+            def bar
+            ^^^^^^^ Missing method documentation comment.
+            end
+          end
+        RUBY
+      end
+
+      it { expect_offense source, 'packs/foo/app/public/foo.rb' }
+    end
+
+    context 'when the block takes no parameters and the method is documented' do
+      let(:source) do
+        <<~RUBY
+          Foo = Struct.new(:a) do
+            # This has documentation, cool
+            def bar
+            end
+          end
+        RUBY
+      end
+
+      it { expect_no_offenses source, 'packs/foo/app/public/foo.rb' }
+    end
+
+    context 'when the method has a sig and documentation above the sig' do
+      let(:source) do
+        <<~RUBY
+          Foo = Data.define(:a) do
+            # This has documentation, cool
+            sig { void }
+            def bar
+            end
+          end
+        RUBY
+      end
+
+      it { expect_no_offenses source, 'packs/foo/app/public/foo.rb' }
+    end
+
+    context 'when the method has a sig and no documentation' do
+      let(:source) do
+        <<~RUBY
+          Foo = Data.define(:a) do
+            sig { void }
+            def bar
+            ^^^^^^^ Missing method documentation comment.
+            end
+          end
+        RUBY
+      end
+
+      it { expect_offense source, 'packs/foo/app/public/foo.rb' }
+    end
+
+    context 'when the block takes parameters' do
+      let(:source) do
+        <<~RUBY
+          Foo = Struct.new(:a) do |klass|
+            def bar
+            ^^^^^^^ Missing method documentation comment.
+            end
+          end
+        RUBY
+      end
+
+      it { expect_offense source, 'packs/foo/app/public/foo.rb' }
+    end
+  end
 end

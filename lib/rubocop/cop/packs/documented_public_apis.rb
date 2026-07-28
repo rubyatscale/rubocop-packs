@@ -49,7 +49,10 @@ module RuboCop
 
           left_sibling = node.left_sibling
 
-          if left_sibling == :private_class_method
+          # A `Symbol` sibling means the definition was passed to a modifier, as in
+          # `private def foo` or `private_class_method def self.foo`, so both the sig and the
+          # documentation comment sit above the enclosing send rather than above the definition.
+          if left_sibling.is_a?(Symbol)
             if node_is_sorbet_signature?(node.parent.left_sibling)
               return if documentation_comment?(node.parent.left_sibling)
             elsif documentation_comment?(node.parent)
@@ -66,8 +69,17 @@ module RuboCop
 
         sig { params(node: T.untyped).returns(T::Boolean) }
         def node_is_sorbet_signature?(node)
+          # A sibling is not necessarily an AST node. It is a `Symbol` when a method definition is
+          # passed to a modifier, such as the `:private` in `private def foo`.
+          return false if !node.is_a?(RuboCop::AST::Node)
+
+          # A node's `source` is `nil` when it has no source range. That is the case for the empty
+          # `args` node of a block written without parameters, as in `Struct.new(:a) do ... end`,
+          # which is the left sibling of a method defined as the block's only statement.
+          node_source = node.source
+
           # Is there a better way to check if a node is a sorbet signature? Probably!
-          !!(node && (node.source.include?('sig do') || node.source.include?('sig {')))
+          !!(node_source && (node_source.include?('sig do') || node_source.include?('sig {')))
         end
       end
     end
