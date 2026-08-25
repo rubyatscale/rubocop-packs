@@ -67,7 +67,9 @@ module RuboCop
         sig { params(node: T.untyped).returns(T::Boolean) }
         def node_is_sorbet_signature?(node)
           # Is there a better way to check if a node is a sorbet signature? Probably!
-          !!(node && (node.source.include?('sig do') || node.source.include?('sig {')))
+          # `node&.source` can be nil (e.g. an empty block `args` node), so guard it before calling `include?`.
+          source = node&.source
+          !!(source && (source.include?('sig do') || source.include?('sig {')))
         end
       end
     end

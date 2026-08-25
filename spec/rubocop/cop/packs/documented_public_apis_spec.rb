@@ -186,4 +186,21 @@ RSpec.describe RuboCop::Cop::Packs::DocumentedPublicApis, :config do
       end
     end
   end
+
+  context 'when a public method is the only statement of a block with no parameters' do
+    let(:source) do
+      <<~RUBY
+        module Foo
+          Bar = Data.define(:a) do
+            def baz
+            ^^^^^^^ Missing method documentation comment.
+              a
+            end
+          end
+        end
+      RUBY
+    end
+
+    it { expect_offense source, 'packs/foo/app/public/foo.rb' }
+  end
 end
