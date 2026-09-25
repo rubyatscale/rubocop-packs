@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    rubocop-packs (0.0.45)
+    rubocop-packs (0.1.0)
       activesupport
       base64
       bigdecimal
