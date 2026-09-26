@@ -1,4 +1,5 @@
 # typed: false
+# frozen_string_literal: true
 
 RSpec.describe RuboCop::Cop::Packs::TypedPublicApis, :config do
   context 'a private class is typed false' do
