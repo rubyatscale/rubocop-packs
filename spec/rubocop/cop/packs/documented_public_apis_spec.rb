@@ -1,4 +1,5 @@
 # typed: false
+# frozen_string_literal: true
 
 RSpec.describe RuboCop::Cop::Packs::DocumentedPublicApis, :config do
   # This is the way rubocop itself tests the Style/DocumentationMethod cop
