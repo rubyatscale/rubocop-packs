@@ -11,16 +11,18 @@ permissions:
 
 jobs:
   call-workflow-from-shared-config:
-    uses: rubyatscale/shared-config/.github/workflows/ci.yml@main
+    uses: rubyatscale/shared-config/.github/workflows/ci.yml@main # zizmor: ignore[unpinned-uses,secrets-inherit] internal reusable workflow tracked at @main by convention so shared-config updates propagate automatically; its ci.yml reads SLACK_WEBHOOK_URL but declares no workflow_call secrets, so inherit is the only way to pass it
     secrets: inherit
   verify_documentation:
     runs-on: ubuntu-latest
     env:
       VERIFYING_DOCUMENTATION: true
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
+        uses: ruby/setup-ruby@14594264cd68ce8a2345dd349bc3d138a4ef85c8 # v1.327.0
         with:
           bundler-cache: true
           ruby-version: 3.3
@@ -36,7 +38,7 @@ jobs:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
       SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
     steps:
-      - uses: slackapi/slack-github-action@v1.25.0
+      - uses: slackapi/slack-github-action@6c661ce58804a1a20f6dc5fbee7f0381b469e001 # v1.25.0
         with:
           payload: |
             {
