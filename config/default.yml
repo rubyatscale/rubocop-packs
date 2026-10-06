@@ -23,6 +23,7 @@ Packs/DocumentedPublicApis:
   Description: 'Requires that each public API method (in `app/public`) has a documentation comment.'
   Enabled: false
   VersionAdded: '0.0.2'
+  AllowedMethods: []
   RequireForNonPublicMethods: false
 
 PackwerkLite/Privacy:

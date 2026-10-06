@@ -78,6 +78,7 @@ end
 
 Name | Default value | Configurable values
 --- | --- | ---
+AllowedMethods | `[]` | Array
 RequireForNonPublicMethods | `false` | Boolean
 
 ## Packs/RootNamespaceIsPackName
