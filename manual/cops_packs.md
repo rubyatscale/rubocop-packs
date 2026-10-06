@@ -74,6 +74,12 @@ class Foo
 end
 ```
 
+### Configurable attributes
+
+Name | Default value | Configurable values
+--- | --- | ---
+RequireForNonPublicMethods | `false` | Boolean
+
 ## Packs/RootNamespaceIsPackName
 
 Enabled by default | Safe | Supports autocorrection | VersionAdded | VersionChanged

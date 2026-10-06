@@ -327,4 +327,135 @@ RSpec.describe RuboCop::Cop::Packs::DocumentedPublicApis, :config do
       it { expect_offense source, 'packs/foo/app/public/foo.rb' }
     end
   end
+
+  context 'when RequireForNonPublicMethods is not configured' do
+    let(:config) do
+      RuboCop::Config.new(
+        'Style/CommentAnnotation' => {
+          'Keywords' => %w(TODO FIXME OPTIMIZE HACK REVIEW),
+        }
+      )
+    end
+
+    context 'when a public method has no documentation' do
+      let(:source) do
+        <<~RUBY
+          class Foo
+            def bar
+            ^^^^^^^ Missing method documentation comment.
+            end
+          end
+        RUBY
+      end
+
+      it { expect_offense source, 'packs/foo/app/public/foo.rb' }
+    end
+
+    context 'when a private section precedes an undocumented instance method' do
+      let(:source) do
+        <<~RUBY
+          class Foo
+            private
+
+            def bar
+            end
+          end
+        RUBY
+      end
+
+      it { expect_no_offenses source, 'packs/foo/app/public/foo.rb' }
+    end
+
+    context 'when a private section precedes an undocumented sig and instance method' do
+      let(:source) do
+        <<~RUBY
+          class Foo
+            private
+
+            sig { void }
+            def bar
+            end
+          end
+        RUBY
+      end
+
+      it { expect_no_offenses source, 'packs/foo/app/public/foo.rb' }
+    end
+
+    context 'when a protected section precedes an undocumented instance method' do
+      let(:source) do
+        <<~RUBY
+          class Foo
+            protected
+
+            def bar
+            end
+          end
+        RUBY
+      end
+
+      it { expect_no_offenses source, 'packs/foo/app/public/foo.rb' }
+    end
+
+    context 'when a private section precedes an undocumented method in a singleton class block' do
+      let(:source) do
+        <<~RUBY
+          class Foo
+            class << self
+              private
+
+              def bar
+              end
+            end
+          end
+        RUBY
+      end
+
+      it { expect_no_offenses source, 'packs/foo/app/public/foo.rb' }
+    end
+
+    context 'when a private section precedes an undocumented sig and method in a singleton class block' do
+      let(:source) do
+        <<~RUBY
+          class Foo
+            class << self
+              private
+
+              sig { void }
+              def bar
+              end
+            end
+          end
+        RUBY
+      end
+
+      it { expect_no_offenses source, 'packs/foo/app/public/foo.rb' }
+    end
+
+    context 'when an undocumented instance method uses the private modifier' do
+      let(:source) do
+        <<~RUBY
+          class Foo
+            private def bar
+            end
+          end
+        RUBY
+      end
+
+      it { expect_no_offenses source, 'packs/foo/app/public/foo.rb' }
+    end
+
+    context 'when an undocumented singleton method uses the private_class_method modifier' do
+      let(:source) do
+        <<~RUBY
+          class Foo
+            private_class_method def self.bar
+            end
+          end
+        RUBY
+      end
+
+      it { expect_no_offenses source, 'packs/foo/app/public/foo.rb' }
+    end
+  end
 end
