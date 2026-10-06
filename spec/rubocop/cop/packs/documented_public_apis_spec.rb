@@ -4,12 +4,14 @@
 RSpec.describe RuboCop::Cop::Packs::DocumentedPublicApis, :config do
   # This is the way rubocop itself tests the Style/DocumentationMethod cop
   # https://github.com/rubocop/rubocop/blob/master/spec/rubocop/cop/style/documentation_method_spec.rb
+  # RequireForNonPublicMethods is read from the cop's own config section, so it
+  # must be set under Packs/DocumentedPublicApis to reach this cop.
   let(:config) do
     RuboCop::Config.new(
       'Style/CommentAnnotation' => {
         'Keywords' => %w(TODO FIXME OPTIMIZE HACK REVIEW),
       },
-      'Style/DocumentationMethod' => {
+      'Packs/DocumentedPublicApis' => {
         'RequireForNonPublicMethods' => true,
       }
     )
