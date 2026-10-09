@@ -73,6 +73,73 @@ class Foo
   def bar; end
 end
 ```
+#### RequireForNonPublicMethods: false (default)
+
+```ruby
+# good
+# packs/foo/app/public/foo.rb
+class Foo
+  private
+
+  def bar; end
+end
+
+# good
+# packs/foo/app/public/foo.rb
+class Foo
+  protected
+
+  def bar; end
+end
+```
+#### RequireForNonPublicMethods: true
+
+```ruby
+# bad
+# packs/foo/app/public/foo.rb
+class Foo
+  private
+
+  def bar; end
+end
+
+# bad
+# packs/foo/app/public/foo.rb
+class Foo
+  protected
+
+  def bar; end
+end
+
+# good
+# packs/foo/app/public/foo.rb
+class Foo
+  private
+
+  # This is a documentation comment.
+  def bar; end
+end
+
+# good
+# packs/foo/app/public/foo.rb
+class Foo
+  protected
+
+  # This is a documentation comment.
+  def bar; end
+end
+```
+#### AllowedMethods: ['method_missing', 'respond_to_missing?']
+
+```ruby
+# good
+# packs/foo/app/public/foo.rb
+class Foo
+  def method_missing(name, *args); end
+
+  def respond_to_missing?(symbol, include_private); end
+end
+```
 
 ### Configurable attributes
 

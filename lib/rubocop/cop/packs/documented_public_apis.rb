@@ -31,6 +31,70 @@ module RuboCop
       #     def bar; end
       #   end
       #
+      # @example RequireForNonPublicMethods: false (default)
+      #
+      #   # good
+      #   # packs/foo/app/public/foo.rb
+      #   class Foo
+      #     private
+      #
+      #     def bar; end
+      #   end
+      #
+      #   # good
+      #   # packs/foo/app/public/foo.rb
+      #   class Foo
+      #     protected
+      #
+      #     def bar; end
+      #   end
+      #
+      # @example RequireForNonPublicMethods: true
+      #
+      #   # bad
+      #   # packs/foo/app/public/foo.rb
+      #   class Foo
+      #     private
+      #
+      #     def bar; end
+      #   end
+      #
+      #   # bad
+      #   # packs/foo/app/public/foo.rb
+      #   class Foo
+      #     protected
+      #
+      #     def bar; end
+      #   end
+      #
+      #   # good
+      #   # packs/foo/app/public/foo.rb
+      #   class Foo
+      #     private
+      #
+      #     # This is a documentation comment.
+      #     def bar; end
+      #   end
+      #
+      #   # good
+      #   # packs/foo/app/public/foo.rb
+      #   class Foo
+      #     protected
+      #
+      #     # This is a documentation comment.
+      #     def bar; end
+      #   end
+      #
+      # @example AllowedMethods: ['method_missing', 'respond_to_missing?']
+      #
+      #   # good
+      #   # packs/foo/app/public/foo.rb
+      #   class Foo
+      #     def method_missing(name, *args); end
+      #
+      #     def respond_to_missing?(symbol, include_private); end
+      #   end
+      #
       class DocumentedPublicApis < Style::DocumentationMethod
         # This cop does two things:
         # 1) It only activates for things in the public folder
@@ -42,6 +106,17 @@ module RuboCop
         # in the default include paths. However, that strategy has the downside of resulting in more configuration for the consumer if they only want to
         # support this for some packs.
         extend T::Sig
+
+        # rubocop < 1.91 checks AllowedMethods inside `#check`, which this cop
+        # overrides. Drop when the gemspec floor is rubocop >= 1.91. Re-alias
+        # `on_defs` so it binds to this method, not the parent's.
+        sig { params(node: T.untyped).void }
+        def on_def(node)
+          return if allowed_methods.include?(node.method_name)
+
+          super
+        end
+        alias on_defs on_def # rubocop:disable Style/Alias
 
         sig { params(node: T.untyped).void }
         def check(node)
