@@ -3,10 +3,10 @@ PATH
   specs:
     rubocop-packs (0.1.0)
       activesupport (>= 7.1)
-      lint_roller (~> 1.1)
+      lint_roller (>= 1.1)
       packs-specification
       parse_packwerk
-      rubocop (~> 1.72)
+      rubocop (>= 1.72)
       rubocop-sorbet (>= 0.9.0)
       sorbet-runtime
 
@@ -181,7 +181,7 @@ DEPENDENCIES
   bundler
   parser
   rake
-  rspec (~> 3.0)
+  rspec (>= 3.0)
   rubocop-extension-generator
   rubocop-gusto
   rubocop-packs!
