@@ -18,6 +18,10 @@ bundle exec rspec
 # Run a single spec file
 bundle exec rspec spec/path/to/spec.rb
 
+# Run specs against the minimum supported rubocop, as CI does
+BUNDLE_GEMFILE=gemfiles/rubocop_minimum.gemfile bundle install
+BUNDLE_GEMFILE=gemfiles/rubocop_minimum.gemfile bundle exec rspec
+
 # Lint
 bundle exec rubocop
 bundle exec rubocop -a  # auto-correct
@@ -34,5 +38,6 @@ VERIFYING_DOCUMENTATION=true bundle exec rake generate_cops_documentation
 - `lib/rubocop/cop/packs/` — individual RuboCop cop classes; each file is one cop
 - `lib/rubocop-packs.rb` — registers all cops with RuboCop
 - `spec/rubocop/cop/packs/` — RSpec tests for each cop using `RuboCop::RSpec::ExpectOffense` helpers
-- `docs/` — auto-generated cop documentation (do not edit by hand)
+- `manual/` — auto-generated cop documentation (do not edit by hand; regenerate from the cops' YARD comments)
+- `docs/` — hand-written guides
 - `tasks/` — Rake tasks for doc generation (only loaded when `VERIFYING_DOCUMENTATION=true`)

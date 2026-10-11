@@ -49,6 +49,21 @@ module RuboCop
       #     def bar; end
       #   end
       #
+      #   # good
+      #   # packs/foo/app/public/foo.rb
+      #   class Foo
+      #     def self.bar; end
+      #     private_class_method :bar
+      #   end
+      #
+      #   # bad - `private` does not apply to singleton methods, so `bar` is public
+      #   # packs/foo/app/public/foo.rb
+      #   class Foo
+      #     private
+      #
+      #     def self.bar; end
+      #   end
+      #
       # @example RequireForNonPublicMethods: true
       #
       #   # bad
@@ -95,6 +110,12 @@ module RuboCop
       #     def respond_to_missing?(symbol, include_private); end
       #   end
       #
+      #   # bad
+      #   # packs/foo/app/public/foo.rb
+      #   class Foo
+      #     def bar; end
+      #   end
+      #
       class DocumentedPublicApis < Style::DocumentationMethod
         # This cop does two things:
         # 1) It only activates for things in the public folder
@@ -108,21 +129,24 @@ module RuboCop
         extend T::Sig
 
         # rubocop < 1.91 checks AllowedMethods inside `#check`, which this cop
-        # overrides. Drop when the gemspec floor is rubocop >= 1.91. Re-alias
-        # `on_defs` so it binds to this method, not the parent's.
-        sig { params(node: T.untyped).void }
+        # overrides. Drop when the gemspec floor is rubocop >= 1.91; until then the
+        # minimum-rubocop CI job covers it. Re-alias `on_defs` so it binds to this
+        # method, not the parent's.
+        sig { params(node: RuboCop::AST::DefNode).void }
         def on_def(node)
           return if allowed_methods.include?(node.method_name)
 
           super
         end
-        alias on_defs on_def # rubocop:disable Style/Alias
+        alias_method :on_defs, :on_def
 
-        sig { params(node: T.untyped).void }
+        # `node` is the enclosing send for a definition passed to `module_function` or
+        # `ruby2_keywords`, and the definition itself otherwise.
+        sig { params(node: T.any(RuboCop::AST::DefNode, RuboCop::AST::SendNode)).void }
         def check(node)
           # This cop only applies for ruby files in `app/public`
           return if !processed_source.file_path.include?('app/public')
-          return if non_public?(node) && !require_for_non_public_methods?
+          return if non_public_method?(node) && !require_for_non_public_methods?
 
           left_sibling = node.left_sibling
 
@@ -144,19 +168,46 @@ module RuboCop
           add_offense(node)
         end
 
-        sig { params(node: T.untyped).returns(T::Boolean) }
+        # `DefNode#non_public?` treats a singleton method after a bare `private` or `protected`
+        # as non-public, but those only change the visibility of instance methods. A singleton
+        # method is non-public only when `private_class_method` wraps it or later names it.
+        sig { params(node: T.any(RuboCop::AST::DefNode, RuboCop::AST::SendNode)).returns(T::Boolean) }
+        def non_public_method?(node)
+          if node.is_a?(RuboCop::AST::DefNode) && node.defs_type?
+            non_public_modifier?(node.parent) || made_private_after_definition?(node)
+          else
+            non_public?(node)
+          end
+        end
+
+        sig { params(node: RuboCop::AST::DefNode).returns(T::Boolean) }
+        def made_private_after_definition?(node)
+          node.right_siblings.any? do |sibling|
+            sibling.is_a?(RuboCop::AST::SendNode) &&
+              (sibling.receiver.nil? || sibling.receiver.self_type?) &&
+              sibling.method?(:private_class_method) &&
+              sibling.arguments.any? do |argument|
+                argument.is_a?(RuboCop::AST::SymbolNode) && argument.value == node.method_name
+              end
+          end
+        end
+
+        sig { params(node: T.anything).returns(T::Boolean) }
         def node_is_sorbet_signature?(node)
-          # A sibling is not necessarily an AST node. It is a `Symbol` when a method definition is
-          # passed to a modifier, such as the `:private` in `private def foo`.
-          return false if !node.is_a?(RuboCop::AST::Node)
+          case node
+          when RuboCop::AST::Node
+            # A node's `source` is `nil` when it has no source range. That is the case for the empty
+            # `args` node of a block written without parameters, as in `Struct.new(:a) do ... end`,
+            # which is the left sibling of a method defined as the block's only statement.
+            node_source = node.source
 
-          # A node's `source` is `nil` when it has no source range. That is the case for the empty
-          # `args` node of a block written without parameters, as in `Struct.new(:a) do ... end`,
-          # which is the left sibling of a method defined as the block's only statement.
-          node_source = node.source
-
-          # Is there a better way to check if a node is a sorbet signature? Probably!
-          !!(node_source && (node_source.include?('sig do') || node_source.include?('sig {')))
+            # Is there a better way to check if a node is a sorbet signature? Probably!
+            !!(node_source && (node_source.include?('sig do') || node_source.include?('sig {')))
+          else
+            # A sibling is not necessarily an AST node. It is a `Symbol` when a method definition is
+            # passed to a modifier, such as the `:private` in `private def foo`.
+            false
+          end
         end
       end
     end

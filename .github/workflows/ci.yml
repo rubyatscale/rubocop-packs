@@ -30,9 +30,24 @@ jobs:
         run: |
           bundle exec rake documentation_syntax_check
           bundle exec rake generate_cops_documentation
+  test_minimum_rubocop:
+    runs-on: ubuntu-latest
+    env:
+      BUNDLE_GEMFILE: ${{ github.workspace }}/gemfiles/rubocop_minimum.gemfile
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@14594264cd68ce8a2345dd349bc3d138a4ef85c8 # v1.327.0
+        with:
+          bundler-cache: true
+          ruby-version: 3.3
+      - name: Run specs against the minimum supported rubocop
+        run: bundle exec rspec
   notify_on_failure:
     runs-on: ubuntu-latest
-    needs: [verify_documentation]
+    needs: [verify_documentation, test_minimum_rubocop]
     if: ${{ failure() && github.ref == 'refs/heads/main' }}
     steps:
       - uses: slackapi/slack-github-action@dcb1066f776dd043e64d0e8ba94ca15cc7e1875d # v4.0.0
