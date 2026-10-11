@@ -28,84 +28,17 @@ AllCops:
 plugins:
   - rubocop-gusto
 
-Sorbet/StrictSigil:
-  Enabled: true
-  Exclude:
-    - tasks/cop_documentation.rake
-    - spec/**/*
-
-# Types are written as RBS comments, which Sorbet checks statically, so the gem
-# does not depend on sorbet-runtime. A dependency may still load sorbet-runtime,
-# so specs would not notice runtime `T` APIs creeping back in; these cops do.
-Sorbet/ForbidSig:
-  Enabled: true
-
-Sorbet/ForbidSigWithoutRuntime:
-  Enabled: true
-
-Sorbet/ForbidTSig:
-  Enabled: true
-
-Sorbet/ForbidTHelpers:
-  Enabled: true
-
-Sorbet/ForbidTStruct:
-  Enabled: true
-  AutocorrectStyle: rbs
-
-Sorbet/ForbidTEnum:
-  Enabled: true
-
-Sorbet/ForbidTTypeAlias:
-  Enabled: true
-
-Sorbet/ForbidTLet:
-  Enabled: true
-  AutocorrectToRBS: true
-
-Sorbet/ForbidTMust:
-  Enabled: true
-  AutocorrectToRBS: true
-
-Sorbet/ForbidTCast:
-  Enabled: true
-  AutocorrectToRBS: true
-
-Sorbet/ForbidTBind:
-  Enabled: true
-  AutocorrectToRBS: true
-
-Sorbet/ForbidTAbsurd:
-  Enabled: true
-  AutocorrectToRBS: true
-
-Sorbet/ForbidTUnsafe:
-  Enabled: true
-  AutocorrectToRBS: true
-
-Metrics/ParameterLists:
-  Enabled: false
-
-# This cop is annoying with typed configuration
-Style/TrivialAccessors:
-  Enabled: false
-
-# This rubocop is annoying when we use interfaces a lot
-Lint/UnusedMethodArgument:
-  Enabled: false
-
 Gemspec/RequireMFA:
   Enabled: false
 
 Lint/DuplicateBranch:
   Enabled: false
 
-# If is sometimes easier to think about than unless sometimes
-Style/NegatedIf:
+# This rubocop is annoying when we use interfaces a lot
+Lint/UnusedMethodArgument:
   Enabled: false
 
-# It's nice to be able to read the condition first before reading the code within the condition
-Style/GuardClause:
+Metrics/ParameterLists:
   Enabled: false
 
 #
@@ -134,8 +67,73 @@ Metrics/CyclomaticComplexity:
 Metrics/PerceivedComplexity:
   Enabled: false
 
-# It's nice to be able to read the condition first before reading the code within the condition
-Style/IfUnlessModifier:
+# Sometimes we like methods like `get_packages`
+Naming/AccessorMethodName:
+  Enabled: false
+
+Naming/FileName:
+  Enabled: false
+
+# Types are written as RBS comments, which Sorbet checks statically, so the gem
+# does not depend on sorbet-runtime. A dependency may still load sorbet-runtime,
+# so specs would not notice runtime `T` APIs creeping back in; these cops do.
+Sorbet/ForbidSig:
+  Enabled: true
+
+Sorbet/ForbidSigWithoutRuntime:
+  Enabled: true
+
+Sorbet/ForbidTAbsurd:
+  Enabled: true
+  AutocorrectToRBS: true
+
+Sorbet/ForbidTBind:
+  Enabled: true
+  AutocorrectToRBS: true
+
+Sorbet/ForbidTCast:
+  Enabled: true
+  AutocorrectToRBS: true
+
+Sorbet/ForbidTEnum:
+  Enabled: true
+
+Sorbet/ForbidTHelpers:
+  Enabled: true
+
+Sorbet/ForbidTLet:
+  Enabled: true
+  AutocorrectToRBS: true
+
+Sorbet/ForbidTMust:
+  Enabled: true
+  AutocorrectToRBS: true
+
+Sorbet/ForbidTSig:
+  Enabled: true
+
+Sorbet/ForbidTStruct:
+  Enabled: true
+  AutocorrectStyle: rbs
+
+Sorbet/ForbidTTypeAlias:
+  Enabled: true
+
+Sorbet/ForbidTUnsafe:
+  Enabled: true
+  AutocorrectToRBS: true
+
+Sorbet/StrictSigil:
+  Enabled: true
+  Exclude:
+    - tasks/cop_documentation.rake
+    - spec/**/*
+
+Style/AccessorGrouping:
+  Enabled: false
+
+# Blocks across lines are okay sometimes
+Style/BlockDelimiters:
   Enabled: false
 
 # This leads to code that is not very readable at times (very long lines)
@@ -150,23 +148,25 @@ Style/Documentation:
 Style/EmptyElse:
   Enabled: false
 
-# Sometimes we want to more explicitly list out a condition
-Style/RedundantCondition:
+# It's nice to be able to read the condition first before reading the code within the condition
+Style/GuardClause:
   Enabled: false
 
-# Blocks across lines are okay sometimes
-Style/BlockDelimiters:
+# It's nice to be able to read the condition first before reading the code within the condition
+Style/IfUnlessModifier:
   Enabled: false
 
-# Sometimes we like methods like `get_packages`
-Naming/AccessorMethodName:
-  Enabled: false
-
-Style/AccessorGrouping:
+# If is sometimes easier to think about than unless sometimes
+Style/NegatedIf:
   Enabled: false
 
 Style/NumericPredicate:
   Enabled: false
 
-Naming/FileName:
+# Sometimes we want to more explicitly list out a condition
+Style/RedundantCondition:
+  Enabled: false
+
+# This cop is annoying with typed configuration
+Style/TrivialAccessors:
   Enabled: false
