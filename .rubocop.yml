@@ -20,7 +20,6 @@ inherit_gem:
 #
 # See https://docs.rubocop.org/rubocop/configuration
 AllCops:
-  SuggestExtensions: false
   NewCops: enable
   Exclude:
     - vendor/bundle/**/**
@@ -38,37 +37,13 @@ Lint/DuplicateBranch:
 Lint/UnusedMethodArgument:
   Enabled: false
 
-Metrics/ParameterLists:
-  Enabled: true
-  CountKeywordArgs: false
-
 # rubocop-gusto disables this, but no block outside specs and gemspecs (both excluded) exceeds the limit.
 Metrics/BlockLength:
   Enabled: true
 
-#
-# Leaving length metrics to human judgment for now
-#
-Metrics/ModuleLength:
-  Enabled: false
-
-Metrics/MethodLength:
-  Enabled: false
-
-Metrics/AbcSize:
-  Enabled: false
-
-# This doesn't feel useful
-Metrics/CyclomaticComplexity:
-  Enabled: false
-
-# This doesn't feel useful
-Metrics/PerceivedComplexity:
-  Enabled: false
-
-# Sometimes we like methods like `get_packages`
-Naming/AccessorMethodName:
-  Enabled: false
+Metrics/ParameterLists:
+  Enabled: true
+  CountKeywordArgs: false
 
 Naming/FileName:
   Enabled: false
@@ -128,38 +103,12 @@ Sorbet/StrictSigil:
     - tasks/cop_documentation.rake
     - spec/**/*
 
-Style/AccessorGrouping:
-  Enabled: false
-
 # Blocks across lines are okay sometimes
 Style/BlockDelimiters:
   Enabled: false
 
 # This leads to code that is not very readable at times (very long lines)
 Style/ConditionalAssignment:
-  Enabled: false
-
-# For now, we prefer to lean on clean method signatures as documentation. We may change this later.
-Style/Documentation:
-  Enabled: false
-
-# Sometimes we leave comments in empty else statements intentionally
-Style/EmptyElse:
-  Enabled: false
-
-# It's nice to be able to read the condition first before reading the code within the condition
-Style/GuardClause:
-  Enabled: false
-
-# It's nice to be able to read the condition first before reading the code within the condition
-Style/IfUnlessModifier:
-  Enabled: false
-
-# If is sometimes easier to think about than unless sometimes
-Style/NegatedIf:
-  Enabled: false
-
-Style/NumericPredicate:
   Enabled: false
 
 # Sometimes we want to more explicitly list out a condition
