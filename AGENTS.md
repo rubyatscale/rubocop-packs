@@ -41,3 +41,12 @@ VERIFYING_DOCUMENTATION=true bundle exec rake generate_cops_documentation
 - `manual/` — auto-generated cop documentation (do not edit by hand; regenerate from the cops' YARD comments)
 - `docs/` — hand-written guides
 - `tasks/` — Rake tasks for doc generation (only loaded when `VERIFYING_DOCUMENTATION=true`)
+
+## Type annotations
+
+Sorbet checks types statically from [RBS comments](https://sorbet.org/docs/rbs-support), enabled in `sorbet/config`. The gem does not depend on sorbet-runtime.
+
+- Signatures go above the method (`#: (String name) -> bool`); type assertions trail the expression (`x = [] #: Array[String]`).
+- `#: as !nil` does nothing at runtime. Prefer code Sorbet can narrow, such as `fetch(0)` instead of `first`, or an `else` branch that raises.
+- Do not add `sig` blocks, `extend T::Sig`, `T::Struct`, `T.let`, or other runtime `T` APIs. The `Sorbet/Forbid*` cops in `.rubocop.yml` catch the common ones. To convert existing code, `bundle exec spoom srb sigs translate` rewrites `sig` blocks and `bundle exec spoom srb assertions translate` rewrites `T.let`, `T.must` and `T.cast`.
+- Avoid `untyped` except as a hash value type. Use the real type, or `top` when a value can be anything; Sorbet makes you narrow `top` before using it.

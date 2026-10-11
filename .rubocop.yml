@@ -34,6 +34,55 @@ Sorbet/StrictSigil:
     - tasks/cop_documentation.rake
     - spec/**/*
 
+# Types are written as RBS comments, which Sorbet checks statically, so the gem
+# does not depend on sorbet-runtime. A dependency may still load sorbet-runtime,
+# so specs would not notice runtime `T` APIs creeping back in; these cops do.
+Sorbet/ForbidSig:
+  Enabled: true
+
+Sorbet/ForbidSigWithoutRuntime:
+  Enabled: true
+
+Sorbet/ForbidTSig:
+  Enabled: true
+
+Sorbet/ForbidTHelpers:
+  Enabled: true
+
+Sorbet/ForbidTStruct:
+  Enabled: true
+  AutocorrectStyle: rbs
+
+Sorbet/ForbidTEnum:
+  Enabled: true
+
+Sorbet/ForbidTTypeAlias:
+  Enabled: true
+
+Sorbet/ForbidTLet:
+  Enabled: true
+  AutocorrectToRBS: true
+
+Sorbet/ForbidTMust:
+  Enabled: true
+  AutocorrectToRBS: true
+
+Sorbet/ForbidTCast:
+  Enabled: true
+  AutocorrectToRBS: true
+
+Sorbet/ForbidTBind:
+  Enabled: true
+  AutocorrectToRBS: true
+
+Sorbet/ForbidTAbsurd:
+  Enabled: true
+  AutocorrectToRBS: true
+
+Sorbet/ForbidTUnsafe:
+  Enabled: true
+  AutocorrectToRBS: true
+
 Metrics/ParameterLists:
   Enabled: false
 
