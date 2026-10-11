@@ -42,22 +42,20 @@ Metrics/ParameterLists:
   Enabled: true
   CountKeywordArgs: false
 
+# rubocop-gusto disables this, but no block outside specs and gemspecs (both excluded) exceeds the limit.
+Metrics/BlockLength:
+  Enabled: true
+
 #
 # Leaving length metrics to human judgment for now
 #
 Metrics/ModuleLength:
   Enabled: false
 
-Metrics/BlockLength:
-  Enabled: false
-
 Metrics/MethodLength:
   Enabled: false
 
 Metrics/AbcSize:
-  Enabled: false
-
-Metrics/ClassLength:
   Enabled: false
 
 # This doesn't feel useful
