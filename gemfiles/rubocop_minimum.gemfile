@@ -1,0 +1,13 @@
+# frozen_string_literal: true
+
+# Runs the specs against the oldest rubocop the gemspec allows, which the main
+# Gemfile.lock cannot. Keep the pin in sync with the gemspec's rubocop floor.
+# Development-only gems such as rubocop-gusto are left out because they need a
+# newer rubocop and the specs do not use them.
+source 'https://rubygems.org'
+
+gem 'rubocop', '1.72.0'
+gem 'rubocop-packs', path: '..'
+
+gem 'rspec', '~> 3.0'
+gem 'simplecov'
