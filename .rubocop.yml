@@ -39,7 +39,8 @@ Lint/UnusedMethodArgument:
   Enabled: false
 
 Metrics/ParameterLists:
-  Enabled: false
+  Enabled: true
+  CountKeywordArgs: false
 
 #
 # Leaving length metrics to human judgment for now
