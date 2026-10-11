@@ -49,6 +49,21 @@ module RuboCop
       #     def bar; end
       #   end
       #
+      #   # good
+      #   # packs/foo/app/public/foo.rb
+      #   class Foo
+      #     def self.bar; end
+      #     private_class_method :bar
+      #   end
+      #
+      #   # bad - `private` does not apply to singleton methods, so `bar` is public
+      #   # packs/foo/app/public/foo.rb
+      #   class Foo
+      #     private
+      #
+      #     def self.bar; end
+      #   end
+      #
       # @example RequireForNonPublicMethods: true
       #
       #   # bad
@@ -95,6 +110,12 @@ module RuboCop
       #     def respond_to_missing?(symbol, include_private); end
       #   end
       #
+      #   # bad
+      #   # packs/foo/app/public/foo.rb
+      #   class Foo
+      #     def bar; end
+      #   end
+      #
       class DocumentedPublicApis < Style::DocumentationMethod
         # This cop does two things:
         # 1) It only activates for things in the public folder
@@ -108,21 +129,22 @@ module RuboCop
         extend T::Sig
 
         # rubocop < 1.91 checks AllowedMethods inside `#check`, which this cop
-        # overrides. Drop when the gemspec floor is rubocop >= 1.91. Re-alias
-        # `on_defs` so it binds to this method, not the parent's.
+        # overrides. Drop when the gemspec floor is rubocop >= 1.91; until then the
+        # minimum-rubocop CI job covers it. Re-alias `on_defs` so it binds to this
+        # method, not the parent's.
         sig { params(node: T.untyped).void }
         def on_def(node)
           return if allowed_methods.include?(node.method_name)
 
           super
         end
-        alias on_defs on_def # rubocop:disable Style/Alias
+        alias_method :on_defs, :on_def
 
         sig { params(node: T.untyped).void }
         def check(node)
           # This cop only applies for ruby files in `app/public`
           return if !processed_source.file_path.include?('app/public')
-          return if non_public?(node) && !require_for_non_public_methods?
+          return if non_public_method?(node) && !require_for_non_public_methods?
 
           left_sibling = node.left_sibling
 
@@ -142,6 +164,28 @@ module RuboCop
           end
 
           add_offense(node)
+        end
+
+        # `DefNode#non_public?` treats a singleton method after a bare `private` or `protected`
+        # as non-public, but those only change the visibility of instance methods. A singleton
+        # method is non-public only when `private_class_method` wraps it or later names it.
+        sig { params(node: T.untyped).returns(T::Boolean) }
+        def non_public_method?(node)
+          return non_public?(node) if !node.defs_type?
+
+          non_public_modifier?(node.parent) || made_private_after_definition?(node)
+        end
+
+        sig { params(node: T.untyped).returns(T::Boolean) }
+        def made_private_after_definition?(node)
+          node.right_siblings.any? do |sibling|
+            sibling.is_a?(RuboCop::AST::SendNode) &&
+              sibling.receiver.nil? &&
+              sibling.method?(:private_class_method) &&
+              sibling.arguments.any? do |argument|
+                argument.is_a?(RuboCop::AST::SymbolNode) && argument.value == node.method_name
+              end
+          end
         end
 
         sig { params(node: T.untyped).returns(T::Boolean) }

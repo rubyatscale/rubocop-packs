@@ -91,6 +91,21 @@ class Foo
 
   def bar; end
 end
+
+# good
+# packs/foo/app/public/foo.rb
+class Foo
+  def self.bar; end
+  private_class_method :bar
+end
+
+# bad - `private` does not apply to singleton methods, so `bar` is public
+# packs/foo/app/public/foo.rb
+class Foo
+  private
+
+  def self.bar; end
+end
 ```
 #### RequireForNonPublicMethods: true
 
@@ -138,6 +153,12 @@ class Foo
   def method_missing(name, *args); end
 
   def respond_to_missing?(symbol, include_private); end
+end
+
+# bad
+# packs/foo/app/public/foo.rb
+class Foo
+  def bar; end
 end
 ```
 
