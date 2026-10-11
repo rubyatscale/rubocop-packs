@@ -7,9 +7,7 @@ module RuboCop
   module Packs
     # A plugin that integrates rubocop-packs with RuboCop's plugin system.
     class Plugin < LintRoller::Plugin
-      extend T::Sig
-
-      sig { returns(LintRoller::About) }
+      #: -> LintRoller::About
       def about
         LintRoller::About.new(
           name: 'rubocop-packs',
@@ -19,12 +17,12 @@ module RuboCop
         )
       end
 
-      sig { params(context: LintRoller::Context).returns(T::Boolean) }
+      #: (LintRoller::Context context) -> bool
       def supported?(context)
         context.engine == :rubocop
       end
 
-      sig { params(_context: LintRoller::Context).returns(LintRoller::Rules) }
+      #: (LintRoller::Context _context) -> LintRoller::Rules
       def rules(_context)
         LintRoller::Rules.new(
           type: :path,

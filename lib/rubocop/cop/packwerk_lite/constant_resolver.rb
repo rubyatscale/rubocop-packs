@@ -13,23 +13,37 @@ module RuboCop
       # that would need to be separated prior to proposing any API changes in zeitwerk.
       #
       class ConstantResolver
-        extend T::Sig
+        class ConstantReference
+          #: String
+          attr_reader :constant_name
 
-        class ConstantReference < T::Struct
-          extend T::Sig
+          #: String
+          attr_reader :global_namespace
 
-          const :constant_name, String
-          const :global_namespace, String
-          const :source_package, ParsePackwerk::Package
-          const :constant_definition_location, Pathname
-          const :referencing_file, Pathname
+          #: ParsePackwerk::Package
+          attr_reader :source_package
 
-          sig { returns(ParsePackwerk::Package) }
+          #: Pathname
+          attr_reader :constant_definition_location
+
+          #: Pathname
+          attr_reader :referencing_file
+
+          #: (constant_name: String, global_namespace: String, source_package: ParsePackwerk::Package, constant_definition_location: Pathname, referencing_file: Pathname) -> void
+          def initialize(constant_name:, global_namespace:, source_package:, constant_definition_location:, referencing_file:)
+            @constant_name = constant_name
+            @global_namespace = global_namespace
+            @source_package = source_package
+            @constant_definition_location = constant_definition_location
+            @referencing_file = referencing_file
+          end
+
+          #: -> ParsePackwerk::Package
           def referencing_package
             ParsePackwerk.package_from_path(referencing_file)
           end
 
-          sig { returns(T::Boolean) }
+          #: -> bool
           def public_api?
             # PackwerkExtensions should have a method to take in a path and determine if the file is public.
             # For now, we put it here and only support the public folder (and not specific private constants).
@@ -37,7 +51,7 @@ module RuboCop
             constant_definition_location.to_s.include?('/public/')
           end
 
-          sig { params(node: RuboCop::AST::ConstNode, processed_source: RuboCop::AST::ProcessedSource).returns(T.nilable(ConstantReference)) }
+          #: (RuboCop::AST::ConstNode node, RuboCop::AST::ProcessedSource processed_source) -> ConstantReference?
           def self.resolve(node, processed_source)
             constant_name = node.const_name
             namespaces = constant_name.split('::')
@@ -72,13 +86,13 @@ module RuboCop
 
             return if !expected_pack_contains_constant
 
-            found_file = found_files.first
+            found_file = found_files.fetch(0)
 
             ConstantReference.new(
               constant_name:,
               global_namespace:,
               source_package: expected_containing_pack,
-              constant_definition_location: T.must(found_file),
+              constant_definition_location: found_file,
               referencing_file: Pathname.new(processed_source.path).relative_path_from(Pathname.pwd)
             )
           end

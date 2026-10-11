@@ -29,9 +29,7 @@ module RuboCop
       #   end
       #
       class ClassMethodsAsPublicApis < Base
-        extend T::Sig
-
-        sig { params(node: T.untyped).void }
+        #: (RuboCop::AST::DefNode node) -> void
         def on_def(node)
           # This cop only applies for ruby files in `app/public`
           return if !processed_source.file_path.include?('app/public/')
@@ -59,7 +57,7 @@ module RuboCop
 
         private
 
-        sig { params(node: T.untyped).returns(T::Boolean) }
+        #: ((RuboCop::AST::ClassNode | RuboCop::AST::ModuleNode)? node) -> bool
         def node_includes_acceptable_mixin?(node)
           acceptable_mixins = cop_config['AcceptableMixins'] || []
           return false if node.nil?

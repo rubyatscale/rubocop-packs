@@ -2,21 +2,18 @@
 # frozen_string_literal: true
 
 require 'rubocop/packs/private/configuration'
-require 'rubocop/packs/private/offense'
 
 module RuboCop
   module Packs
     module Private
-      extend T::Sig
-
-      sig { void }
+      #: -> void
       def self.bust_cache!
         @loaded_client_configuration = nil
       end
 
-      sig { void }
+      #: -> void
       def self.load_client_configuration
-        @loaded_client_configuration ||= T.let(false, T.nilable(T::Boolean))
+        @loaded_client_configuration ||= false #: bool?
         return if @loaded_client_configuration
 
         @loaded_client_configuration = true

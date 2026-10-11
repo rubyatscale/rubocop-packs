@@ -126,13 +126,12 @@ module RuboCop
         # This monkey-patched cop could/should probably be upstreamed to `rubocop-sorbet`, and then `config/default.yml` could simply set `packs/*/app/public/**/*`
         # in the default include paths. However, that strategy has the downside of resulting in more configuration for the consumer if they only want to
         # support this for some packs.
-        extend T::Sig
 
         # rubocop < 1.91 checks AllowedMethods inside `#check`, which this cop
         # overrides. Drop when the gemspec floor is rubocop >= 1.91; until then the
         # minimum-rubocop CI job covers it. Re-alias `on_defs` so it binds to this
         # method, not the parent's.
-        sig { params(node: RuboCop::AST::DefNode).void }
+        #: (RuboCop::AST::DefNode node) -> void
         def on_def(node)
           return if allowed_methods.include?(node.method_name)
 
@@ -142,7 +141,7 @@ module RuboCop
 
         # `node` is the enclosing send for a definition passed to `module_function` or
         # `ruby2_keywords`, and the definition itself otherwise.
-        sig { params(node: T.any(RuboCop::AST::DefNode, RuboCop::AST::SendNode)).void }
+        #: ((RuboCop::AST::DefNode | RuboCop::AST::SendNode) node) -> void
         def check(node)
           # This cop only applies for ruby files in `app/public`
           return if !processed_source.file_path.include?('app/public')
@@ -171,7 +170,7 @@ module RuboCop
         # `DefNode#non_public?` treats a singleton method after a bare `private` or `protected`
         # as non-public, but those only change the visibility of instance methods. A singleton
         # method is non-public only when `private_class_method` wraps it or later names it.
-        sig { params(node: T.any(RuboCop::AST::DefNode, RuboCop::AST::SendNode)).returns(T::Boolean) }
+        #: ((RuboCop::AST::DefNode | RuboCop::AST::SendNode) node) -> bool
         def non_public_method?(node)
           if node.is_a?(RuboCop::AST::DefNode) && node.defs_type?
             non_public_modifier?(node.parent) || made_private_after_definition?(node)
@@ -180,7 +179,7 @@ module RuboCop
           end
         end
 
-        sig { params(node: RuboCop::AST::DefNode).returns(T::Boolean) }
+        #: (RuboCop::AST::DefNode node) -> bool
         def made_private_after_definition?(node)
           node.right_siblings.any? do |sibling|
             sibling.is_a?(RuboCop::AST::SendNode) &&
@@ -192,7 +191,7 @@ module RuboCop
           end
         end
 
-        sig { params(node: T.anything).returns(T::Boolean) }
+        #: (top node) -> bool
         def node_is_sorbet_signature?(node)
           case node
           when RuboCop::AST::Node

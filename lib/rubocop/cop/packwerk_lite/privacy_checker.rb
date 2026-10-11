@@ -39,9 +39,7 @@ module RuboCop
       #   end
       #
       class Privacy < Base
-        extend T::Sig
-
-        sig { params(node: RuboCop::AST::ConstNode).void }
+        #: (RuboCop::AST::ConstNode node) -> void
         def on_const(node)
           # See https://github.com/rubocop/rubocop/blob/master/lib/rubocop/cop/lint/constant_resolution.rb source code as an example
           return if Private.partial_const_reference?(node)

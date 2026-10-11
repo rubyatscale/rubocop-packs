@@ -38,9 +38,7 @@ module RuboCop
       #   #   - packs/bar
       #
       class Dependency < Base
-        extend T::Sig
-
-        sig { params(node: RuboCop::AST::ConstNode).void }
+        #: (RuboCop::AST::ConstNode node) -> void
         def on_const(node)
           return if Private.partial_const_reference?(node)
 

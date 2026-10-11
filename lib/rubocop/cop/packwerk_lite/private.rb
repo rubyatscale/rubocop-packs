@@ -5,9 +5,7 @@ module RuboCop
   module Cop
     module PackwerkLite
       module Private
-        extend T::Sig
-
-        sig { params(node: RuboCop::AST::ConstNode).returns(T::Boolean) }
+        #: (RuboCop::AST::ConstNode node) -> bool
         def self.partial_const_reference?(node)
           # This is a bit whacky, but if I have a reference in the code like this: Foo::Bar::Baz.any_method, `on_const` will be called three times:
           # One with `Foo`, one with `Foo::Bar`, and one with `Foo::Bar::Baz`.
@@ -24,7 +22,7 @@ module RuboCop
           right_sibling.to_s[0].capitalize == right_sibling.to_s[0]
         end
 
-        sig { params(constant_reference: ConstantResolver::ConstantReference, type: String).returns(T::Boolean) }
+        #: (ConstantResolver::ConstantReference constant_reference, ?type: String) -> bool
         def self.violation_in_package_todo_yml?(constant_reference, type: 'privacy')
           existing_violations = ParsePackwerk::PackageTodo.for(constant_reference.referencing_package).violations
           existing_violations.any? do |v|

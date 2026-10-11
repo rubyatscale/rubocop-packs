@@ -11,6 +11,5 @@ module RuboCop
   # See docs/packwerk_lite.md
   module PackwerkLite
     class Error < StandardError; end
-    extend T::Sig
   end
 end

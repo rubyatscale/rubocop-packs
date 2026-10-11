@@ -33,8 +33,6 @@ Sorbet/StrictSigil:
   Exclude:
     - tasks/cop_documentation.rake
     - spec/**/*
-    # Loaded by the gemspec before sorbet-runtime, so `T` is unavailable here.
-    - lib/rubocop/packs/version.rb
 
 Metrics/ParameterLists:
   Enabled: false
