@@ -1,6 +1,9 @@
 # typed: strict
 # frozen_string_literal: true
 
+# For String#underscore
+require 'active_support/core_ext/string/inflections'
+
 module RuboCop
   module Cop
     module PackwerkLite

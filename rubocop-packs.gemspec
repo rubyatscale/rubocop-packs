@@ -28,9 +28,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
   spec.required_ruby_version = '>= 3.3'
 
-  spec.add_dependency 'activesupport'
-  spec.add_dependency 'base64'
-  spec.add_dependency 'bigdecimal'
+  spec.add_dependency 'activesupport', '>= 7.1'
   spec.add_dependency 'lint_roller', '~> 1.1'
   spec.add_dependency 'packs-specification'
   spec.add_dependency 'parse_packwerk'

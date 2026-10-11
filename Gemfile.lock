@@ -2,9 +2,7 @@ PATH
   remote: .
   specs:
     rubocop-packs (0.1.0)
-      activesupport
-      base64
-      bigdecimal
+      activesupport (>= 7.1)
       lint_roller (~> 1.1)
       packs-specification
       parse_packwerk
