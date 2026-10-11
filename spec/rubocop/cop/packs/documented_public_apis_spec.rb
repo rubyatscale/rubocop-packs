@@ -606,6 +606,34 @@ RSpec.describe RuboCop::Cop::Packs::DocumentedPublicApis, :config do
       it { expect_no_offenses source, 'packs/foo/app/public/foo.rb' }
     end
 
+    context 'when an undocumented method uses the module_function modifier' do
+      let(:source) do
+        <<~RUBY
+          module Foo
+            module_function def bar
+            ^^^^^^^^^^^^^^^^^^^^^^^ Missing method documentation comment.
+            end
+          end
+        RUBY
+      end
+
+      it { expect_offense source, 'packs/foo/app/public/foo.rb' }
+    end
+
+    context 'when a documented method uses the module_function modifier' do
+      let(:source) do
+        <<~RUBY
+          module Foo
+            # Here is documentation!
+            module_function def bar
+            end
+          end
+        RUBY
+      end
+
+      it { expect_no_offenses source, 'packs/foo/app/public/foo.rb' }
+    end
+
     # A bare `private` or `protected` only changes the visibility of instance
     # methods, so a singleton method defined after one is still public.
     context 'when a private section precedes an undocumented singleton method' do
