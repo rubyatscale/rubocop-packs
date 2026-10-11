@@ -682,6 +682,20 @@ RSpec.describe RuboCop::Cop::Packs::DocumentedPublicApis, :config do
       it { expect_no_offenses source, 'packs/foo/app/public/foo.rb' }
     end
 
+    context 'when self.private_class_method names an undocumented singleton method after its definition' do
+      let(:source) do
+        <<~RUBY
+          class Foo
+            def self.bar
+            end
+            self.private_class_method :bar
+          end
+        RUBY
+      end
+
+      it { expect_no_offenses source, 'packs/foo/app/public/foo.rb' }
+    end
+
     context 'when private_class_method names several methods including an undocumented singleton method' do
       let(:source) do
         <<~RUBY

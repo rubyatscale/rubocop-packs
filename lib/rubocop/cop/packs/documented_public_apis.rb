@@ -184,7 +184,7 @@ module RuboCop
         def made_private_after_definition?(node)
           node.right_siblings.any? do |sibling|
             sibling.is_a?(RuboCop::AST::SendNode) &&
-              sibling.receiver.nil? &&
+              (sibling.receiver.nil? || sibling.receiver.self_type?) &&
               sibling.method?(:private_class_method) &&
               sibling.arguments.any? do |argument|
                 argument.is_a?(RuboCop::AST::SymbolNode) && argument.value == node.method_name
