@@ -8,7 +8,6 @@ PATH
       parse_packwerk
       rubocop (>= 1.72)
       rubocop-sorbet (>= 0.9.0)
-      sorbet-runtime
 
 GEM
   remote: https://rubygems.org/

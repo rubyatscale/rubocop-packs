@@ -11,13 +11,26 @@ module RuboCop
         # that would need to be separated prior to proposing any API changes in zeitwerk.
         #
         class DesiredZeitwerkApi
-          extend T::Sig
+          class NamespaceContext
+            #: String
+            attr_reader :current_namespace
 
-          class NamespaceContext < T::Struct
-            const :current_namespace, String
-            const :current_fully_qualified_constant, String
-            const :expected_namespace, String
-            const :expected_filepath, String
+            #: String
+            attr_reader :current_fully_qualified_constant
+
+            #: String
+            attr_reader :expected_namespace
+
+            #: String
+            attr_reader :expected_filepath
+
+            #: (current_namespace: String, current_fully_qualified_constant: String, expected_namespace: String, expected_filepath: String) -> void
+            def initialize(current_namespace:, current_fully_qualified_constant:, expected_namespace:, expected_filepath:)
+              @current_namespace = current_namespace
+              @current_fully_qualified_constant = current_fully_qualified_constant
+              @expected_namespace = expected_namespace
+              @expected_filepath = expected_filepath
+            end
           end
 
           #
@@ -29,7 +42,7 @@ module RuboCop
           # Likely this means that our own cop should determine the desired namespace and pass that in
           # and this can determine actual namespace and how to get to expected.
           #
-          sig { params(relative_filename: String, package_for_path: ::Packs::Pack).returns(T.nilable(NamespaceContext)) }
+          #: (String relative_filename, ::Packs::Pack package_for_path) -> NamespaceContext?
           def for_file(relative_filename, package_for_path)
             package_name = package_for_path.name
 
@@ -53,22 +66,25 @@ module RuboCop
             if path_without_package_base.include?('/concerns/')
               autoload_folder_name = path_without_package_base.split('/').first(2).join('/')
             else
-              autoload_folder_name = path_without_package_base.split('/').first
+              autoload_folder_name = path_without_package_base.split('/').fetch(0)
             end
 
             remaining_file_path = path_without_package_base.gsub(%r(\A#{autoload_folder_name}/), '')
             actual_namespace = get_actual_namespace(remaining_file_path, package_name)
 
-            if relative_filename.include?('app/')
-              app_or_lib = 'app'
-            elsif relative_filename.include?('lib/')
-              app_or_lib = 'lib'
-            end
+            app_or_lib =
+              if relative_filename.include?('app/')
+                'app'
+              elsif relative_filename.include?('lib/')
+                'lib'
+              else
+                raise ArgumentError, "#{relative_filename} is in neither app/ nor lib/"
+              end
 
             absolute_desired_path = root_pathname.join(
               package_name,
-              T.must(app_or_lib),
-              T.must(autoload_folder_name),
+              app_or_lib,
+              autoload_folder_name,
               package_for_path.last_name,
               remaining_file_path
             )
@@ -76,26 +92,26 @@ module RuboCop
             relative_desired_path = absolute_desired_path.relative_path_from(root_pathname)
 
             NamespaceContext.new(
-              current_namespace: T.must(actual_namespace.split('::').first),
+              current_namespace: actual_namespace.split('::').fetch(0),
               current_fully_qualified_constant: actual_namespace,
               expected_namespace: get_pack_based_namespace(package_for_path),
               expected_filepath: relative_desired_path.to_s
             )
           end
 
-          sig { params(pack: ::Packs::Pack).returns(String) }
+          #: (::Packs::Pack pack) -> String
           def get_pack_based_namespace(pack)
             pack.last_name.camelize
           end
 
           private
 
-          sig { returns(Pathname) }
+          #: -> Pathname
           def root_pathname
             Pathname.pwd
           end
 
-          sig { params(remaining_file_path: String, package_name: String).returns(String) }
+          #: (String remaining_file_path, String package_name) -> String
           def get_actual_namespace(remaining_file_path, package_name)
             # If the remaining file path is a ruby file (not a directory), then it establishes a global namespace
             # Otherwise, per Zeitwerk's conventions as listed above, its a directory that establishes another global namespace

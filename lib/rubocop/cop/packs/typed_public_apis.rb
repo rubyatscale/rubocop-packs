@@ -33,9 +33,8 @@ module RuboCop
         #
         # We can apply this same pattern if we want to use other cops in the context of package protections and prevent clashing.
         #
-        extend T::Sig
 
-        sig { void }
+        #: -> void
         def on_new_investigation
           return unless processed_source.path.include?('app/public')
 

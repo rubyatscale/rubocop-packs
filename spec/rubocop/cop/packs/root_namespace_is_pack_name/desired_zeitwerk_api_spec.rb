@@ -30,7 +30,7 @@ RSpec.describe RuboCop::Cop::Packs::RootNamespaceIsPackName.const_get(:DesiredZe
 
   context 'when the file is in neither app/ nor lib/' do
     it 'raises because the autoload folder cannot be determined' do
-      expect { api.for_file('packs/apples/tool.rb', pack) }.to raise_error(TypeError)
+      expect { api.for_file('packs/apples/tool.rb', pack) }.to raise_error(ArgumentError, %r(neither app/ nor lib/))
     end
   end
 end

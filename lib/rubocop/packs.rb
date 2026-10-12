@@ -5,23 +5,21 @@ require 'rubocop/packs/private'
 
 module RuboCop
   module Packs
-    extend T::Sig
-
-    sig { void }
+    #: -> void
     def self.bust_cache!
       config.bust_cache!
       Private.bust_cache!
     end
 
-    sig { params(blk: T.proc.params(arg0: Private::Configuration).void).void }
+    #: { (Private::Configuration arg0) -> void } -> void
     def self.configure(&blk)
       yield(config)
     end
 
-    sig { returns(Private::Configuration) }
+    #: -> Private::Configuration
     def self.config
       Private.load_client_configuration
-      @config ||= T.let(Private::Configuration.new, T.nilable(Private::Configuration))
+      @config ||= Private::Configuration.new #: Private::Configuration?
     end
   end
 end

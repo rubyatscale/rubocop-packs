@@ -25,11 +25,9 @@ module RuboCop
       #   class Foo::Blah::Bar; end
       #
       class RootNamespaceIsPackName < Base
-        extend T::Sig
-
         include RangeHelp
 
-        sig { void }
+        #: -> void
         def on_new_investigation
           absolute_filepath = Pathname.new(processed_source.file_path)
           relative_filepath = absolute_filepath.relative_path_from(Pathname.pwd)
@@ -84,10 +82,9 @@ module RuboCop
 
         private
 
-        sig { returns(DesiredZeitwerkApi) }
+        #: -> DesiredZeitwerkApi
         def desired_zeitwerk_api
-          @desired_zeitwerk_api ||= T.let(nil, T.nilable(DesiredZeitwerkApi))
-          @desired_zeitwerk_api ||= DesiredZeitwerkApi.new
+          @desired_zeitwerk_api ||= DesiredZeitwerkApi.new #: DesiredZeitwerkApi?
         end
       end
     end

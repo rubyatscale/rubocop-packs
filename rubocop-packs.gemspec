@@ -34,7 +34,6 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'parse_packwerk'
   spec.add_dependency 'rubocop', '>= 1.72'
   spec.add_dependency 'rubocop-sorbet', '>= 0.9.0'
-  spec.add_dependency 'sorbet-runtime'
 
   spec.add_development_dependency 'bundler'
   spec.add_development_dependency 'parser'

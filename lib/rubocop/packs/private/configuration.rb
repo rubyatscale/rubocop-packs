@@ -5,17 +5,15 @@ module RuboCop
   module Packs
     module Private
       class Configuration
-        extend T::Sig
-
-        sig { returns(T::Array[String]) }
+        #: Array[String]
         attr_accessor :globally_permitted_namespaces
 
-        sig { void }
+        #: -> void
         def initialize
-          @globally_permitted_namespaces = T.let([], T::Array[String])
+          @globally_permitted_namespaces = [] #: Array[String]
         end
 
-        sig { void }
+        #: -> void
         def bust_cache!
           @globally_permitted_namespaces = []
         end
