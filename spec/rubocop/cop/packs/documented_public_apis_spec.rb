@@ -176,6 +176,60 @@ RSpec.describe RuboCop::Cop::Packs::DocumentedPublicApis, :config do
       it { expect_offense source, 'packs/foo/app/public/foo.rb' }
     end
 
+    context 'when an instance method has every Sorbet annotation, an RBS signature and no documentation' do
+      let(:source) do
+        <<~RUBY
+          class Foo
+            # @abstract
+            # @final
+            # @overridable
+            # @override
+            # @override(allow_incompatible: true)
+            # @override(allow_incompatible: false)
+            # @override(allow_incompatible: :visibility)
+            # @without_runtime
+            #: -> void
+            def bar
+            ^^^^^^^ Missing method documentation comment.
+            end
+          end
+        RUBY
+      end
+
+      it { expect_offense source, 'packs/foo/app/public/foo.rb' }
+    end
+
+    context 'when an instance method has a YARD tag with a description and an RBS signature' do
+      let(:source) do
+        <<~RUBY
+          class Foo
+            # @abstract Subclasses must implement this.
+            #: -> void
+            def bar
+            end
+          end
+        RUBY
+      end
+
+      it { expect_no_offenses source, 'packs/foo/app/public/foo.rb' }
+    end
+
+    context 'when an instance method has a rubocop directive, an RBS signature and no documentation' do
+      let(:source) do
+        <<~RUBY
+          class Foo
+            # rubocop:disable Style/For
+            #: -> void
+            def bar
+            ^^^^^^^ Missing method documentation comment.
+            end
+          end
+        RUBY
+      end
+
+      it { expect_offense source, 'packs/foo/app/public/foo.rb' }
+    end
+
     context 'when an instance method has an annotation keyword, an RBS signature and no documentation' do
       let(:source) do
         <<~RUBY
@@ -220,8 +274,42 @@ RSpec.describe RuboCop::Cop::Packs::DocumentedPublicApis, :config do
         RUBY
       end
 
-      # Unlike a `sig`, which is a statement, Sorbet allows comments between the signature and the method
+      # Sorbet ignores other comments when it pairs an RBS signature with its method, so documentation can
+      # sit between them. Documentation below a `sig` doesn't count, since the cop reads it above the `sig`.
       it { expect_no_offenses source, 'packs/foo/app/public/foo.rb' }
+    end
+
+    context 'when a comment is separated from an RBS signature by a blank line' do
+      let(:source) do
+        <<~RUBY
+          class Foo
+            # == Helpers
+
+            #: -> void
+            def bar
+            ^^^^^^^ Missing method documentation comment.
+            end
+          end
+        RUBY
+      end
+
+      it { expect_offense source, 'packs/foo/app/public/foo.rb' }
+    end
+
+    context 'when an instance method has only a Sorbet annotation above its sig' do
+      let(:source) do
+        <<~RUBY
+          class Foo
+            # @override
+            sig { override.void }
+            def bar
+            ^^^^^^^ Missing method documentation comment.
+            end
+          end
+        RUBY
+      end
+
+      it { expect_offense source, 'packs/foo/app/public/foo.rb' }
     end
 
     context 'when an undocumented method with an RBS signature uses the private modifier' do
