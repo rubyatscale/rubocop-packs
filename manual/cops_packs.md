@@ -72,6 +72,23 @@ class Foo
   sig { void }
   def bar; end
 end
+
+# bad - RBS signatures and Sorbet annotations are not documentation
+# packs/foo/app/public/foo.rb
+class Foo
+  # @override
+  #: -> void
+  def bar; end
+end
+
+# good
+# packs/foo/app/public/foo.rb
+class Foo
+  # This is a documentation comment.
+  # @override
+  #: -> void
+  def bar; end
+end
 ```
 #### RequireForNonPublicMethods: false (default)
 

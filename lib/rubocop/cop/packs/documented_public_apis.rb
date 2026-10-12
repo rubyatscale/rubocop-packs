@@ -31,6 +31,23 @@ module RuboCop
       #     def bar; end
       #   end
       #
+      #   # bad - RBS signatures and Sorbet annotations are not documentation
+      #   # packs/foo/app/public/foo.rb
+      #   class Foo
+      #     # @override
+      #     #: -> void
+      #     def bar; end
+      #   end
+      #
+      #   # good
+      #   # packs/foo/app/public/foo.rb
+      #   class Foo
+      #     # This is a documentation comment.
+      #     # @override
+      #     #: -> void
+      #     def bar; end
+      #   end
+      #
       # @example RequireForNonPublicMethods: false (default)
       #
       #   # good
@@ -119,13 +136,30 @@ module RuboCop
       class DocumentedPublicApis < Style::DocumentationMethod
         # This cop does two things:
         # 1) It only activates for things in the public folder
-        # 2) It allows `Style/DocumentationMethod` to work with sigs as expected.
+        # 2) It allows `Style/DocumentationMethod` to work with sigs, RBS comment signatures and Sorbet annotations as expected.
         #
         # An alternate approach would be to monkey patch the existing cop, as `rubocop-sorbet` did here:
         # https://github.com/Shopify/rubocop-sorbet/blob/6634f033611604cd76eeb73eae6d8728ec82d504/lib/rubocop/cop/sorbet/mutable_constant_sorbet_aware_behaviour.rb
         # This monkey-patched cop could/should probably be upstreamed to `rubocop-sorbet`, and then `config/default.yml` could simply set `packs/*/app/public/**/*`
         # in the default include paths. However, that strategy has the downside of resulting in more configuration for the consumer if they only want to
         # support this for some packs.
+
+        # The lines of an RBS method signature as Sorbet reads them: `#:` starts one, and `#|` continues a
+        # multi-line one. https://sorbet.org/docs/rbs-support
+        RBS_SIGNATURE = /\A#[:|]/
+
+        # The comments Sorbet reads in place of a `sig`'s modifiers, such as `# @override` for `override`,
+        # plus `@without_runtime`, which `spoom srb sigs translate` writes for `T::Sig::WithoutRuntime.sig`.
+        SORBET_METHOD_ANNOTATIONS = [
+          '@abstract',
+          '@final',
+          '@overridable',
+          '@override',
+          '@override(allow_incompatible: true)',
+          '@override(allow_incompatible: false)',
+          '@override(allow_incompatible: :visibility)',
+          '@without_runtime',
+        ].freeze
 
         # rubocop < 1.91 checks AllowedMethods inside `#check`, which this cop
         # overrides. Drop when the gemspec floor is rubocop >= 1.91; until then the
@@ -207,6 +241,37 @@ module RuboCop
             # passed to a modifier, such as the `:private` in `private def foo`.
             false
           end
+        end
+
+        # A copy of `RuboCop::Cop::DocumentationComment#documentation_comment?` with two changes. Like the
+        # original, it ignores annotation keywords (`# TODO:`) and directives (`# rubocop:disable`), and it
+        # also ignores RBS comments, which, like a `sig`, are not documentation. And it reads only the
+        # comments directly above the method: the original accepts any comment above a method once one is
+        # adjacent, which an RBS signature always is, so a section heading a blank line above would count.
+        #: (RuboCop::AST::Node node) -> bool
+        def documentation_comment?(node)
+          preceding_lines = preceding_lines(node)
+
+          return false unless preceding_comment?(node, preceding_lines.last)
+
+          adjacent_comments(preceding_lines).any? do |comment|
+            !AnnotationComment.new(comment, annotation_keywords).annotation? &&
+              !interpreter_directive_comment?(comment) &&
+              !rubocop_directive_comment?(comment) &&
+              !rbs_comment?(comment)
+          end
+        end
+
+        # The unbroken run of `comments` that ends with the last one, from the bottom up.
+        #: (Array[Parser::Source::Comment] comments) -> Array[Parser::Source::Comment]
+        def adjacent_comments(comments)
+          comments.reverse.chunk_while { |below, above| below.loc.line - above.loc.last_line == 1 }.first.to_a
+        end
+
+        #: (Parser::Source::Comment comment) -> bool
+        def rbs_comment?(comment)
+          comment.text.match?(RBS_SIGNATURE) ||
+            SORBET_METHOD_ANNOTATIONS.include?(comment.text.delete_prefix('#').strip)
         end
       end
     end
