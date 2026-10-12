@@ -126,6 +126,135 @@ RSpec.describe RuboCop::Cop::Packs::DocumentedPublicApis, :config do
     it { expect_no_offenses source, 'packs/foo/app/public/foo.rb' }
   end
 
+  context 'with RBS comment signatures' do
+    context 'when an instance method has an RBS signature and no documentation' do
+      let(:source) do
+        <<~RUBY
+          class Foo
+            #: -> void
+            def bar
+            ^^^^^^^ Missing method documentation comment.
+            end
+          end
+        RUBY
+      end
+
+      it { expect_offense source, 'packs/foo/app/public/foo.rb' }
+    end
+
+    context 'when an instance method has a multi-line RBS signature and no documentation' do
+      let(:source) do
+        <<~RUBY
+          class Foo
+            #: (
+            #|   Integer
+            #| ) -> void
+            def bar(baz)
+            ^^^^^^^^^^^^ Missing method documentation comment.
+            end
+          end
+        RUBY
+      end
+
+      it { expect_offense source, 'packs/foo/app/public/foo.rb' }
+    end
+
+    context 'when a singleton method has Sorbet annotations, an RBS signature and no documentation' do
+      let(:source) do
+        <<~RUBY
+          class Foo
+            # @override(allow_incompatible: true)
+            # @final
+            #: -> void
+            def self.bar
+            ^^^^^^^^^^^^ Missing method documentation comment.
+            end
+          end
+        RUBY
+      end
+
+      it { expect_offense source, 'packs/foo/app/public/foo.rb' }
+    end
+
+    context 'when an instance method has an annotation keyword, an RBS signature and no documentation' do
+      let(:source) do
+        <<~RUBY
+          class Foo
+            # TODO: Document this
+            #: -> void
+            def bar
+            ^^^^^^^ Missing method documentation comment.
+            end
+          end
+        RUBY
+      end
+
+      it { expect_offense source, 'packs/foo/app/public/foo.rb' }
+    end
+
+    context 'when an instance method has documentation above Sorbet annotations and an RBS signature' do
+      let(:source) do
+        <<~RUBY
+          class Foo
+            # This has documentation, cool
+            # @override
+            #: -> void
+            def bar
+            end
+          end
+        RUBY
+      end
+
+      it { expect_no_offenses source, 'packs/foo/app/public/foo.rb' }
+    end
+
+    context 'when an instance method has documentation between the RBS signature and the method' do
+      let(:source) do
+        <<~RUBY
+          class Foo
+            #: -> void
+            # This has documentation, cool
+            def bar
+            end
+          end
+        RUBY
+      end
+
+      # Unlike a `sig`, which is a statement, Sorbet allows comments between the signature and the method
+      it { expect_no_offenses source, 'packs/foo/app/public/foo.rb' }
+    end
+
+    context 'when an undocumented method with an RBS signature uses the private modifier' do
+      let(:source) do
+        <<~RUBY
+          class Foo
+            #: -> void
+            private def bar
+                    ^^^^^^^ Missing method documentation comment.
+            end
+          end
+        RUBY
+      end
+
+      it { expect_offense source, 'packs/foo/app/public/foo.rb' }
+    end
+
+    context 'when a documented method with an RBS signature uses the private modifier' do
+      let(:source) do
+        <<~RUBY
+          class Foo
+            # Here is documentation!
+            #: -> void
+            private def bar
+            end
+          end
+        RUBY
+      end
+
+      it { expect_no_offenses source, 'packs/foo/app/public/foo.rb' }
+    end
+  end
+
   context 'using inline private class method syntax' do
     context 'with a sig' do
       context 'documented' do

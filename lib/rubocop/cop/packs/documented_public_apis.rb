@@ -31,6 +31,23 @@ module RuboCop
       #     def bar; end
       #   end
       #
+      #   # bad - RBS signatures and Sorbet annotations are not documentation
+      #   # packs/foo/app/public/foo.rb
+      #   class Foo
+      #     # @override
+      #     #: -> void
+      #     def bar; end
+      #   end
+      #
+      #   # good
+      #   # packs/foo/app/public/foo.rb
+      #   class Foo
+      #     # This is a documentation comment.
+      #     # @override
+      #     #: -> void
+      #     def bar; end
+      #   end
+      #
       # @example RequireForNonPublicMethods: false (default)
       #
       #   # good
@@ -119,13 +136,30 @@ module RuboCop
       class DocumentedPublicApis < Style::DocumentationMethod
         # This cop does two things:
         # 1) It only activates for things in the public folder
-        # 2) It allows `Style/DocumentationMethod` to work with sigs as expected.
+        # 2) It allows `Style/DocumentationMethod` to work with sigs and RBS comment signatures as expected.
         #
         # An alternate approach would be to monkey patch the existing cop, as `rubocop-sorbet` did here:
         # https://github.com/Shopify/rubocop-sorbet/blob/6634f033611604cd76eeb73eae6d8728ec82d504/lib/rubocop/cop/sorbet/mutable_constant_sorbet_aware_behaviour.rb
         # This monkey-patched cop could/should probably be upstreamed to `rubocop-sorbet`, and then `config/default.yml` could simply set `packs/*/app/public/**/*`
         # in the default include paths. However, that strategy has the downside of resulting in more configuration for the consumer if they only want to
         # support this for some packs.
+
+        # The RBS comments that `Layout/LeadingCommentSpace` allows with `AllowRBSInlineAnnotation`:
+        # a `#:` signature, the `#|` lines that continue a multi-line one, and a `#[...]` type application.
+        RBS_INLINE_ANNOTATION = /\A(?:#:|#\[.+\]|#\|)/
+
+        # The comments Sorbet reads in place of a `sig`'s modifiers, such as `# @override` for `override`.
+        # https://sorbet.org/docs/rbs-support
+        SORBET_METHOD_ANNOTATIONS = [
+          '@abstract',
+          '@final',
+          '@overridable',
+          '@override',
+          '@override(allow_incompatible: true)',
+          '@override(allow_incompatible: false)',
+          '@override(allow_incompatible: :visibility)',
+          '@without_runtime',
+        ].freeze
 
         # rubocop < 1.91 checks AllowedMethods inside `#check`, which this cop
         # overrides. Drop when the gemspec floor is rubocop >= 1.91; until then the
@@ -207,6 +241,29 @@ module RuboCop
             # passed to a modifier, such as the `:private` in `private def foo`.
             false
           end
+        end
+
+        # `Style/DocumentationMethod` counts every comment above a method as documentation except
+        # annotation keywords (`# TODO:`) and directives (`# rubocop:disable`). This copies its check
+        # and also skips RBS comments, which, like a `sig`, are not documentation.
+        #: (RuboCop::AST::Node node) -> bool
+        def documentation_comment?(node)
+          preceding_lines = preceding_lines(node)
+
+          return false unless preceding_comment?(node, preceding_lines.last)
+
+          preceding_lines.any? do |comment|
+            !AnnotationComment.new(comment, annotation_keywords).annotation? &&
+              !interpreter_directive_comment?(comment) &&
+              !rubocop_directive_comment?(comment) &&
+              !rbs_comment?(comment)
+          end
+        end
+
+        #: (Parser::Source::Comment comment) -> bool
+        def rbs_comment?(comment)
+          comment.text.match?(RBS_INLINE_ANNOTATION) ||
+            SORBET_METHOD_ANNOTATIONS.include?(comment.text.delete_prefix('#').strip)
         end
       end
     end
