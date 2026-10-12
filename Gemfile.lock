@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    rubocop-packs (0.1.0)
+    rubocop-packs (0.1.1)
       activesupport (>= 7.1)
       lint_roller (>= 1.1)
       packs-specification
