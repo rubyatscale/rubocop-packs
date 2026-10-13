@@ -206,6 +206,8 @@ module RuboCop
         end
         alias_method :on_defs, :on_def
 
+        private
+
         # `node` is the enclosing send for a definition passed to `module_function` or
         # `ruby2_keywords`, and the definition itself otherwise.
         #: ((RuboCop::AST::DefNode | RuboCop::AST::SendNode) node) -> void
