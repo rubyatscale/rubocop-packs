@@ -423,6 +423,214 @@ RSpec.describe RuboCop::Cop::Packs::DocumentedPublicApis, :config do
 
       it { expect_no_offenses source, 'packs/foo/app/public/foo.rb' }
     end
+
+    context 'when an instance method has rbs-inline annotations and no documentation' do
+      let(:source) do
+        <<~RUBY
+          class Foo
+            # @rbs override
+            # @rbs baz: Integer
+            # @rbs return: void
+            def bar(baz)
+            ^^^^^^^^^^^^ Missing method documentation comment.
+            end
+          end
+        RUBY
+      end
+
+      it { expect_offense source, 'packs/foo/app/public/foo.rb' }
+    end
+
+    context 'when an instance method has a multi-line rbs-inline signature and no documentation' do
+      let(:source) do
+        <<~RUBY
+          class Foo
+            # @rbs (Integer) -> Integer
+            #    | (Float) -> Float
+            def bar(baz)
+            ^^^^^^^^^^^^ Missing method documentation comment.
+            end
+          end
+        RUBY
+      end
+
+      it { expect_offense source, 'packs/foo/app/public/foo.rb' }
+    end
+
+    context 'when an instance method has a multi-line rbs-inline signature with a blank line and no documentation' do
+      let(:source) do
+        <<~RUBY
+          class Foo
+            # @rbs (Integer) -> Integer
+            #
+            #  | (Float) -> Float
+            def bar(baz)
+            ^^^^^^^^^^^^ Missing method documentation comment.
+            end
+          end
+        RUBY
+      end
+
+      it { expect_offense source, 'packs/foo/app/public/foo.rb' }
+    end
+
+    context 'when an instance method has an rbs-inline annotation that continues onto indented prose' do
+      let(:source) do
+        <<~RUBY
+          class Foo
+            # @rbs baz: Integer
+            #   Some prose
+            def bar(baz)
+            ^^^^^^^^^^^^ Missing method documentation comment.
+            end
+          end
+        RUBY
+      end
+
+      # RBS reads the indented line as part of the annotation, which it then fails to parse
+      it { expect_offense source, 'packs/foo/app/public/foo.rb' }
+    end
+
+    context 'when an instance method has an rbs-inline annotation with a description' do
+      let(:source) do
+        <<~RUBY
+          class Foo
+            # @rbs baz: Integer -- This has documentation, cool
+            # @rbs return: void
+            def bar(baz)
+            end
+          end
+        RUBY
+      end
+
+      it { expect_no_offenses source, 'packs/foo/app/public/foo.rb' }
+    end
+
+    context 'when an instance method has an rbs-inline annotation with a description on the next line' do
+      let(:source) do
+        <<~RUBY
+          class Foo
+            # @rbs baz: Integer --
+            #   This has documentation, cool
+            # @rbs return: void
+            def bar(baz)
+            end
+          end
+        RUBY
+      end
+
+      it { expect_no_offenses source, 'packs/foo/app/public/foo.rb' }
+    end
+
+    context 'when an instance method has an rbs-inline annotation with an empty description' do
+      let(:source) do
+        <<~RUBY
+          class Foo
+            # @rbs baz: Integer --
+            # @rbs return: void
+            def bar(baz)
+            ^^^^^^^^^^^^ Missing method documentation comment.
+            end
+          end
+        RUBY
+      end
+
+      it { expect_offense source, 'packs/foo/app/public/foo.rb' }
+    end
+
+    context 'when an instance method has an rbs-inline annotation with a string literal type that contains --' do
+      let(:source) do
+        <<~RUBY
+          class Foo
+            # @rbs baz: "--verbose" | "--quiet"
+            def bar(baz)
+            ^^^^^^^^^^^^ Missing method documentation comment.
+            end
+          end
+        RUBY
+      end
+
+      it { expect_offense source, 'packs/foo/app/public/foo.rb' }
+    end
+
+    context 'when an instance method has documentation below an rbs-inline annotation' do
+      let(:source) do
+        <<~RUBY
+          class Foo
+            # @rbs baz: Integer
+            # This has documentation, cool
+            def bar(baz)
+            end
+          end
+        RUBY
+      end
+
+      it { expect_no_offenses source, 'packs/foo/app/public/foo.rb' }
+    end
+
+    context 'when an instance method has documentation above rbs-inline annotations' do
+      let(:source) do
+        <<~RUBY
+          class Foo
+            # This has documentation, cool
+            # @rbs baz: Integer
+            # @rbs return: void
+            def bar(baz)
+            end
+          end
+        RUBY
+      end
+
+      it { expect_no_offenses source, 'packs/foo/app/public/foo.rb' }
+    end
+
+    context 'when an instance method has indented documentation above an RBS signature' do
+      let(:source) do
+        <<~RUBY
+          class Foo
+            #   This has documentation, cool
+            #: -> void
+            def bar
+            end
+          end
+        RUBY
+      end
+
+      # Indentation continues only an rbs-inline annotation, and none precedes this line
+      it { expect_no_offenses source, 'packs/foo/app/public/foo.rb' }
+    end
+
+    context 'when an instance method has indented documentation below an RBS signature' do
+      let(:source) do
+        <<~RUBY
+          class Foo
+            #: -> void
+            #   This has documentation, cool
+            def bar
+            end
+          end
+        RUBY
+      end
+
+      # Sorbet continues a `#:` signature with `#|`, not with indentation
+      it { expect_no_offenses source, 'packs/foo/app/public/foo.rb' }
+    end
+
+    context 'when an instance method has only a blank comment above an RBS signature' do
+      let(:source) do
+        <<~RUBY
+          class Foo
+            #
+            #: -> void
+            def bar
+            ^^^^^^^ Missing method documentation comment.
+            end
+          end
+        RUBY
+      end
+
+      it { expect_offense source, 'packs/foo/app/public/foo.rb' }
+    end
   end
 
   context 'using inline private class method syntax' do

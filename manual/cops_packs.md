@@ -89,6 +89,22 @@ class Foo
   #: -> void
   def bar; end
 end
+
+# bad - rbs-inline annotations are not documentation either
+# packs/foo/app/public/foo.rb
+class Foo
+  # @rbs baz: Integer
+  # @rbs return: void
+  def bar(baz); end
+end
+
+# good - an rbs-inline annotation with a `--` description is documentation
+# packs/foo/app/public/foo.rb
+class Foo
+  # @rbs baz: Integer -- This is a documentation comment.
+  # @rbs return: void
+  def bar(baz); end
+end
 ```
 #### RequireForNonPublicMethods: false (default)
 
