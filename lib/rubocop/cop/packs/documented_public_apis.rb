@@ -144,6 +144,16 @@ module RuboCop
         # in the default include paths. However, that strategy has the downside of resulting in more configuration for the consumer if they only want to
         # support this for some packs.
 
+        # A `sig` block: `sig`, `sig(:final)` or `T::Sig::WithoutRuntime.sig`. These are the forms of
+        # `rubocop-sorbet`'s `SignatureHelp#signature?` that sorbet-runtime defines: it also matches
+        # `T::Sig.sig`, which raises a `NoMethodError`.
+        SORBET_SIGNATURE = RuboCop::AST::NodePattern.new(<<~PATTERN)
+          (block
+            (send {nil? (const (const (const {nil? cbase} :T) :Sig) :WithoutRuntime)} :sig (sym :final)?)
+            (args)
+            ...)
+        PATTERN
+
         # The lines of an RBS method signature as Sorbet reads them: `#:` starts one, and `#|` continues a
         # multi-line one. https://sorbet.org/docs/rbs-support
         RBS_SIGNATURE = /\A#[:|]/
@@ -229,13 +239,7 @@ module RuboCop
         def node_is_sorbet_signature?(node)
           case node
           when RuboCop::AST::Node
-            # A node's `source` is `nil` when it has no source range. That is the case for the empty
-            # `args` node of a block written without parameters, as in `Struct.new(:a) do ... end`,
-            # which is the left sibling of a method defined as the block's only statement.
-            node_source = node.source
-
-            # Is there a better way to check if a node is a sorbet signature? Probably!
-            !!(node_source && (node_source.include?('sig do') || node_source.include?('sig {')))
+            !!SORBET_SIGNATURE.match(node)
           else
             # A sibling is not necessarily an AST node. It is a `Symbol` when a method definition is
             # passed to a modifier, such as the `:private` in `private def foo`.

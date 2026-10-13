@@ -126,6 +126,88 @@ RSpec.describe RuboCop::Cop::Packs::DocumentedPublicApis, :config do
     it { expect_no_offenses source, 'packs/foo/app/public/foo.rb' }
   end
 
+  context 'when class defines an instance method with a final sig and no documentation' do
+    let(:source) do
+      <<~RUBY
+        class Foo
+          sig(:final) { void }
+          def bar
+          ^^^^^^^ Missing method documentation comment.
+          end
+        end
+      RUBY
+    end
+
+    it { expect_offense source, 'packs/foo/app/public/foo.rb' }
+  end
+
+  context 'when class defines an instance method with a final sig and with documentation above the sig' do
+    let(:source) do
+      <<~RUBY
+        class Foo
+          # This has documentation, cool
+          sig(:final) { void }
+          def bar
+          end
+        end
+      RUBY
+    end
+
+    it { expect_no_offenses source, 'packs/foo/app/public/foo.rb' }
+  end
+
+  context 'when class defines an instance method with a runtime-free sig and with documentation above the sig' do
+    let(:source) do
+      <<~RUBY
+        class Foo
+          # This has documentation, cool
+          T::Sig::WithoutRuntime.sig { void }
+          def bar
+          end
+        end
+      RUBY
+    end
+
+    it { expect_no_offenses source, 'packs/foo/app/public/foo.rb' }
+  end
+
+  context 'when class defines an instance method with a top-level runtime-free sig and with documentation above the sig' do
+    let(:source) do
+      <<~RUBY
+        class Foo
+          # This has documentation, cool
+          ::T::Sig::WithoutRuntime.sig { void }
+          def bar
+          end
+        end
+      RUBY
+    end
+
+    it { expect_no_offenses source, 'packs/foo/app/public/foo.rb' }
+  end
+
+  context 'when an undocumented method follows a block whose body contains a sig' do
+    let(:source) do
+      <<~RUBY
+        module Foo
+          # This has documentation, cool
+          included do
+            # This has documentation, cool
+            sig { void }
+            def baz
+            end
+          end
+
+          def bar
+          ^^^^^^^ Missing method documentation comment.
+          end
+        end
+      RUBY
+    end
+
+    it { expect_offense source, 'packs/foo/app/public/foo.rb' }
+  end
+
   context 'with RBS comment signatures' do
     context 'when an instance method has an RBS signature and no documentation' do
       let(:source) do
