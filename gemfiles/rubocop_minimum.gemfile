@@ -6,7 +6,7 @@
 # newer rubocop and the specs do not use them.
 source 'https://rubygems.org'
 
-gem 'rubocop', '1.72.0'
+gem 'rubocop', '1.75.2'
 gem 'rubocop-packs', path: '..'
 
 gem 'rspec', '~> 3.0'
